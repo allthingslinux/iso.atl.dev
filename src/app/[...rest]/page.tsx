@@ -1,17 +1,24 @@
 import { type Metadata, type ResolvedMetadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { FileActions, FileBreadcrumb, FileExplorerLayout, FileReadme } from "~/components/explorer";
-import { ErrorComponent } from "~/components/layout";
-import { PreviewLayout } from "~/components/preview";
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import {
+  FileActions,
+  FileBreadcrumb,
+  FileExplorerLayout,
+  FileReadme,
+} from "@/components/explorer";
+import { Error as ErrorComponent } from "@/components/layout";
+import { PreviewLayout } from "@/components/preview";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import Icon from "@/components/ui/icon";
 
-import { getFileType } from "~/lib/previewHelper";
-import { formatPathToBreadcrumb } from "~/lib/utils";
+import { getFileType } from "@/lib/previewHelper";
+import { formatPathToBreadcrumb } from "@/lib/utils";
 
-import { GetBanner, GetFile, GetReadme, ListFiles } from "~/actions/files";
-import { ValidatePaths } from "~/actions/paths";
-import { CreateFileToken } from "~/actions/token";
+import { GetBanner, GetFile, GetReadme, ListFiles } from "@/actions/files";
+import { ValidatePaths } from "@/actions/paths";
 
 export const revalidate = 3600;
 export const dynamic = "force-static";
@@ -22,7 +29,10 @@ type Props = {
   }>;
 };
 
-export async function generateMetadata({ params }: Props, parent: ResolvedMetadata): Promise<Metadata> {
+export async function generateMetadata(
+  { params }: Props,
+  parent: ResolvedMetadata,
+): Promise<Metadata> {
   const { rest } = await params;
 
   const paths = await ValidatePaths(rest);
@@ -58,44 +68,55 @@ export default async function RestPage({ params }: Props) {
   if (!paths.success) notFound();
 
   const currentPath = paths.data[paths.data.length - 1];
-  if (!currentPath) return <ErrorComponent error={new Error("Failed to get current path")} />;
+  if (!currentPath)
+    return <ErrorComponent error={new Error("Failed to get current path")} />;
+
+  const prevPath = "/" + rest.slice(0, -1).join("/");
 
   const Layout: React.FC<{
     children: React.ReactNode;
   }> = ({ children }) => (
-    <div className='flex h-fit w-full flex-col gap-4'>
+    <div className="flex h-fit w-full flex-col gap-4">
       <FileBreadcrumb data={formatPathToBreadcrumb(paths.data)} />
 
-      <section
-        slot='content'
-        className='w-full'
-      >
+      <section slot="content" className="w-full">
         {children}
       </section>
     </div>
   );
 
   if (currentPath.mimeType.includes("folder")) {
-    const [data, readme] = await Promise.all([ListFiles({ id: currentPath.id }), GetReadme(currentPath.id)]);
+    const [data, readme] = await Promise.all([
+      ListFiles({ id: currentPath.id }),
+      GetReadme(currentPath.id),
+    ]);
     if (!data.success) return <ErrorComponent error={new Error(data.error)} />;
-    if (!readme.success) return <ErrorComponent error={new Error(readme.error)} />;
+    if (!readme.success)
+      return <ErrorComponent error={new Error(readme.error)} />;
 
     return (
       <Layout>
         <Card>
-          <CardHeader className='pb-0'>
-            <div className='flex w-full items-center justify-between gap-4'>
-              <CardTitle className='flex-grow'>Browse files</CardTitle>
+          <CardHeader className="pb-0">
+            <div className="relative flex w-full items-center justify-between gap-4">
+              <Button variant="outline" asChild>
+                <Link href={prevPath}>
+                  <Icon name="ArrowLeft" size="1rem" className="mr-2" />
+                  Back
+                </Link>
+              </Button>
+              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform">
+                <CardTitle>Browse files</CardTitle>
+              </div>
               <FileActions />
             </div>
           </CardHeader>
 
-          <CardContent className='p-2 pt-0 tablet:p-4 tablet:pt-0'>
+          <CardContent className="p-2 pt-0 tablet:p-4 tablet:pt-0">
             <FileExplorerLayout
               encryptedId={currentPath.id}
               files={data.data.files}
               nextPageToken={data.data.nextPageToken ?? undefined}
-              showBackButton
             />
           </CardContent>
         </Card>
@@ -115,9 +136,8 @@ export default async function RestPage({ params }: Props) {
     if (file.error === "NotFound") notFound();
     return <ErrorComponent error={new Error(file.error)} />;
   }
-  if (!file.data) return <ErrorComponent error={new Error("Failed to get file data")} />;
-  const token = await CreateFileToken(file.data);
-  if (!token.success) return <ErrorComponent error={new Error(token.error)} />;
+  if (!file.data)
+    return <ErrorComponent error={new Error("Failed to get file data")} />;
 
   return (
     <Layout>
@@ -128,7 +148,6 @@ export default async function RestPage({ params }: Props) {
             ? getFileType(file.data.fileExtension, file.data.mimeType)
             : "unknown"
         }
-        token={token.data}
         paths={rest}
       />
     </Layout>
