@@ -10,19 +10,5 @@
   "endOfLine": "lf",
   "proseWrap": "preserve",
   "quoteProps": "as-needed",
-  "bracketSameLine": false,
-  "plugins": ["@trivago/prettier-plugin-sort-imports"],
-  "importOrder": [
-    "^(react/(.*)$)|^(react$)",
-    "^(next/(.*)$)|^(next$)",
-    "<THIRD_PARTY_MODULES>",
-    "^@/types/(.*)$",
-    "^@/lib/(.*)$",
-    "^@/hooks/(.*)$",
-    "^@/components/(.*)$",
-    "^@/app/(.*)$",
-    "^[./]"
-  ],
-  "importOrderSeparation": true,
-  "importOrderSortSpecifiers": true
+  "bracketSameLine": false
 }
