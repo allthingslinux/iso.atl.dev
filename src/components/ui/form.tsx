@@ -75,7 +75,11 @@ const FormItemContext = React.createContext<FormItemContextValue>(
   {} as FormItemContextValue
 );
 
-function FormItem({ className, ...props }: React.ComponentProps<"div">) {
+function FormItem({
+  className,
+  disableBorder,
+  ...props
+}: React.ComponentProps<"div"> & { disableBorder?: boolean }) {
   const id = React.useId();
 
   return (
@@ -91,8 +95,13 @@ function FormItem({ className, ...props }: React.ComponentProps<"div">) {
 
 function FormLabel({
   className,
+  resetDisabled,
+  onFieldReset,
   ...props
-}: React.ComponentProps<typeof LabelPrimitive.Root>) {
+}: React.ComponentProps<typeof LabelPrimitive.Root> & {
+  resetDisabled?: boolean;
+  onFieldReset?: () => void;
+}) {
   const { error, formItemId } = useFormField();
 
   return (

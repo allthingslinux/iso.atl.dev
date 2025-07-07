@@ -142,7 +142,9 @@ export default function UseConfirmDialogProvider({
 }: React.PropsWithChildren<UseConfirmDialogProviderProps>) {
   const [isOpen, setOpen] = React.useState<boolean>(false);
   const [options, setOptions] = React.useState<UseConfirmOptions>(baseOptions);
-  const resolver = React.useRef<(value: boolean) => void>();
+  const resolver = React.useRef<((value: boolean) => void) | undefined>(
+    undefined
+  );
 
   const resolvedOptions = React.useMemo<UseConfirmOptions>(() => {
     return { ...baseOptions, ...defaultOptions };

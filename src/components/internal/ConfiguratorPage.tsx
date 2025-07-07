@@ -49,7 +49,7 @@ export default function ConfiguratorPage() {
   const [isLoadingEnv, setIsLoadingEnv] = useState<boolean>(false);
   const [isLoadingConfig, setIsLoadingConfig] = useState<boolean>(false);
   const form = useForm<z.infer<typeof Schema_App_Configuration>>({
-    resolver: zodResolver(Schema_App_Configuration),
+    resolver: zodResolver(Schema_App_Configuration) as any,
     defaultValues: initialConfiguration,
   });
 
