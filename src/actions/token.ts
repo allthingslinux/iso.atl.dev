@@ -1,13 +1,11 @@
 "use server";
 
 import { type z } from "zod";
-import { type ActionResponseSchema } from "~/types";
+import { type ActionResponseSchema } from "@/types";
 
-import { encryptionService } from "~/lib/utils.server";
+import { encryptionService } from "@/lib/utils.server";
 
-import { type Schema_File, Schema_FileToken } from "~/types/schema";
-
-import config from "config";
+import { type Schema_File, Schema_FileToken } from "@/types/schema";
 
 /**
  * Create a token to download a file
@@ -16,7 +14,7 @@ import config from "config";
  */
 export async function CreateFileToken(
   file: z.infer<typeof Schema_File>,
-  expiredIn: number = 3600 * 1000 * config.apiConfig.temporaryTokenDuration,
+  expiredIn: number = 3600 * 1000, // 1 hour default
 ): Promise<ActionResponseSchema<string>> {
   const tokenObject = {
     id: file.encryptedId,
@@ -31,7 +29,9 @@ export async function CreateFileToken(
       error: parsedTokenObject.error.message,
     };
 
-  const token = await encryptionService.encrypt(JSON.stringify(parsedTokenObject.data));
+  const token = await encryptionService.encrypt(
+    JSON.stringify(parsedTokenObject.data),
+  );
 
   return {
     success: true,

@@ -1,24 +1,34 @@
 "use server";
 
 import { type z } from "zod";
-import { type ActionResponseSchema } from "~/types";
+import { type ActionResponseSchema } from "@/types";
 
-import { encryptionService, gdrive } from "~/lib/utils.server";
+import { encryptionService, gdrive } from "@/lib/utils.server";
 
-import { Schema_File } from "~/types/schema";
+import { Schema_File } from "@/types/schema";
 
-import config from "config";
+import config from "@/config/gIndex.config";
 
 import { GetFilePaths } from "./paths";
 
-export async function SearchFiles(query: string): Promise<ActionResponseSchema<z.infer<typeof Schema_File>[]>> {
-  const isSharedDrive = !!(config.apiConfig.isTeamDrive && config.apiConfig.sharedDrive);
+export async function SearchFiles(
+  query: string,
+): Promise<ActionResponseSchema<z.infer<typeof Schema_File>[]>> {
+  const isSharedDrive = !!(
+    config.apiConfig.isTeamDrive && config.apiConfig.sharedDrive
+  );
   const decryptedSharedDrive = isSharedDrive
     ? await encryptionService.decrypt(config.apiConfig.sharedDrive!)
     : undefined;
 
-  const filterName = config.apiConfig.hiddenFiles.map((item) => `not name = '${item}'`).join(" and ");
-  const filterQuery: string = [...config.apiConfig.defaultQuery, `name contains '${query}'`, filterName].join(" and ");
+  const filterName = config.apiConfig.hiddenFiles
+    .map((item) => `not name = '${item}'`)
+    .join(" and ");
+  const filterQuery: string = [
+    ...config.apiConfig.defaultQuery,
+    `name contains '${query}'`,
+    filterName,
+  ].join(" and ");
 
   const { data } = await gdrive.files.list({
     q: filterQuery,
@@ -43,7 +53,9 @@ export async function SearchFiles(query: string): Promise<ActionResponseSchema<z
   for (const file of data.files) {
     files.push({
       encryptedId: await encryptionService.encrypt(file.id!),
-      encryptedWebContentLink: file.webContentLink ? await encryptionService.encrypt(file.webContentLink) : undefined,
+      encryptedWebContentLink: file.webContentLink
+        ? await encryptionService.encrypt(file.webContentLink)
+        : undefined,
       name: file.name!,
       mimeType: file.mimeType!,
       trashed: file.trashed ?? false,
@@ -83,9 +95,15 @@ export async function SearchFiles(query: string): Promise<ActionResponseSchema<z
   };
 }
 
-export async function GetSearchResultPath(id: string): Promise<ActionResponseSchema<string>> {
-  const isSharedDrive = !!(config.apiConfig.isTeamDrive && config.apiConfig.sharedDrive);
-  const decryptedId = await encryptionService.decrypt(id ?? config.apiConfig.rootFolder);
+export async function GetSearchResultPath(
+  id: string,
+): Promise<ActionResponseSchema<string>> {
+  const isSharedDrive = !!(
+    config.apiConfig.isTeamDrive && config.apiConfig.sharedDrive
+  );
+  const decryptedId = await encryptionService.decrypt(
+    id ?? config.apiConfig.rootFolder,
+  );
 
   const { data } = await gdrive.files.get({
     fileId: decryptedId,

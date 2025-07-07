@@ -1,13 +1,13 @@
 "use server";
 
 import { type z } from "zod";
-import { type ActionResponseSchema } from "~/types";
+import { type ActionResponseSchema } from "@/types";
 
-import { encryptionService, gdrive } from "~/lib/utils.server";
+import { encryptionService, gdrive } from "@/lib/utils.server";
 
-import { Schema_File, Schema_File_Shortcut } from "~/types/schema";
+import { Schema_File, Schema_File_Shortcut } from "@/types/schema";
 
-import config from "config";
+import config from "@/config/gIndex.config";
 
 import { ValidatePaths } from "./paths";
 
@@ -17,22 +17,33 @@ import { ValidatePaths } from "./paths";
  * @param {string} options.id (optional) - Folder ID to fetch, default is root folder
  * @param {string} options.pageToken (optional) - Page token to fetch next page
  */
-export async function ListFiles({ id, pageToken }: { id?: string; pageToken?: string } = {}): Promise<
+export async function ListFiles({
+  id,
+  pageToken,
+}: { id?: string; pageToken?: string } = {}): Promise<
   ActionResponseSchema<{
     files: z.infer<typeof Schema_File>[];
     nextPageToken?: string | null;
   }>
 > {
-  const isSharedDrive = !!(config.apiConfig.isTeamDrive && config.apiConfig.sharedDrive);
-  const decryptedId = await encryptionService.decrypt(id ?? config.apiConfig.rootFolder);
+  const isSharedDrive = !!(
+    config.apiConfig.isTeamDrive && config.apiConfig.sharedDrive
+  );
+  const decryptedId = await encryptionService.decrypt(
+    id ?? config.apiConfig.rootFolder,
+  );
   const decryptedSharedDrive = isSharedDrive
     ? await encryptionService.decrypt(config.apiConfig.sharedDrive!)
     : undefined;
 
-  const filterName = config.apiConfig.hiddenFiles.map((item) => `not name = '${item}'`).join(" and ");
-  const filterQuery: string = [...config.apiConfig.defaultQuery, `'${decryptedId}' in parents`, filterName].join(
-    " and ",
-  );
+  const filterName = config.apiConfig.hiddenFiles
+    .map((item) => `not name = '${item}'`)
+    .join(" and ");
+  const filterQuery: string = [
+    ...config.apiConfig.defaultQuery,
+    `'${decryptedId}' in parents`,
+    filterName,
+  ].join(" and ");
 
   const { data } = await gdrive.files.list({
     q: filterQuery,
@@ -61,7 +72,9 @@ export async function ListFiles({ id, pageToken }: { id?: string; pageToken?: st
   for (const file of data.files) {
     files.push({
       encryptedId: await encryptionService.encrypt(file.id!),
-      encryptedWebContentLink: file.webContentLink ? await encryptionService.encrypt(file.webContentLink) : undefined,
+      encryptedWebContentLink: file.webContentLink
+        ? await encryptionService.encrypt(file.webContentLink)
+        : undefined,
       name: file.name!,
       mimeType: file.mimeType!,
       trashed: file.trashed ?? false,
@@ -108,8 +121,12 @@ export async function ListFiles({ id, pageToken }: { id?: string; pageToken?: st
  * Get file details
  * @param id - File ID to fetch
  */
-export async function GetFile(id: string): Promise<ActionResponseSchema<z.infer<typeof Schema_File> | null>> {
-  const decryptedId = await encryptionService.decrypt(id ?? config.apiConfig.rootFolder);
+export async function GetFile(
+  id: string,
+): Promise<ActionResponseSchema<z.infer<typeof Schema_File> | null>> {
+  const decryptedId = await encryptionService.decrypt(
+    id ?? config.apiConfig.rootFolder,
+  );
 
   const { data } = await gdrive.files.get({
     fileId: decryptedId,
@@ -125,7 +142,9 @@ export async function GetFile(id: string): Promise<ActionResponseSchema<z.infer<
 
   const file: z.infer<typeof Schema_File> = {
     encryptedId: await encryptionService.encrypt(data.id),
-    encryptedWebContentLink: data.webContentLink ? await encryptionService.encrypt(data.webContentLink) : undefined,
+    encryptedWebContentLink: data.webContentLink
+      ? await encryptionService.encrypt(data.webContentLink)
+      : undefined,
     name: data.name!,
     mimeType: data.mimeType!,
     trashed: data.trashed ?? false,
@@ -174,8 +193,12 @@ export async function GetReadme(id: string | null = null): Promise<
     content: string;
   } | null>
 > {
-  const isSharedDrive = !!(config.apiConfig.isTeamDrive && config.apiConfig.sharedDrive);
-  const decryptedId = await encryptionService.decrypt(id ?? config.apiConfig.rootFolder);
+  const isSharedDrive = !!(
+    config.apiConfig.isTeamDrive && config.apiConfig.sharedDrive
+  );
+  const decryptedId = await encryptionService.decrypt(
+    id ?? config.apiConfig.rootFolder,
+  );
   const decryptedSharedDrive = isSharedDrive
     ? await encryptionService.decrypt(config.apiConfig.sharedDrive!)
     : undefined;
@@ -213,7 +236,9 @@ export async function GetReadme(id: string | null = null): Promise<
     file = data.files[0];
   } else {
     file = data.files.find((file) => file.mimeType === "text/markdown");
-    file ??= data.files.find((file) => file.mimeType === 'application/vnd.google-apps.shortcut');
+    file ??= data.files.find(
+      (file) => file.mimeType === "application/vnd.google-apps.shortcut",
+    );
   }
 
   if (!file)
@@ -264,7 +289,10 @@ export async function GetReadme(id: string | null = null): Promise<
         success: true,
         message: "README found",
         data: {
-          type: parsedData.data.shortcutDetails.targetMimeType === "text/markdown" ? "markdown" : "txt",
+          type:
+            parsedData.data.shortcutDetails.targetMimeType === "text/markdown"
+              ? "markdown"
+              : "txt",
           content: shortcutContent as string,
         },
       };
@@ -301,9 +329,15 @@ export async function GetReadme(id: string | null = null): Promise<
  * Get banner file inside a folder
  * @param id - Folder ID to fetch, default is root folder
  */
-export async function GetBanner(id: string | null = null): Promise<ActionResponseSchema<string | null>> {
-  const isSharedDrive = !!(config.apiConfig.isTeamDrive && config.apiConfig.sharedDrive);
-  const decryptedId = await encryptionService.decrypt(id ?? config.apiConfig.rootFolder);
+export async function GetBanner(
+  id: string | null = null,
+): Promise<ActionResponseSchema<string | null>> {
+  const isSharedDrive = !!(
+    config.apiConfig.isTeamDrive && config.apiConfig.sharedDrive
+  );
+  const decryptedId = await encryptionService.decrypt(
+    id ?? config.apiConfig.rootFolder,
+  );
   const decryptedSharedDrive = isSharedDrive
     ? await encryptionService.decrypt(config.apiConfig.sharedDrive!)
     : undefined;
@@ -346,7 +380,9 @@ export async function GetBanner(id: string | null = null): Promise<ActionRespons
  * Get content of text file
  * @param id - File ID to fetch
  */
-export async function GetContent(id: string): Promise<ActionResponseSchema<string>> {
+export async function GetContent(
+  id: string,
+): Promise<ActionResponseSchema<string>> {
   const decryptedId = await encryptionService.decrypt(id);
 
   const { data, status, statusText } = await gdrive.files.get(
@@ -377,7 +413,9 @@ export async function GetContent(id: string): Promise<ActionResponseSchema<strin
  * Get siblings media files from the same parent folder
  * @param paths - Paths to check
  */
-export async function GetSiblingsMedia(paths: string[]): Promise<ActionResponseSchema<z.infer<typeof Schema_File>[]>> {
+export async function GetSiblingsMedia(
+  paths: string[],
+): Promise<ActionResponseSchema<z.infer<typeof Schema_File>[]>> {
   const pathIds = await ValidatePaths(paths);
   if (!pathIds.success)
     return {
@@ -385,16 +423,23 @@ export async function GetSiblingsMedia(paths: string[]): Promise<ActionResponseS
       message: "Failed to validate paths",
       error: pathIds.error,
     };
-  const folderPaths = pathIds.data.filter((item) => item.mimeType === "application/vnd.google-apps.folder");
+  const folderPaths = pathIds.data.filter(
+    (item) => item.mimeType === "application/vnd.google-apps.folder",
+  );
 
-  const parentId = folderPaths[folderPaths.length - 1]?.id ?? config.apiConfig.rootFolder;
-  const isSharedDrive = !!(config.apiConfig.isTeamDrive && config.apiConfig.sharedDrive);
+  const parentId =
+    folderPaths[folderPaths.length - 1]?.id ?? config.apiConfig.rootFolder;
+  const isSharedDrive = !!(
+    config.apiConfig.isTeamDrive && config.apiConfig.sharedDrive
+  );
   const decryptedParentId = await encryptionService.decrypt(parentId);
   const decryptedSharedDrive = isSharedDrive
     ? await encryptionService.decrypt(config.apiConfig.sharedDrive!)
     : undefined;
 
-  const filterName = config.apiConfig.hiddenFiles.map((item) => `not name = '${item}'`).join(" and ");
+  const filterName = config.apiConfig.hiddenFiles
+    .map((item) => `not name = '${item}'`)
+    .join(" and ");
   const filterQuery: string = [
     ...config.apiConfig.defaultQuery,
     `'${decryptedParentId}' in parents`,
@@ -414,13 +459,16 @@ export async function GetSiblingsMedia(paths: string[]): Promise<ActionResponseS
       corpora: "drive",
     }),
   });
-  if (!data.files?.length) return { success: true, message: "No siblings media found", data: [] };
+  if (!data.files?.length)
+    return { success: true, message: "No siblings media found", data: [] };
 
   const files: z.infer<typeof Schema_File>[] = [];
   for (const file of data.files) {
     files.push({
       encryptedId: await encryptionService.encrypt(file.id!),
-      encryptedWebContentLink: file.webContentLink ? await encryptionService.encrypt(file.webContentLink) : undefined,
+      encryptedWebContentLink: file.webContentLink
+        ? await encryptionService.encrypt(file.webContentLink)
+        : undefined,
       name: file.name!,
       mimeType: file.mimeType!,
       trashed: file.trashed ?? false,
@@ -458,4 +506,172 @@ export async function GetSiblingsMedia(paths: string[]): Promise<ActionResponseS
     message: "Siblings media fetched",
     data: parsed.data,
   };
+}
+
+/**
+ * Get storage information from Google Drive (Shared Drive)
+ */
+export async function GetStorageInfo(): Promise<
+  ActionResponseSchema<{
+    storageUsed: number;
+    storageLimit: number;
+    storageUsedInDrive: number;
+    storageUsedInTrash: number;
+    totalFiles: number;
+    totalFolders: number;
+    fileTypeStats: { [key: string]: { count: number; size: number } };
+    driveInfo?: {
+      name: string;
+      id: string;
+      capabilities: unknown;
+    };
+  }>
+> {
+  try {
+    const isSharedDrive = !!(
+      config.apiConfig.isTeamDrive && config.apiConfig.sharedDrive
+    );
+    
+    console.log("[GetStorageInfo] isSharedDrive:", isSharedDrive);
+    console.log("[GetStorageInfo] config.apiConfig.isTeamDrive:", config.apiConfig.isTeamDrive);
+    console.log("[GetStorageInfo] config.apiConfig.sharedDrive:", config.apiConfig.sharedDrive);
+
+    if (isSharedDrive) {
+      // For shared drives, get drive info and calculate usage from files
+      const decryptedSharedDrive = await encryptionService.decrypt(
+        config.apiConfig.sharedDrive!
+      );
+
+      // Get shared drive information
+      const { data: driveData } = await gdrive.drives.get({
+        driveId: decryptedSharedDrive,
+        fields: "id, name, capabilities",
+      });
+
+             // Calculate comprehensive storage and file statistics
+       let totalSize = 0;
+       let totalFiles = 0;
+       let totalFolders = 0;
+       const fileTypeStats: { [key: string]: { count: number; size: number } } = {};
+       let pageToken: string | null | undefined = null;
+       
+       console.log("[GetStorageInfo] Starting comprehensive scan of shared drive...");
+       
+       do {
+         const response: any = await gdrive.files.list({
+           q: "trashed = false",
+           fields: "files(id,name,size,mimeType,fileExtension), nextPageToken",
+           supportsAllDrives: true,
+           includeItemsFromAllDrives: true,
+           driveId: decryptedSharedDrive,
+           corpora: "drive",
+           pageSize: 1000,
+           pageToken: pageToken || undefined,
+         });
+
+         if (response.data.files) {
+           for (const file of response.data.files) {
+             if (file.mimeType === "application/vnd.google-apps.folder") {
+               totalFolders++;
+             } else {
+               totalFiles++;
+               if (file.size) {
+                 const fileSize = Number(file.size);
+                 totalSize += fileSize;
+                 
+                 // Categorize by file type
+                 const extension = file.fileExtension || 'no-extension';
+                 const mimeType = file.mimeType || 'unknown';
+                 
+                 let category = 'other';
+                 if (mimeType.startsWith('image/')) category = 'images';
+                 else if (mimeType.startsWith('video/')) category = 'videos';
+                 else if (mimeType.startsWith('audio/')) category = 'audio';
+                 else if (mimeType.includes('pdf')) category = 'documents';
+                 else if (mimeType.includes('text') || mimeType.includes('document')) category = 'documents';
+                 else if (extension === 'iso') category = 'iso';
+                 else if (extension === 'zip' || extension === 'rar' || extension === '7z') category = 'archives';
+                 
+                 if (!fileTypeStats[category]) {
+                   fileTypeStats[category] = { count: 0, size: 0 };
+                 }
+                 fileTypeStats[category].count++;
+                 fileTypeStats[category].size += fileSize;
+               }
+             }
+           }
+         }
+         
+         pageToken = response.data.nextPageToken;
+         console.log(`[GetStorageInfo] Processed page, total files so far: ${totalFiles}, folders: ${totalFolders}, size: ${(totalSize / (1024**4)).toFixed(2)} TB`);
+       } while (pageToken);
+       
+       console.log("[GetStorageInfo] Final stats:", {
+         totalFiles,
+         totalFolders,
+         totalSize,
+         totalSizeTB: (totalSize / (1024**4)).toFixed(2),
+         fileTypeStats
+       });
+
+       // Set the actual org limit: 100TB
+       const orgLimit = 100 * 1024 * 1024 * 1024 * 1024; // 100TB in bytes
+
+             return {
+         success: true,
+         message: "Shared drive storage information retrieved",
+         data: {
+           storageUsed: totalSize,
+           storageLimit: orgLimit,
+           storageUsedInDrive: totalSize,
+           storageUsedInTrash: 0, // Shared drives don't have individual trash tracking
+           totalFiles,
+           totalFolders,
+           fileTypeStats,
+           driveInfo: {
+             name: driveData.name || "Unknown",
+             id: driveData.id || "",
+             capabilities: driveData.capabilities,
+           },
+         },
+       };
+    } else {
+      // Personal drive storage (original logic)
+      const { data } = await gdrive.about.get({
+        fields: "storageQuota",
+      });
+
+      if (!data.storageQuota) {
+        return {
+          success: false,
+          message: "Storage quota information not available",
+          error: "NoQuotaInfo",
+        };
+      }
+
+      const storageQuota = data.storageQuota;
+
+      return {
+        success: true,
+        message: "Storage information retrieved",
+        data: {
+          storageUsed: Number(storageQuota.usage || 0),
+          storageLimit: Number(storageQuota.limit || 0),
+          storageUsedInDrive: Number(storageQuota.usageInDrive || 0),
+          storageUsedInTrash: Number(storageQuota.usageInDriveTrash || 0),
+          totalFiles: 0, // Personal drive stats not implemented
+          totalFolders: 0,
+          fileTypeStats: {},
+        },
+      };
+    }
+  } catch (error) {
+    const e = error as Error;
+    console.error(`[GetStorageInfo] ${e.message}`);
+    return {
+      success: false,
+      message: "Failed to get storage information",
+      error: e.message,
+    };
+  }
 }

@@ -1,10 +1,10 @@
 "use server";
 
-import { type ActionResponseSchema } from "~/types";
+import { type ActionResponseSchema } from "@/types";
 
-import { encryptionService, gdrive } from "~/lib/utils.server";
+import { encryptionService, gdrive } from "@/lib/utils.server";
 
-import config from "config";
+import config from "@/config/gIndex.config";
 
 /**
  * Get file paths from the root folder to the file.
@@ -12,10 +12,19 @@ import config from "config";
  * @param {string} parentId - The parent ID of the file.
  * @returns {string} - The file path.
  */
-export async function GetFilePaths(fileName: string, parentId?: string): Promise<ActionResponseSchema<string>> {
-  const decryptedRootId = await encryptionService.decrypt(config.apiConfig.rootFolder);
+export async function GetFilePaths(
+  fileName: string,
+  parentId?: string,
+): Promise<ActionResponseSchema<string>> {
+  const decryptedRootId = await encryptionService.decrypt(
+    config.apiConfig.rootFolder,
+  );
   if (!decryptedRootId)
-    return { success: false, message: "Failed to decrypt root folder ID", error: "Failed to decrypt root folder ID" };
+    return {
+      success: false,
+      message: "Failed to decrypt root folder ID",
+      error: "Failed to decrypt root folder ID",
+    };
 
   const paths: string[] = [fileName];
   let parentIdTemp = parentId;
@@ -33,7 +42,11 @@ export async function GetFilePaths(fileName: string, parentId?: string): Promise
     parentIdTemp = data.parents?.[0];
   }
 
-  return { success: true, message: "File paths retrieved", data: paths.join("/") };
+  return {
+    success: true,
+    message: "File paths retrieved",
+    data: paths.join("/"),
+  };
 }
 
 type PathFetch = {
@@ -52,9 +65,15 @@ type PathFetch = {
  */
 export async function ValidatePaths(
   paths: string[],
-): Promise<ActionResponseSchema<{ id: string; path: string; mimeType: string }[]>> {
-  const isSharedDrive = !!(config.apiConfig.isTeamDrive && config.apiConfig.sharedDrive);
-  const decryptedRootId = await encryptionService.decrypt(config.apiConfig.rootFolder);
+): Promise<
+  ActionResponseSchema<{ id: string; path: string; mimeType: string }[]>
+> {
+  const isSharedDrive = !!(
+    config.apiConfig.isTeamDrive && config.apiConfig.sharedDrive
+  );
+  const decryptedRootId = await encryptionService.decrypt(
+    config.apiConfig.rootFolder,
+  );
   const decryptedSharedDrive = isSharedDrive
     ? await encryptionService.decrypt(config.apiConfig.sharedDrive!)
     : undefined;
@@ -122,7 +141,11 @@ export async function ValidatePaths(
      */
     for (const item of path.data) {
       if (path.index === 0) {
-        if (item.parents !== decryptedRootId && item.parents !== decryptedSharedDrive) break;
+        if (
+          item.parents !== decryptedRootId &&
+          item.parents !== decryptedSharedDrive
+        )
+          break;
         validatedPaths.push(path);
       } else {
         const previousPath = validatedPaths[path.index - 1];
@@ -140,7 +163,9 @@ export async function ValidatePaths(
     return {
       success: false,
       message: "Invalid path",
-      error: invalidPath ? `Failed to validate path: ${invalidPath}` : "Failed when validating paths",
+      error: invalidPath
+        ? `Failed to validate path: ${invalidPath}`
+        : "Failed when validating paths",
     };
 
   const response: { path: string; id: string; mimeType: string }[] = [];

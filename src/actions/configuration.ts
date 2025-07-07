@@ -2,7 +2,7 @@
 
 import { type AsyncZippable, strToU8, zipSync } from "fflate";
 import { type z } from "zod";
-import { type ActionResponseSchema } from "~/types";
+import { type ActionResponseSchema } from "@/types";
 
 import {
   configurationTemplate,
@@ -10,12 +10,21 @@ import {
   parseEnvironment,
   parseVersion1Config,
   parseVersion2Config,
-} from "~/lib/configurationHelper";
-import { base64Decode, base64Encode, encryptionService } from "~/lib/utils.server";
+} from "@/lib/configurationHelper";
+import {
+  base64Decode,
+  base64Encode,
+  encryptionService,
+} from "@/lib/utils.server";
 
-import { type Schema_App_Configuration, type Schema_App_Configuration_Env } from "~/types/schema";
+import {
+  type Schema_App_Configuration,
+  type Schema_App_Configuration_Env,
+} from "@/types/schema";
 
-export async function GenerateServiceAccountB64(serviceAccount: string): Promise<ActionResponseSchema<string>> {
+export async function GenerateServiceAccountB64(
+  serviceAccount: string,
+): Promise<ActionResponseSchema<string>> {
   const b64 = base64Encode(serviceAccount, "standard");
 
   // Test
@@ -24,14 +33,16 @@ export async function GenerateServiceAccountB64(serviceAccount: string): Promise
     return {
       success: false,
       message: "Failed to decode the service account",
-      error: "Something went wrong while encoding the service account, please try again",
+      error:
+        "Something went wrong while encoding the service account, please try again",
     };
   }
   if (decoded !== serviceAccount) {
     return {
       success: false,
       message: "Encode failed to match the original string",
-      error: "Something went wrong while testing the encoding, please try again",
+      error:
+        "Something went wrong while testing the encoding, please try again",
     };
   }
 
@@ -75,8 +86,15 @@ export async function ProcessEnvironmentConfig(
 export async function ProcessConfiguration(
   configuration: string,
   version: "v1" | "v2" | "latest",
-): Promise<ActionResponseSchema<Omit<z.infer<typeof Schema_App_Configuration>, "environment">>> {
-  const data = version === "v1" ? parseVersion1Config(configuration) : parseVersion2Config(configuration);
+): Promise<
+  ActionResponseSchema<
+    Omit<z.infer<typeof Schema_App_Configuration>, "environment">
+  >
+> {
+  const data =
+    version === "v1"
+      ? parseVersion1Config(configuration)
+      : parseVersion2Config(configuration);
   if ("message" in data && "details" in data) {
     return {
       success: false,
@@ -94,7 +112,9 @@ export async function ProcessConfiguration(
 
 export async function GenerateConfiguration(
   values: z.infer<typeof Schema_App_Configuration>,
-): Promise<ActionResponseSchema<{ configuration: string; env: string; zip: Blob }>> {
+): Promise<
+  ActionResponseSchema<{ configuration: string; env: string; zip: Blob }>
+> {
   const configurationMap: { key: string; value: string }[] = [
     {
       key: "version",
@@ -112,7 +132,10 @@ export async function GenerateConfiguration(
     },
     {
       key: "api.rootFolder",
-      value: await encryptionService.encrypt(values.api.rootFolder, values.environment.ENCRYPTION_KEY),
+      value: await encryptionService.encrypt(
+        values.api.rootFolder,
+        values.environment.ENCRYPTION_KEY,
+      ),
     },
     {
       key: "api.isTeamDrive",
@@ -121,7 +144,10 @@ export async function GenerateConfiguration(
     {
       key: "api.sharedDrive",
       value: values.api.sharedDrive
-        ? await encryptionService.encrypt(values.api.sharedDrive, values.environment.ENCRYPTION_KEY)
+        ? await encryptionService.encrypt(
+            values.api.sharedDrive,
+            values.environment.ENCRYPTION_KEY,
+          )
         : "",
     },
     {
@@ -132,10 +158,7 @@ export async function GenerateConfiguration(
       key: "api.searchResult",
       value: values.api.searchResult.toString(),
     },
-    {
-      key: "api.specialFile.password",
-      value: values.api.specialFile.password,
-    },
+
     {
       key: "api.specialFile.readme",
       value: values.api.specialFile.readme,
@@ -160,14 +183,7 @@ export async function GenerateConfiguration(
       key: "api.maxFileSize",
       value: values.api.maxFileSize.toString(),
     },
-    {
-      key: "api.allowDownloadProtectedFile",
-      value: values.api.allowDownloadProtectedFile.toString(),
-    },
-    {
-      key: "api.temporaryTokenDuration",
-      value: values.api.temporaryTokenDuration.toString(),
-    },
+
     {
       key: "site.siteName",
       value: values.site.siteName,
@@ -196,10 +212,7 @@ export async function GenerateConfiguration(
       key: "site.showFileExtension",
       value: values.site.showFileExtension.toString(),
     },
-    {
-      key: "site.privateIndex",
-      value: values.site.privateIndex.toString(),
-    },
+
     {
       key: "site.breadcrumbMax",
       value: values.site.breadcrumbMax.toString(),
@@ -239,10 +252,7 @@ export async function GenerateConfiguration(
       key: "key",
       value: values.environment.ENCRYPTION_KEY,
     },
-    {
-      key: "password",
-      value: values.environment.SITE_PASSWORD ?? "",
-    },
+
     {
       key: "domain",
       value: values.environment.NEXT_PUBLIC_DOMAIN ?? "",
