@@ -16,6 +16,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 import Icon from "@/components/ui/icon";
+import Image from "next/image";
 
 type Props = {
   content: string;
@@ -70,9 +71,11 @@ export default function Markdown({
               img: ({ src, alt, className, ...props }) => {
                 return (
                   <>
-                    <img
-                      src={src}
-                      alt={alt}
+                    <Image
+                      src={typeof src === "string" ? src : ""}
+                      alt={alt || ""}
+                      width={512}
+                      height={384}
                       className={cn(
                         "mx-auto max-w-(--breakpoint-md) cursor-pointer rounded-lg",
                         className

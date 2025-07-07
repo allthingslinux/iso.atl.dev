@@ -90,7 +90,8 @@ export function handleApiError(error: unknown): NextResponse<ErrorResponse> {
 
   // Handle Next.js errors
   if (error instanceof Error) {
-    const statusCode = (error as any).statusCode || 500;
+    const errWithStatus = error as Error & { statusCode?: number };
+    const statusCode = errWithStatus.statusCode || 500;
     return NextResponse.json(
       {
         error: {
@@ -147,9 +148,17 @@ function logError(error: unknown): void {
   // In production, send to monitoring service
   if (process.env.NODE_ENV === "production") {
     // TODO: Send to monitoring service (e.g., Sentry, LogRocket)
-    console.error(JSON.stringify(errorInfo));
+    if (error instanceof Error) {
+      console.error(JSON.stringify(errorInfo));
+    } else {
+      console.error("Unknown error", error);
+    }
   } else {
-    console.error("Error:", errorInfo);
+    if (error instanceof Error) {
+      console.error("Error:", errorInfo);
+    } else {
+      console.error("Unknown error", error);
+    }
   }
 }
 
@@ -173,7 +182,7 @@ export function hasStatusCode(
   return (
     error instanceof Error &&
     "statusCode" in error &&
-    typeof (error as any).statusCode === "number"
+    typeof (error as Error & { statusCode?: unknown }).statusCode === "number"
   );
 }
 

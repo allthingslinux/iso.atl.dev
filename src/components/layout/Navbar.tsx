@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 
 import config from "@/config/gIndex.config";
 import { NO_LAYOUT_PATHS } from "@/constant";
@@ -24,9 +25,11 @@ export default function Navbar() {
           <div className="flex items-center justify-start">
             <Link href="/" className="flex items-center space-x-3">
               <div className="relative flex items-center justify-center">
-                <img
+                <Image
                   src={config.siteConfig.siteIcon}
                   alt={config.siteConfig.siteName}
+                  width={32}
+                  height={32}
                   className="h-8 w-8"
                 />
                 <div

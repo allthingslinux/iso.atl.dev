@@ -27,7 +27,7 @@ export interface UseAsyncDataOptions<T> {
   cacheTime?: number;
   staleTime?: number;
   // Dependencies that trigger refetch
-  dependencies?: any[];
+  dependencies?: unknown[];
 }
 
 export interface UseAsyncDataReturn<T> extends UseAsyncDataState<T> {

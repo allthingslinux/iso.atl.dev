@@ -167,6 +167,12 @@ function FormMessage({ className, ...props }: React.ComponentProps<"p">) {
   );
 }
 
+function _disableBorder() {}
+
+function _resetDisabled() {}
+
+function _onFieldReset() {}
+
 export {
   useFormField,
   Form,

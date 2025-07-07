@@ -38,6 +38,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Icon, { type IconName } from "@/components/ui/icon";
+import Image from "next/image";
 
 // import { GetMostRecentFileUpdate } from "@/actions/folder";
 
@@ -377,10 +378,12 @@ export const FileItem = ({ data: file, layout }: Props) => {
     >
       <div className="relative flex h-32 w-full items-center justify-center bg-muted/30">
         {file.thumbnailLink && file.mimeType.includes("image") ? (
-          <img
+          <Image
             src={`/api/thumb/${file.encryptedId}`}
             alt={file.name}
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            width={128}
+            height={128}
           />
         ) : (
           <div className="flex flex-col items-center justify-center">

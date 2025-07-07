@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 // Breakpoint constants following standard responsive design patterns
 export const BREAKPOINTS = {

@@ -9,7 +9,7 @@ export interface ApiSuccessResponse<T = unknown> {
   meta?: {
     timestamp: string;
     duration?: number;
-    [key: string]: any;
+    [key: string]: unknown;
   };
 }
 
@@ -22,7 +22,7 @@ export interface ApiErrorResponse {
   };
   meta?: {
     timestamp: string;
-    [key: string]: any;
+    [key: string]: unknown;
   };
 }
 
@@ -38,7 +38,7 @@ export class ResponseBuilder<T = unknown> {
     code?: string;
     details?: unknown;
   };
-  private meta: Record<string, any> = {};
+  private meta: Record<string, unknown> = {};
   private startTime = Date.now();
 
   constructor() {
@@ -86,7 +86,7 @@ export class ResponseBuilder<T = unknown> {
   }
 
   // Meta methods
-  withMeta(key: string, value: any): this {
+  withMeta(key: string, value: unknown): this {
     this.meta[key] = value;
     return this;
   }
