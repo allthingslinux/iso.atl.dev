@@ -16,25 +16,89 @@ const eslintConfig = [
   // Global ignores (replaces .eslintignore)
   {
     ignores: [
+      // Dependencies
       "**/node_modules/**",
+      "**/.pnp",
+      "**/.pnp.js",
+      "**/.yarn/**",
+      
+      // Build outputs
       "**/.next/**",
       "**/out/**",
       "**/build/**",
       "**/dist/**",
       "**/.vercel/**",
-      "**/*.tsbuildinfo",
+      "**/storybook-static/**",
+      
+      // Testing & Coverage
+      "**/coverage/**",
+      "**/.nyc_output/**",
+      "**/test-results/**",
+      "**/playwright-report/**",
+      "**/playwright/.cache/**",
+      
+      // Configuration files
+      "**/*.config.js",
+      "**/*.config.mjs",
+      "**/*.config.ts",
+      "**/commitlint.config.js",
+      
+      // Generated files
+      "**/*.min.js",
+      "**/*.min.css",
       "**/public/sw.js",
       "**/public/workbox-*.js",
-      "**/.DS_Store",
-      "**/*.pem",
+      "**/public/worker-*.js",
+      "**/public/fallback-*.js",
+      "**/public/precache.*.js",
+      
+      // TypeScript
+      "**/*.d.ts",
+      "**/next-env.d.ts",
+      "**/*.tsbuildinfo",
+      
+      // Logs
+      "**/logs/**",
+      "**/*.log",
       "**/npm-debug.log*",
       "**/yarn-debug.log*",
       "**/yarn-error.log*",
-      "**/.env*.local",
-      "**/coverage/**",
-      "**/.nyc_output/**",
+      "**/pnpm-debug.log*",
+      "**/lerna-debug.log*",
+      
+      // OS files
+      "**/.DS_Store",
+      "**/Thumbs.db",
+      
+      // Security
+      "**/*.pem",
+      "**/*.key",
+      "**/*.crt",
+      
+      // Environment
+      "**/.env*",
+      
+      // Temporary & cache
+      "**/.cache/**",
+      "**/.parcel-cache/**",
       "**/tmp/**",
       "**/temp/**",
+      "**/*.tmp",
+      "**/*.temp",
+      
+      // Package files
+      "**/package-lock.json",
+      "**/yarn.lock",
+      "**/pnpm-lock.yaml",
+      
+      // Documentation
+      "**/*.md",
+      "**/LICENSE",
+      
+      // Misc
+      "**/.eslintcache",
+      "**/.prettierignore",
+      "**/.gitignore",
     ],
   },
   // Add custom rules as a separate configuration object
