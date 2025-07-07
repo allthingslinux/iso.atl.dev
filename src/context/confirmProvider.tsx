@@ -3,7 +3,7 @@
 import * as React from "react";
 import { toast } from "sonner";
 
-import { Button, LoadingButton } from "~/components/ui/button";
+import { Button, LoadingButton } from "@/components/ui/button";
 import {
   ResponsiveDialog,
   ResponsiveDialogBody,
@@ -12,8 +12,8 @@ import {
   ResponsiveDialogFooter,
   ResponsiveDialogHeader,
   ResponsiveDialogTitle,
-} from "~/components/ui/dialog.responsive";
-import { type IconName } from "~/components/ui/icon";
+} from "@/components/ui/dialog.responsive";
+import { type IconName } from "@/components/ui/icon";
 
 export type UseConfirmOptions = {
   title: React.ReactNode;
@@ -49,9 +49,10 @@ const baseOptions: Readonly<UseConfirmOptions> = {
 type UseConfirmDialogContextProps = {
   confirm: (options: UseConfirmOptions) => Promise<boolean>;
 };
-const UseConfirmDialogContext = React.createContext<UseConfirmDialogContextProps>({
-  confirm: async () => false,
-});
+const UseConfirmDialogContext =
+  React.createContext<UseConfirmDialogContextProps>({
+    confirm: async () => false,
+  });
 
 type UseConfirmDialogComponentProps = {
   open: boolean;
@@ -84,13 +85,17 @@ const UseConfirmDialogComponent = (props: UseConfirmDialogComponentProps) => {
         <ResponsiveDialogHeader>
           <ResponsiveDialogTitle>{props.config.title}</ResponsiveDialogTitle>
           {props.config.description && (
-            <ResponsiveDialogDescription>{props.config.description}</ResponsiveDialogDescription>
+            <ResponsiveDialogDescription>
+              {props.config.description}
+            </ResponsiveDialogDescription>
           )}
         </ResponsiveDialogHeader>
 
-        {props.config.content && <ResponsiveDialogBody>{props.config.content}</ResponsiveDialogBody>}
+        {props.config.content && (
+          <ResponsiveDialogBody>{props.config.content}</ResponsiveDialogBody>
+        )}
 
-        <ResponsiveDialogFooter className='flex-col-reverse md:flex-row'>
+        <ResponsiveDialogFooter className="flex-col-reverse md:flex-row">
           {!props.config.hideCancelButton && (
             <Button
               disabled={isLoading}
@@ -183,10 +188,14 @@ export default function UseConfirmDialogProvider({
   );
 }
 
-export const useConfirmDialog = (): ((options: UseConfirmOptions) => Promise<boolean>) => {
+export const useConfirmDialog = (): ((
+  options: UseConfirmOptions,
+) => Promise<boolean>) => {
   const context = React.useContext(UseConfirmDialogContext);
   if (!context) {
-    throw new Error("useConfirmDialog must be used within a UseConfirmDialogProvider");
+    throw new Error(
+      "useConfirmDialog must be used within a UseConfirmDialogProvider",
+    );
   }
   return context.confirm;
 };

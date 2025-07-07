@@ -1,4 +1,11 @@
-import React, { createContext, useEffect, useState, useTransition } from "react";
+import React, {
+  createContext,
+  useEffect,
+  useState,
+  useTransition,
+  useCallback,
+  useMemo,
+} from "react";
 
 export type TLayout = "grid" | "list";
 
@@ -29,7 +36,8 @@ export const LayoutContext = createContext<TLayoutContext>({
 type TLayoutProvider = {
   children: React.ReactNode;
 };
-export const LayoutProvider = ({ children }: TLayoutProvider) => {
+
+export const LayoutProvider = React.memo(({ children }: TLayoutProvider) => {
   const [layout, setLayout] = useState<TLayout>("grid");
   const [isPending, startTransition] = useTransition();
 
@@ -37,16 +45,27 @@ export const LayoutProvider = ({ children }: TLayoutProvider) => {
     setLayout(getLayoutFromLocalStorage());
   }, []);
 
-  const onChangeLayout = (layout: TLayout) => {
+  const onChangeLayout = useCallback((newLayout: TLayout) => {
     startTransition(() => {
-      setLayout(layout);
-      localStorage.setItem("layout", layout);
+      setLayout(newLayout);
+      localStorage.setItem("layout", newLayout);
     });
-  };
+  }, []);
+
+  // Memoize context value to prevent unnecessary re-renders
+  const contextValue = useMemo<TLayoutContext>(() => ({
+    layout,
+    setLayout: onChangeLayout,
+    isPending,
+  }), [layout, onChangeLayout, isPending]);
 
   return (
-    <LayoutContext.Provider value={{ layout, setLayout: onChangeLayout, isPending }}>{children}</LayoutContext.Provider>
+    <LayoutContext.Provider value={contextValue}>
+      {children}
+    </LayoutContext.Provider>
   );
-};
+});
+
+LayoutProvider.displayName = "LayoutProvider";
 
 export const useLayout = () => React.useContext(LayoutContext);
