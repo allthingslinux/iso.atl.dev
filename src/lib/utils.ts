@@ -27,6 +27,22 @@ export function formatDate(
   date: string | number | Date,
   options?: Intl.DateTimeFormatOptions
 ): string {
+  let parsedDate: Date;
+
+  if (typeof date === "string" && /^\d{2}\/\d{2}\/\d{4}$/.test(date)) {
+    // If date is in DD/MM/YYYY format
+    const [dayStr, monthStr, yearStr] = date.split("/");
+    const day = parseInt(dayStr!, 10);
+    const month = parseInt(monthStr!, 10);
+    const year = parseInt(yearStr!, 10);
+
+    parsedDate = new Date(year, month - 1, day); // JS months are 0-based
+  } else if (typeof date === "string" || typeof date === "number" || date instanceof Date) {
+    parsedDate = new Date(date);
+  } else {
+    throw new TypeError("Invalid date format");
+  }
+
   const formatter = new Intl.DateTimeFormat(undefined, {
     day: "numeric",
     month: "short",
@@ -34,7 +50,7 @@ export function formatDate(
     ...options,
   });
 
-  return formatter.format(new Date(date));
+  return formatter.format(parsedDate);
 }
 
 /**
