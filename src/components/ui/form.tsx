@@ -75,11 +75,11 @@ const FormItemContext = React.createContext<FormItemContextValue>(
   {} as FormItemContextValue
 );
 
-function FormItem({
-  className,
-  disableBorder,
-  ...props
-}: React.ComponentProps<"div"> & { disableBorder?: boolean }) {
+function FormItem(
+  props: React.ComponentProps<"div"> & { disableBorder?: boolean }
+) {
+  const { className, disableBorder, ...rest } = props;
+  const _disableBorder = disableBorder;
   const id = React.useId();
 
   return (
@@ -87,21 +87,21 @@ function FormItem({
       <div
         data-slot="form-item"
         className={cn("grid gap-2", className)}
-        {...props}
+        {...rest}
       />
     </FormItemContext.Provider>
   );
 }
 
-function FormLabel({
-  className,
-  resetDisabled,
-  onFieldReset,
-  ...props
-}: React.ComponentProps<typeof LabelPrimitive.Root> & {
-  resetDisabled?: boolean;
-  onFieldReset?: () => void;
-}) {
+function FormLabel(
+  props: React.ComponentProps<typeof LabelPrimitive.Root> & {
+    resetDisabled?: boolean;
+    onFieldReset?: () => void;
+  }
+) {
+  const { className, resetDisabled, onFieldReset, ...rest } = props;
+  const _resetDisabled = resetDisabled;
+  const _onFieldReset = onFieldReset;
   const { error, formItemId } = useFormField();
 
   return (
@@ -110,7 +110,7 @@ function FormLabel({
       data-error={!!error}
       className={cn("data-[error=true]:text-destructive", className)}
       htmlFor={formItemId}
-      {...props}
+      {...rest}
     />
   );
 }

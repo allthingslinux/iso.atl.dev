@@ -10,6 +10,13 @@ import { encryptionService, gdrive } from "@/lib/utils.server";
 
 import { ValidatePaths } from "./paths";
 
+interface DriveFile {
+  mimeType?: string;
+  size?: string | number;
+  fileExtension?: string;
+  name?: string;
+}
+
 /**
  * List files in a folder
  * @param {object} options
@@ -577,19 +584,25 @@ export async function GetStorageInfo(): Promise<
           pageToken: pageToken || undefined,
         });
 
-        if (response && (response as any).data.files) {
-          for (const file of (response as any).data.files) {
-            if (file.mimeType === "application/vnd.google-apps.folder") {
+        if (
+          response &&
+          (response as { data: { files: unknown[]; nextPageToken?: string } })
+            .data.files
+        ) {
+          for (const file of (response as { data: { files: unknown[] } }).data
+            .files) {
+            const f = file as DriveFile;
+            if (f.mimeType === "application/vnd.google-apps.folder") {
               totalFolders++;
             } else {
               totalFiles++;
-              if (file.size) {
-                const fileSize = Number(file.size);
+              if (f.size) {
+                const fileSize = Number(f.size);
                 totalSize += fileSize;
 
                 // Categorize by file type
-                const extension = file.fileExtension || "no-extension";
-                const mimeType = file.mimeType || "unknown";
+                const extension = f.fileExtension || "no-extension";
+                const mimeType = f.mimeType || "unknown";
 
                 let category = "other";
                 if (mimeType.startsWith("image/")) category = "images";
@@ -619,7 +632,8 @@ export async function GetStorageInfo(): Promise<
           }
         }
 
-        pageToken = (response as any).data.nextPageToken;
+        pageToken = (response as { data: { nextPageToken?: string } }).data
+          .nextPageToken;
         console.info(
           `[GetStorageInfo] Processed page, total files so far: ${totalFiles}, folders: ${totalFolders}, size: ${(totalSize / 1024 ** 4).toFixed(2)} TB`
         );

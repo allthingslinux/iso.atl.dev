@@ -163,9 +163,9 @@ function logError(error: unknown): void {
 }
 
 // Async error wrapper for route handlers
-export function withErrorHandler<T extends (...args: any[]) => Promise<any>>(
-  handler: T
-): T {
+export function withErrorHandler<
+  T extends (...args: unknown[]) => Promise<unknown>,
+>(handler: T): T {
   return (async (...args: Parameters<T>) => {
     try {
       return await handler(...args);
