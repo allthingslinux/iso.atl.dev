@@ -48,8 +48,6 @@ export const BASE_URL = (() => {
  * Cookies name for the app
  */
 export const COOKIES_NAME = {
-  indexPassword: "next-gdrive-index-password",
-  folderPassword: "next-gdrive-index-folder-password",
   viewType: "next-gdrive-index-view-type",
 } as const;
 export const COOKIES_AGE = 60 * 60 * 24 * 365; // Default: 1 year
