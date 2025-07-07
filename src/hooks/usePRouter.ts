@@ -8,7 +8,7 @@ import NProgress from "nprogress";
  */
 export default function useRouter() {
   const router = useNextRouter();
-  // eslint-disable-next-line @typescript-eslint/unbound-method
+   
   const { push } = router;
 
   router.push = (...args: Parameters<typeof push>) => {
