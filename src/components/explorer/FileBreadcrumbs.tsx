@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Fragment, useState } from "react";
 import { type z } from "zod";
+import { Home } from "lucide-react";
 
 import {
   Breadcrumb,
@@ -12,129 +13,150 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "~/components/ui/breadcrumb";
+} from "@/components/ui/breadcrumb";
 import {
   ResponsiveDropdownMenu,
   ResponsiveDropdownMenuContent,
   ResponsiveDropdownMenuItem,
   ResponsiveDropdownMenuTrigger,
-} from "~/components/ui/dropdown-menu.responsive";
-import Icon from "~/components/ui/icon";
-import { Skeleton } from "~/components/ui/skeleton";
+} from "@/components/ui/dropdown-menu.responsive";
+import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
 
-import useLoading from "~/hooks/useLoading";
+import useLoading from "@/hooks/useLoading";
 
-import { type Schema_Breadcrumb } from "~/types/schema";
+import { type Schema_Breadcrumb } from "@/types/schema";
 
-import config from "config";
+import config from "@/config/gIndex.config";
 
 type Props = {
   data?: z.infer<typeof Schema_Breadcrumb>[];
 };
+
 export default function FileBreadcrumb({ data }: Props) {
   const loading = useLoading();
-
   const [open, setOpen] = useState<boolean>(false);
-  const [path] = useState<z.infer<typeof Schema_Breadcrumb>[]>(data ?? []);
+  const breadcrumbs = data ?? [];
 
-  if (loading) return <Skeleton className='my-2 h-5 w-1/2' />;
+  if (loading) {
+    return <Skeleton className="my-2 h-6 w-1/2" />;
+  }
+
+  // Helper function to build href for breadcrumb items
+  const buildHref = (index: number): string => {
+    const pathSegments = breadcrumbs
+      .slice(0, index + 1)
+      .map((item) => item.href)
+      .filter(Boolean);
+    
+    return pathSegments.length > 0 ? `/${pathSegments.join("/")}` : "/";
+  };
+
+  // Split breadcrumbs for ellipsis handling
+  const maxVisible = config.siteConfig.breadcrumbMax;
+  const shouldShowEllipsis = breadcrumbs.length > maxVisible;
+  const hiddenItems = shouldShowEllipsis 
+    ? breadcrumbs.slice(0, -maxVisible + 1)
+    : [];
+  const visibleItems = shouldShowEllipsis 
+    ? breadcrumbs.slice(-maxVisible + 1)
+    : breadcrumbs;
 
   return (
-    <section
-      slot='file-path'
-      className='flex w-full flex-nowrap items-center px-3'
-    >
-      <Breadcrumb>
-        <BreadcrumbList>
+    <Breadcrumb>
+        <BreadcrumbList className="flex-wrap">
           {/* Root */}
           <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <Link href={"/"}>
-                <div className='flex items-center gap-1'>
-                  <Icon
-                    name='FolderRoot'
-                    size={"1rem"}
-                    className='stroke-foreground'
-                  />
-                  ~
-                </div>
+            <BreadcrumbLink asChild className="flex items-center gap-1.5 font-mono">
+              <Link href="/">
+                <Home className="h-4 w-4" />
+                <span className="hidden sm:inline">Home</span>
               </Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
 
-          {!!path.length ? (
+          {breadcrumbs.length > 0 && (
             <>
               <BreadcrumbSeparator />
 
-              {path.length >= config.siteConfig.breadcrumbMax && (
+              {/* Ellipsis dropdown for hidden items */}
+              {shouldShowEllipsis && (
                 <>
-                  <ResponsiveDropdownMenu
-                    open={open}
-                    onOpenChange={setOpen}
-                  >
-                    <ResponsiveDropdownMenuTrigger asChild>
-                      <BreadcrumbLink asChild>
-                        <BreadcrumbEllipsis className='w-4 cursor-pointer' />
-                      </BreadcrumbLink>
-                    </ResponsiveDropdownMenuTrigger>
-                    <ResponsiveDropdownMenuContent
-                      header={{
-                        title: "Navigate",
-                        description: "Navigate to parent directories",
-                      }}
-                    >
-                      {path.slice(0, -config.siteConfig.breadcrumbMax + 1).map((item, idx, array) => (
-                        <ResponsiveDropdownMenuItem
-                          key={`breadcrumb-${item.label}/${item.href}`}
-                          closeOnSelect
-                          asChild
-                        >
-                          <Link
-                            href={`/${array
-                              .slice(0, array.indexOf(item) + 1)
-                              .map((item) => item.href)
-                              .join("/")}`}
+                  <BreadcrumbItem>
+                    <ResponsiveDropdownMenu open={open} onOpenChange={setOpen}>
+                      <ResponsiveDropdownMenuTrigger asChild>
+                        <BreadcrumbEllipsis className="h-4 w-4 cursor-pointer" />
+                      </ResponsiveDropdownMenuTrigger>
+                      <ResponsiveDropdownMenuContent
+                        header={{
+                          title: "Navigate",
+                          description: "Navigate to parent directories",
+                        }}
+                      >
+                        {hiddenItems.map((item, index) => (
+                          <ResponsiveDropdownMenuItem
+                            key={`breadcrumb-${item.label}-${index}`}
+                            closeOnSelect
+                            asChild
                           >
-                            {item.label}
-                          </Link>
-                        </ResponsiveDropdownMenuItem>
-                      ))}
-                    </ResponsiveDropdownMenuContent>
-                  </ResponsiveDropdownMenu>
-
+                            <Link
+                              href={buildHref(index)}
+                              className="flex items-center gap-2 truncate"
+                            >
+                              <span className="truncate">{item.label}</span>
+                            </Link>
+                          </ResponsiveDropdownMenuItem>
+                        ))}
+                      </ResponsiveDropdownMenuContent>
+                    </ResponsiveDropdownMenu>
+                  </BreadcrumbItem>
                   <BreadcrumbSeparator />
                 </>
               )}
 
-              {path.slice(-config.siteConfig.breadcrumbMax + 1).map((item) => (
-                <Fragment key={`${item.label}/${item.href}`}>
-                  <BreadcrumbItem className='line-clamp-1 whitespace-pre-wrap break-all'>
-                    {item.href ? (
-                      <>
+              {/* Visible breadcrumb items */}
+              {visibleItems.map((item, index) => {
+                const actualIndex = shouldShowEllipsis 
+                  ? hiddenItems.length + index 
+                  : index;
+                const isLast = actualIndex === breadcrumbs.length - 1;
+                const href = item.href ? buildHref(actualIndex) : undefined;
+
+                return (
+                  <Fragment key={`breadcrumb-${item.label}-${actualIndex}`}>
+                    <BreadcrumbItem>
+                      {href && !isLast ? (
                         <BreadcrumbLink asChild>
                           <Link
-                            href={`/${path
-                              .map((item) => item.href)
-                              .join("/")
-                              .replace(/\/\//g, "/")}`}
+                            href={href}
+                            className={cn(
+                              "max-w-48 truncate font-mono",
+                              "transition-colors hover:text-foreground"
+                            )}
+                            title={item.label}
                           >
                             {item.label}
                           </Link>
                         </BreadcrumbLink>
-                      </>
-                    ) : (
-                      <BreadcrumbPage className='line-clamp-1 whitespace-pre-wrap break-all'>
-                        {item.label}
-                      </BreadcrumbPage>
-                    )}
-                  </BreadcrumbItem>
-                  {item.href && <BreadcrumbSeparator />}
-                </Fragment>
-              ))}
+                      ) : (
+                        <BreadcrumbPage 
+                          className={cn(
+                            "max-w-48 truncate font-medium font-mono",
+                            "text-foreground"
+                          )}
+                          title={item.label}
+                        >
+                          {item.label}
+                        </BreadcrumbPage>
+                      )}
+                    </BreadcrumbItem>
+                    {!isLast && <BreadcrumbSeparator />}
+                  </Fragment>
+                );
+              })}
             </>
-          ) : null}
+          )}
         </BreadcrumbList>
       </Breadcrumb>
-    </section>
   );
 }
