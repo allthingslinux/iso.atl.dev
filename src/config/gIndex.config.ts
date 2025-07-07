@@ -1,7 +1,7 @@
 import { type z } from "zod";
-import { BASE_URL } from "~/constant";
+import { BASE_URL } from "@/constant";
 
-import { type Schema_Config } from "~/types/schema";
+import { type Schema_Config } from "@/types/schema";
 
 const config: z.input<typeof Schema_Config> = {
   /**
@@ -63,9 +63,13 @@ const config: z.input<typeof Schema_Config> = {
      * Then you need to encrypt it using `/api/internal/encrypt?q=:shared_drive_id` route
      */
     isTeamDrive: true,
-    sharedDrive: "cc983ff4ada4d0063cff41a914cc106e824520a0e6a9975447409f2f6d535d910f704d;8410e72eb62369e4b3f03c5e",
+    sharedDrive:
+      "cc983ff4ada4d0063cff41a914cc106e824520a0e6a9975447409f2f6d535d910f704d;8410e72eb62369e4b3f03c5e",
 
-    defaultQuery: ["trashed = false", "(not mimeType contains 'google-apps' or mimeType contains 'folder')"],
+    defaultQuery: [
+      "trashed = false",
+      "(not mimeType contains 'google-apps' or mimeType contains 'folder')",
+    ],
     defaultField:
       "id, name, mimeType, thumbnailLink, fileExtension, modifiedTime, size, imageMediaMetadata, videoMediaMetadata, webContentLink, trashed",
     defaultOrder: "folder, name asc, modifiedTime desc",
@@ -78,7 +82,6 @@ const config: z.input<typeof Schema_Config> = {
      * and will be hidden from the files list by default
      */
     specialFile: {
-      password: ".password",
       readme: ".readme.md",
       /**
        * Banner will be used for opengraph image for folder
@@ -94,7 +97,13 @@ const config: z.input<typeof Schema_Config> = {
      *
      * You can add more extensions if you want
      */
-    hiddenFiles: [".password", ".readme.md", ".banner", ".banner.jpg", ".banner.png", ".banner.webp"],
+    hiddenFiles: [
+      ".readme.md",
+      ".banner",
+      ".banner.jpg",
+      ".banner.png",
+      ".banner.webp",
+    ],
 
     /**
      * By default, the app will use the thumbnail URL from Google Drive
@@ -138,29 +147,6 @@ const config: z.input<typeof Schema_Config> = {
      * Default: 4MB
      */
     maxFileSize: 4194304,
-
-    /**
-     * Allow user to download protected file without password.
-     * If this set to false, download link will have temporary token attached to it
-     * If this set to true, user can download the file without password as long as they have the link
-     *
-     * Default: false
-     */
-    allowDownloadProtectedFile: true,
-
-    /**
-     * Duration in hours.
-     * In version 2, this will be used for download link expiration.
-     * If you need it under 1 hour, you can use math expression. (e.g: (5 / 60) * 1 = 5 minutes)
-     *
-     * This only affect when the user download the file
-     * For example if you set it for example 30 minutes (0.5)
-     * After 30 minutes, and the user still downloading the file, the download will NOT be interrupted
-     * But if the user refresh the page / trying to download again, the download link will be expired
-     *
-     * Default: 1 hour
-     */
-    temporaryTokenDuration: 168,
   },
 
   siteConfig: {
@@ -172,9 +158,10 @@ const config: z.input<typeof Schema_Config> = {
      *
      * You can set it to undefined if you don't want to use it
      */
-    siteName: "ATL ISO Archives",
+    siteName: "iso.atl.dev",
     siteNameTemplate: "%s - %t",
-    siteDescription: "Comprehensive (or, will be) archive of ISO files from ATL",
+    siteDescription:
+      "Comprehensive (or, will be) archive of ISO files from ATL",
     siteIcon: "/logo.svg",
     siteAuthor: "All Things Linux",
     favIcon: "/favicon.png",
@@ -272,13 +259,13 @@ const config: z.input<typeof Schema_Config> = {
      * - {{ creator }} will be replaced with mbaharip if you want to credit me
      */
     footer: [
-  {
-    "value": "{{ poweredBy }}"
-  },
-  {
-    "value": " [**{{ author }}**](https://allthingslinux.org)"
-  }
-],
+      {
+        value: "{{ poweredBy }}",
+      },
+      {
+        value: " [**{{ author }}**](https://allthingslinux.org)",
+      },
+    ],
     /**
      * Add page load time on the footer
      * If you don't want to use it, you can set it to false
