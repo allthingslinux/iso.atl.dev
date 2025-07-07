@@ -7,17 +7,36 @@ import { type FieldPath, type UseFormReturn, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { type z } from "zod";
 
-import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert";
-import { Button, LoadingButton } from "~/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "~/components/ui/card";
-import { Form } from "~/components/ui/form";
-import { Separator } from "~/components/ui/separator";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button, LoadingButton } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Form } from "@/components/ui/form";
+import { Separator } from "@/components/ui/separator";
 
-import { type PickFileResponse, initialConfiguration, pickFile, versionExpectMap } from "~/lib/configurationHelper";
+import {
+  type PickFileResponse,
+  initialConfiguration,
+  pickFile,
+  versionExpectMap,
+} from "@/lib/configurationHelper";
 
-import { type ConfigurationCategory, Schema_App_Configuration } from "~/types/schema";
+import {
+  type ConfigurationCategory,
+  Schema_App_Configuration,
+} from "@/types/schema";
 
-import { GenerateConfiguration, ProcessConfiguration, ProcessEnvironmentConfig } from "~/actions/configuration";
+import {
+  GenerateConfiguration,
+  ProcessConfiguration,
+  ProcessEnvironmentConfig,
+} from "@/actions/configuration";
 
 import {
   APIConfigurator as ApiForm,
@@ -41,7 +60,9 @@ export default function ConfiguratorPage() {
     }
     toast.success("Form reverted to initial state");
   }
-  async function onFormSubmit(values: z.infer<typeof Schema_App_Configuration>) {
+  async function onFormSubmit(
+    values: z.infer<typeof Schema_App_Configuration>,
+  ) {
     const id = `download-${Date.now()}`;
     toast.loading("Generating configuration...", {
       id,
@@ -81,7 +102,7 @@ export default function ConfiguratorPage() {
       toast.error(response.message, {
         id,
         description: response.details.length ? (
-          <pre className='w-full overflow-auto whitespace-pre-wrap font-mono text-xs'>
+          <pre className="w-full overflow-auto whitespace-pre-wrap font-mono text-xs">
             {response.details.join("\n")}
           </pre>
         ) : undefined,
@@ -99,7 +120,11 @@ export default function ConfiguratorPage() {
     if (!data.success) {
       toast.error(data.message, {
         id,
-        description: <pre className='w-full overflow-auto whitespace-pre-wrap font-mono text-xs'>{data.error}</pre>,
+        description: (
+          <pre className="w-full overflow-auto whitespace-pre-wrap font-mono text-xs">
+            {data.error}
+          </pre>
+        ),
       });
       setIsLoadingEnv(false);
       return;
@@ -122,7 +147,7 @@ export default function ConfiguratorPage() {
       toast.error(response.message, {
         id,
         description: response.details.length ? (
-          <pre className='w-full overflow-auto whitespace-pre-wrap font-mono text-xs'>
+          <pre className="w-full overflow-auto whitespace-pre-wrap font-mono text-xs">
             {response.details.join("\n")}
           </pre>
         ) : undefined,
@@ -132,7 +157,9 @@ export default function ConfiguratorPage() {
       return;
     }
 
-    const loadedVersion = /version:\s*["']?(\d+\.\d+\.\d+)["']?/.exec(response.data)?.[1];
+    const loadedVersion = /version:\s*["']?(\d+\.\d+\.\d+)["']?/.exec(
+      response.data,
+    )?.[1];
     if (!loadedVersion) {
       toast.error("Version not found in configuration file", {
         id,
@@ -141,12 +168,14 @@ export default function ConfiguratorPage() {
       return;
     }
 
-    const versionGroup = Object.entries(versionExpectMap).find(([_, v]) => v.includes(loadedVersion))?.[0];
+    const versionGroup = Object.entries(versionExpectMap).find(([_, v]) =>
+      v.includes(loadedVersion),
+    )?.[0];
     if (!versionGroup) {
       toast.error("Version not recognized", {
         id,
         description: (
-          <pre className='w-full overflow-auto whitespace-pre-wrap font-mono text-xs'>
+          <pre className="w-full overflow-auto whitespace-pre-wrap font-mono text-xs">
             {`Loaded version: ${loadedVersion}, not matching any known version`}
           </pre>
         ),
@@ -159,11 +188,18 @@ export default function ConfiguratorPage() {
       id,
       duration: 0,
     });
-    const data = await ProcessConfiguration(response.data, versionGroup as "v1" | "v2" | "latest");
+    const data = await ProcessConfiguration(
+      response.data,
+      versionGroup as "v1" | "v2" | "latest",
+    );
     if (!data.success) {
       toast.error(data.message, {
         id,
-        description: <pre className='w-full overflow-auto whitespace-pre-wrap font-mono text-xs'>{data.error}</pre>,
+        description: (
+          <pre className="w-full overflow-auto whitespace-pre-wrap font-mono text-xs">
+            {data.error}
+          </pre>
+        ),
       });
       setIsLoadingConfig(false);
       return;
@@ -184,32 +220,34 @@ export default function ConfiguratorPage() {
   return (
     <>
       <Alert variant={"primary"}>
-        <AlertTitle>Theme customization is removed from the configurator.</AlertTitle>
+        <AlertTitle>
+          Theme customization is removed from the configurator.
+        </AlertTitle>
         <AlertDescription>
           You can use website like{" "}
           <Link
             href={"https://themes.fkaya.dev/"}
-            target='_blank'
-            rel='noopener noreferrer'
-            className='text-balance text-sm font-medium text-blue-600 opacity-80 transition-all duration-300 hover:opacity-100 dark:text-blue-400'
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-balance text-sm font-medium text-blue-600 opacity-80 transition-all duration-300 hover:opacity-100 dark:text-blue-400"
           >
             themes.fkaya.dev
           </Link>
           ,{" "}
           <Link
             href={"https://themeshadcn.com/"}
-            target='_blank'
-            rel='noopener noreferrer'
-            className='text-balance text-sm font-medium text-blue-600 opacity-80 transition-all duration-300 hover:opacity-100 dark:text-blue-400'
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-balance text-sm font-medium text-blue-600 opacity-80 transition-all duration-300 hover:opacity-100 dark:text-blue-400"
           >
             themeshadcn.com
           </Link>{" "}
           or{" "}
           <Link
             href={"https://ui.jln.dev/"}
-            target='_blank'
-            rel='noopener noreferrer'
-            className='text-balance text-sm font-medium text-blue-600 opacity-80 transition-all duration-300 hover:opacity-100 dark:text-blue-400'
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-balance text-sm font-medium text-blue-600 opacity-80 transition-all duration-300 hover:opacity-100 dark:text-blue-400"
           >
             ui.jln.dev
           </Link>{" "}
@@ -218,15 +256,17 @@ export default function ConfiguratorPage() {
       </Alert>
 
       <Card>
-        <CardHeader className='flex w-full flex-col gap-4 tablet:flex-row tablet:items-center tablet:justify-between'>
-          <div className='flex grow flex-col space-y-1.5'>
+        <CardHeader className="flex w-full flex-col gap-4 tablet:flex-row tablet:items-center tablet:justify-between">
+          <div className="flex grow flex-col space-y-1.5">
             <CardTitle>Configurator</CardTitle>
-            <CardDescription>Generate configurator for your index.</CardDescription>
+            <CardDescription>
+              Generate configurator for your index.
+            </CardDescription>
           </div>
-          <div className='flex flex-col items-center gap-2 tablet:flex-row-reverse'>
+          <div className="flex flex-col items-center gap-2 tablet:flex-row-reverse">
             <LoadingButton
               loading={isLoadingConfig}
-              className='w-full tablet:w-fit'
+              className="w-full tablet:w-fit"
               onClick={() => {
                 setIsLoadingConfig(true);
 
@@ -242,7 +282,7 @@ export default function ConfiguratorPage() {
             </LoadingButton>
             <LoadingButton
               loading={isLoadingEnv}
-              className='w-full tablet:w-fit'
+              className="w-full tablet:w-fit"
               onClick={() => {
                 setIsLoadingEnv(true);
 
@@ -257,7 +297,7 @@ export default function ConfiguratorPage() {
               Load Env
             </LoadingButton>
             <Button
-              className='w-full tablet:w-fit'
+              className="w-full tablet:w-fit"
               variant={"destructive"}
               onClick={() => onReset("all")}
             >
@@ -265,13 +305,13 @@ export default function ConfiguratorPage() {
             </Button>
           </div>
         </CardHeader>
-        <Separator className='mb-6' />
+        <Separator className="mb-6" />
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onFormSubmit)}
-            className='grid grid-cols-1'
+            className="grid grid-cols-1"
           >
-            <CardContent className='grid grid-cols-1 gap-8'>
+            <CardContent className="grid grid-cols-1 gap-8">
               <EnvironmentForm
                 form={form}
                 onResetField={(field) => form.resetField(field)}
@@ -296,8 +336,8 @@ export default function ConfiguratorPage() {
                 size={"lg"}
                 loading={form.formState.isSubmitting}
                 disabled={!form.formState.isValid || !form.formState.isDirty}
-                type='submit'
-                className='w-full'
+                type="submit"
+                className="w-full"
               >
                 Generate Configuration
               </LoadingButton>
@@ -312,11 +352,14 @@ export default function ConfiguratorPage() {
 type FormColumnProps = {
   column?: number;
 };
-export function FormColumn({ column = 2, children }: PropsWithChildren<FormColumnProps>) {
+export function FormColumn({
+  column = 2,
+  children,
+}: PropsWithChildren<FormColumnProps>) {
   return (
     <>
       <div
-        className='grid grid-cols-1 gap-x-4 gap-y-4 md:grid-cols-[--form-column]'
+        className="grid grid-cols-1 gap-x-4 gap-y-4 md:grid-cols-(--form-column)"
         style={
           {
             "--form-column": `repeat(${column}, minmax(0, 1fr))`,
@@ -333,7 +376,11 @@ type FormSectionProps = {
   title: string;
   description: string;
 };
-export function FormSection({ title, description, children }: PropsWithChildren<FormSectionProps>) {
+export function FormSection({
+  title,
+  description,
+  children,
+}: PropsWithChildren<FormSectionProps>) {
   return (
     <div
       id={title
@@ -341,11 +388,11 @@ export function FormSection({ title, description, children }: PropsWithChildren<
         .replace(/\s/g, "-")
         .replace(/[^a-z0-9-]/g, "")
         .replace(/-+/g, "-")}
-      className='group grid grid-cols-1 gap-4'
+      className="group grid grid-cols-1 gap-4"
     >
-      <div className='flex flex-col gap-1.5'>
-        <h2 className='text-lg font-semibold'>{title}</h2>
-        <p className='text-sm text-muted-foreground'>{description}</p>
+      <div className="flex flex-col gap-1.5">
+        <h2 className="text-lg font-semibold">{title}</h2>
+        <p className="text-sm text-muted-foreground">{description}</p>
       </div>
 
       {children}
@@ -355,5 +402,7 @@ export function FormSection({ title, description, children }: PropsWithChildren<
 
 export type FormProps = {
   form: UseFormReturn<z.infer<typeof Schema_App_Configuration>>;
-  onResetField?: (field: FieldPath<z.infer<typeof Schema_App_Configuration>>) => void;
+  onResetField?: (
+    field: FieldPath<z.infer<typeof Schema_App_Configuration>>,
+  ) => void;
 } & Omit<FormSectionProps, "title" | "description">;

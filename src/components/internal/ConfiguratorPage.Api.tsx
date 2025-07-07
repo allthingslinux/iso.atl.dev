@@ -3,15 +3,28 @@
 import { useState } from "react";
 import { toast } from "sonner";
 
-import { Badge } from "~/components/ui/badge";
-import { Button } from "~/components/ui/button";
-import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "~/components/ui/form";
-import Icon from "~/components/ui/icon";
-import { Input } from "~/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
-import { Switch } from "~/components/ui/switch";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import Icon from "@/components/ui/icon";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 
-import { cn } from "~/lib/utils";
+import { cn } from "@/lib/utils";
 
 import { FormColumn, type FormProps, FormSection } from "./ConfiguratorPage";
 
@@ -30,21 +43,25 @@ export default function ApiForm({ form, onResetField }: FormProps) {
       setInputHiddenFile("");
       return;
     }
-    form.setValue("api.hiddenFiles", [...form.watch("api.hiddenFiles"), inputHiddenFile], {
-      shouldDirty: true,
-    });
+    form.setValue(
+      "api.hiddenFiles",
+      [...form.watch("api.hiddenFiles"), inputHiddenFile],
+      {
+        shouldDirty: true,
+      },
+    );
     setInputHiddenFile("");
   }
 
   return (
     <FormSection
-      title='API Configuration'
-      description='Configure how your index backend works'
+      title="API Configuration"
+      description="Configure how your index backend works"
     >
       <FormColumn>
         <FormField
           control={form.control}
-          name='api.cache.public'
+          name="api.cache.public"
           render={({ field, fieldState }) => (
             <FormItem>
               <FormLabel
@@ -61,22 +78,24 @@ export default function ApiForm({ form, onResetField }: FormProps) {
                   onValueChange={(value) => field.onChange(value === "true")}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder='Select option' />
+                    <SelectValue placeholder="Select option" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value='true'>Enable (Recommended)</SelectItem>
-                    <SelectItem value='false'>Disable</SelectItem>
+                    <SelectItem value="true">Enable (Recommended)</SelectItem>
+                    <SelectItem value="false">Disable</SelectItem>
                   </SelectContent>
                 </Select>
               </FormControl>
-              <FormDescription>Enable public cache for the index.</FormDescription>
+              <FormDescription>
+                Enable public cache for the index.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
         <FormField
           control={form.control}
-          name='api.cache.staleWhileRevalidate'
+          name="api.cache.staleWhileRevalidate"
           render={({ field, fieldState }) => (
             <FormItem>
               <FormLabel
@@ -93,22 +112,24 @@ export default function ApiForm({ form, onResetField }: FormProps) {
                   onValueChange={(value) => field.onChange(value === "true")}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder='Select option' />
+                    <SelectValue placeholder="Select option" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value='true'>Enable (Recommended)</SelectItem>
-                    <SelectItem value='false'>Disable</SelectItem>
+                    <SelectItem value="true">Enable (Recommended)</SelectItem>
+                    <SelectItem value="false">Disable</SelectItem>
                   </SelectContent>
                 </Select>
               </FormControl>
-              <FormDescription>Return stale data before requesting fresh data.</FormDescription>
+              <FormDescription>
+                Return stale data before requesting fresh data.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
         <FormField
           control={form.control}
-          name='api.cache.maxAge'
+          name="api.cache.maxAge"
           render={({ field, fieldState }) => (
             <FormItem>
               <FormLabel
@@ -120,19 +141,18 @@ export default function ApiForm({ form, onResetField }: FormProps) {
                 Max Age
               </FormLabel>
               <FormControl>
-                <Input
-                  type='number'
-                  {...field}
-                />
+                <Input type="number" {...field} />
               </FormControl>
-              <FormDescription>How long should the cache in browser last.</FormDescription>
+              <FormDescription>
+                How long should the cache in browser last.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
         <FormField
           control={form.control}
-          name='api.cache.sMaxAge'
+          name="api.cache.sMaxAge"
           render={({ field, fieldState }) => (
             <FormItem>
               <FormLabel
@@ -144,12 +164,11 @@ export default function ApiForm({ form, onResetField }: FormProps) {
                 Shared Max Age
               </FormLabel>
               <FormControl>
-                <Input
-                  type='number'
-                  {...field}
-                />
+                <Input type="number" {...field} />
               </FormControl>
-              <FormDescription>How long should the cache in server last.</FormDescription>
+              <FormDescription>
+                How long should the cache in server last.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -158,7 +177,7 @@ export default function ApiForm({ form, onResetField }: FormProps) {
 
       <FormField
         control={form.control}
-        name='api.rootFolder'
+        name="api.rootFolder"
         render={({ field, fieldState }) => (
           <FormItem>
             <FormLabel
@@ -170,22 +189,21 @@ export default function ApiForm({ form, onResetField }: FormProps) {
               Root Folder ID
             </FormLabel>
             <FormControl>
-              <Input
-                placeholder='Unencrypted folder ID'
-                {...field}
-              />
+              <Input placeholder="Unencrypted folder ID" {...field} />
             </FormControl>
-            <FormDescription>Google Drive folder ID to be used as the root folder.</FormDescription>
+            <FormDescription>
+              Google Drive folder ID to be used as the root folder.
+            </FormDescription>
             <FormMessage />
           </FormItem>
         )}
       />
       <FormField
         control={form.control}
-        name='api.sharedDrive'
+        name="api.sharedDrive"
         render={({ field, fieldState }) => (
           <FormItem>
-            <div className='inline-flex w-full items-center justify-between gap-4 tablet:justify-start'>
+            <div className="inline-flex w-full items-center justify-between gap-4 tablet:justify-start">
               <FormLabel
                 resetDisabled={!fieldState.isDirty}
                 onFieldReset={() => {
@@ -205,7 +223,9 @@ export default function ApiForm({ form, onResetField }: FormProps) {
             <FormControl>
               <Input
                 placeholder={
-                  form.watch("api.isTeamDrive") ? "Unencrypted shared drive ID" : "Switch to use shared drive"
+                  form.watch("api.isTeamDrive")
+                    ? "Unencrypted shared drive ID"
+                    : "Switch to use shared drive"
                 }
                 disabled={!form.watch("api.isTeamDrive")}
                 {...field}
@@ -219,7 +239,7 @@ export default function ApiForm({ form, onResetField }: FormProps) {
       <FormColumn>
         <FormField
           control={form.control}
-          name='api.itemsPerPage'
+          name="api.itemsPerPage"
           render={({ field, fieldState }) => (
             <FormItem>
               <FormLabel
@@ -231,19 +251,18 @@ export default function ApiForm({ form, onResetField }: FormProps) {
                 Items Per Page
               </FormLabel>
               <FormControl>
-                <Input
-                  type='number'
-                  {...field}
-                />
+                <Input type="number" {...field} />
               </FormControl>
-              <FormDescription>Number of items to show before pagination.</FormDescription>
+              <FormDescription>
+                Number of items to show before pagination.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
         <FormField
           control={form.control}
-          name='api.searchResult'
+          name="api.searchResult"
           render={({ field, fieldState }) => (
             <FormItem>
               <FormLabel
@@ -255,12 +274,11 @@ export default function ApiForm({ form, onResetField }: FormProps) {
                 Search Result Limit
               </FormLabel>
               <FormControl>
-                <Input
-                  type='number'
-                  {...field}
-                />
+                <Input type="number" {...field} />
               </FormControl>
-              <FormDescription>Number of search results to show.</FormDescription>
+              <FormDescription>
+                Number of search results to show.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -269,7 +287,7 @@ export default function ApiForm({ form, onResetField }: FormProps) {
       <FormColumn column={3}>
         <FormField
           control={form.control}
-          name='api.specialFile.banner'
+          name="api.specialFile.banner"
           render={({ field, fieldState }) => (
             <FormItem>
               <FormLabel
@@ -281,43 +299,19 @@ export default function ApiForm({ form, onResetField }: FormProps) {
                 Banner File
               </FormLabel>
               <FormControl>
-                <Input
-                  placeholder='.banner.jpg'
-                  {...field}
-                />
+                <Input placeholder=".banner.jpg" {...field} />
               </FormControl>
-              <FormDescription>Will be used as the banner if found in the folder.</FormDescription>
+              <FormDescription>
+                Will be used as the banner if found in the folder.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
-          name='api.specialFile.password'
-          render={({ field, fieldState }) => (
-            <FormItem>
-              <FormLabel
-                resetDisabled={!fieldState.isDirty}
-                onFieldReset={() => {
-                  onResetField?.("api.specialFile.password");
-                }}
-              >
-                Password File
-              </FormLabel>
-              <FormControl>
-                <Input
-                  placeholder='.password'
-                  {...field}
-                />
-              </FormControl>
-              <FormDescription>Will be used to protect the folder.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name='api.specialFile.readme'
+          name="api.specialFile.readme"
           render={({ field, fieldState }) => (
             <FormItem>
               <FormLabel
@@ -329,12 +323,11 @@ export default function ApiForm({ form, onResetField }: FormProps) {
                 Readme File
               </FormLabel>
               <FormControl>
-                <Input
-                  placeholder='.readme.md'
-                  {...field}
-                />
+                <Input placeholder=".readme.md" {...field} />
               </FormControl>
-              <FormDescription>Will be used as the description if found in the folder.</FormDescription>
+              <FormDescription>
+                Will be used as the description if found in the folder.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -342,7 +335,7 @@ export default function ApiForm({ form, onResetField }: FormProps) {
       </FormColumn>
       <FormField
         control={form.control}
-        name='api.hiddenFiles'
+        name="api.hiddenFiles"
         render={({ fieldState }) => {
           const watch = form.watch("api.hiddenFiles");
 
@@ -356,15 +349,15 @@ export default function ApiForm({ form, onResetField }: FormProps) {
               >
                 Hidden Files
               </FormLabel>
-              <div className='flex flex-col gap-2'>
-                <div className='flex flex-col gap-2'>
+              <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-2">
                   {watch.length ? (
                     <>
-                      <div className='flex grow flex-wrap gap-1'>
+                      <div className="flex grow flex-wrap gap-1">
                         {watch.map((name, index) => (
                           <Badge
                             key={`name-${index}`}
-                            className='cursor-pointer'
+                            className="cursor-pointer"
                             variant={"secondary"}
                             onClick={() => {
                               form.setValue(
@@ -379,19 +372,21 @@ export default function ApiForm({ form, onResetField }: FormProps) {
                             {name}
                           </Badge>
                         ))}
-                        <span className='text-[0.8rem] text-muted-foreground'>Click to remove hidden file</span>
+                        <span className="text-[0.8rem] text-muted-foreground">
+                          Click to remove hidden file
+                        </span>
                       </div>
                     </>
                   ) : (
-                    <span className='text-[0.8rem] text-destructive'>
+                    <span className="text-[0.8rem] text-destructive">
                       All files including special files are visible.
                     </span>
                   )}
                 </div>
 
-                <div className='flex flex-col items-center gap-2 tablet:flex-row'>
+                <div className="flex flex-col items-center gap-2 tablet:flex-row">
                   <Input
-                    placeholder='Press enter to add to hidden files'
+                    placeholder="Press enter to add to hidden files"
                     value={inputHiddenFile}
                     onChange={(e) => setInputHiddenFile(e.target.value)}
                     onKeyDown={(e) => {
@@ -401,31 +396,46 @@ export default function ApiForm({ form, onResetField }: FormProps) {
                     }}
                   />
                   <Button
-                    size='sm'
-                    type='button'
-                    className='w-full tablet:w-fit'
+                    size="sm"
+                    type="button"
+                    className="w-full tablet:w-fit"
                     onClick={onHiddenFileSubmit}
                   >
-                    <Icon name='Plus' />
+                    <Icon name="Plus" />
                     Add
                   </Button>
                 </div>
-                <div className='flex flex-wrap items-center gap-2'>
+                <div className="flex flex-wrap items-center gap-2">
                   <Badge
-                    variant={watch.includes(form.watch("api.specialFile.banner")) ? "outline" : "destructive"}
+                    variant={
+                      watch.includes(form.watch("api.specialFile.banner"))
+                        ? "outline"
+                        : "destructive"
+                    }
                     className={cn(
                       "inline-flex gap-1",
-                      watch.includes(form.watch("api.specialFile.banner")) ? "cursor-not-allowed" : "cursor-pointer",
+                      watch.includes(form.watch("api.specialFile.banner"))
+                        ? "cursor-not-allowed"
+                        : "cursor-pointer",
                     )}
                     onClick={() => {
-                      if (watch.includes(form.watch("api.specialFile.banner"))) {
+                      if (
+                        watch.includes(form.watch("api.specialFile.banner"))
+                      ) {
                         return;
                       }
-                      form.setValue("api.hiddenFiles", [...watch, form.watch("api.specialFile.banner")]);
+                      form.setValue("api.hiddenFiles", [
+                        ...watch,
+                        form.watch("api.specialFile.banner"),
+                      ]);
                     }}
                   >
                     <Icon
-                      name={watch.includes(form.watch("api.specialFile.banner")) ? "Check" : "X"}
+                      name={
+                        watch.includes(form.watch("api.specialFile.banner"))
+                          ? "Check"
+                          : "X"
+                      }
                       className={
                         watch.includes(form.watch("api.specialFile.banner"))
                           ? "stroke-green-600 dark:stroke-green-400"
@@ -438,46 +448,35 @@ export default function ApiForm({ form, onResetField }: FormProps) {
                   </Badge>
 
                   <Badge
-                    variant={watch.includes(form.watch("api.specialFile.password")) ? "outline" : "destructive"}
+                    variant={
+                      watch.includes(form.watch("api.specialFile.readme"))
+                        ? "outline"
+                        : "destructive"
+                    }
                     className={cn(
                       "inline-flex gap-1",
-                      watch.includes(form.watch("api.specialFile.password")) ? "cursor-not-allowed" : "cursor-pointer",
+                      watch.includes(form.watch("api.specialFile.readme"))
+                        ? "cursor-not-allowed"
+                        : "cursor-pointer",
                     )}
                     onClick={() => {
-                      if (watch.includes(form.watch("api.specialFile.password"))) {
+                      if (
+                        watch.includes(form.watch("api.specialFile.readme"))
+                      ) {
                         return;
                       }
-                      form.setValue("api.hiddenFiles", [...watch, form.watch("api.specialFile.password")]);
+                      form.setValue("api.hiddenFiles", [
+                        ...watch,
+                        form.watch("api.specialFile.readme"),
+                      ]);
                     }}
                   >
                     <Icon
-                      name={watch.includes(form.watch("api.specialFile.password")) ? "Check" : "X"}
-                      className={
-                        watch.includes(form.watch("api.specialFile.password"))
-                          ? "stroke-green-600 dark:stroke-green-400"
-                          : "stroke-destructive-foreground"
+                      name={
+                        watch.includes(form.watch("api.specialFile.readme"))
+                          ? "Check"
+                          : "X"
                       }
-                    />
-                    {watch.includes(form.watch("api.specialFile.password"))
-                      ? "Password file is hidden"
-                      : "Add password file to the list"}
-                  </Badge>
-
-                  <Badge
-                    variant={watch.includes(form.watch("api.specialFile.readme")) ? "outline" : "destructive"}
-                    className={cn(
-                      "inline-flex gap-1",
-                      watch.includes(form.watch("api.specialFile.readme")) ? "cursor-not-allowed" : "cursor-pointer",
-                    )}
-                    onClick={() => {
-                      if (watch.includes(form.watch("api.specialFile.readme"))) {
-                        return;
-                      }
-                      form.setValue("api.hiddenFiles", [...watch, form.watch("api.specialFile.readme")]);
-                    }}
-                  >
-                    <Icon
-                      name={watch.includes(form.watch("api.specialFile.readme")) ? "Check" : "X"}
                       className={
                         watch.includes(form.watch("api.specialFile.readme"))
                           ? "stroke-green-600 dark:stroke-green-400"
@@ -490,7 +489,9 @@ export default function ApiForm({ form, onResetField }: FormProps) {
                   </Badge>
                 </div>
               </div>
-              <FormDescription>Click the badge to add special files to the hidden files list.</FormDescription>
+              <FormDescription>
+                Click the badge to add special files to the hidden files list.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           );
@@ -499,7 +500,7 @@ export default function ApiForm({ form, onResetField }: FormProps) {
 
       <FormField
         control={form.control}
-        name='api.proxyThumbnail'
+        name="api.proxyThumbnail"
         render={({ field, fieldState }) => (
           <FormItem>
             <FormLabel
@@ -516,15 +517,19 @@ export default function ApiForm({ form, onResetField }: FormProps) {
                 onValueChange={(value) => field.onChange(value === "true")}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder='Select option' />
+                  <SelectValue placeholder="Select option" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value='true'>Proxy Thumbnail (Recommended)</SelectItem>
-                  <SelectItem value='false'>Use GDrive Thumbnail</SelectItem>
+                  <SelectItem value="true">
+                    Proxy Thumbnail (Recommended)
+                  </SelectItem>
+                  <SelectItem value="false">Use GDrive Thumbnail</SelectItem>
                 </SelectContent>
               </Select>
             </FormControl>
-            <FormDescription>Serve thumbnail through API route to avoid CORS issue.</FormDescription>
+            <FormDescription>
+              Serve thumbnail through API route to avoid CORS issue.
+            </FormDescription>
             <FormMessage />
           </FormItem>
         )}
@@ -532,7 +537,7 @@ export default function ApiForm({ form, onResetField }: FormProps) {
       <FormColumn>
         <FormField
           control={form.control}
-          name='api.streamMaxSize'
+          name="api.streamMaxSize"
           render={({ field, fieldState }) => (
             <FormItem>
               <FormLabel
@@ -545,7 +550,7 @@ export default function ApiForm({ form, onResetField }: FormProps) {
               </FormLabel>
               <FormControl>
                 <Input
-                  type='number'
+                  type="number"
                   {...field}
                   min={0}
                   value={field.value / (1024 * 1024)}
@@ -558,9 +563,12 @@ export default function ApiForm({ form, onResetField }: FormProps) {
                 />
               </FormControl>
               <FormDescription>
-                Maximum file size to be previewed in the browser in MB. Larger file won&apos;t be previewed.
+                Maximum file size to be previewed in the browser in MB. Larger
+                file won&apos;t be previewed.
                 <br />
-                <span className='text-destructive'>Will count towards the deployment bandwidth usage.</span>{" "}
+                <span className="text-destructive">
+                  Will count towards the deployment bandwidth usage.
+                </span>{" "}
                 <b>Set to 0 to disable the limit</b>
               </FormDescription>
               <FormMessage />
@@ -569,7 +577,7 @@ export default function ApiForm({ form, onResetField }: FormProps) {
         />
         <FormField
           control={form.control}
-          name='api.maxFileSize'
+          name="api.maxFileSize"
           render={({ field, fieldState }) => (
             <FormItem>
               <FormLabel
@@ -582,7 +590,7 @@ export default function ApiForm({ form, onResetField }: FormProps) {
               </FormLabel>
               <FormControl>
                 <Input
-                  type='number'
+                  type="number"
                   {...field}
                   min={0}
                   value={field.value / (1024 * 1024)}
@@ -595,68 +603,13 @@ export default function ApiForm({ form, onResetField }: FormProps) {
                 />
               </FormControl>
               <FormDescription>
-                Maximum file size that can be downloaded via API route. Larger file will be using GDrive link.
+                Maximum file size that can be downloaded via API route. Larger
+                file will be using GDrive link.
                 <br />
-                <span className='text-destructive'>Will count towards the deployment bandwidth usage.</span>{" "}
+                <span className="text-destructive">
+                  Will count towards the deployment bandwidth usage.
+                </span>{" "}
                 <b>Set to 0 to disable the limit</b>
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name='api.allowDownloadProtectedFile'
-          render={({ field, fieldState }) => (
-            <FormItem>
-              <FormLabel
-                resetDisabled={!fieldState.isDirty}
-                onFieldReset={() => {
-                  onResetField?.("api.allowDownloadProtectedFile");
-                }}
-              >
-                Download Protected File
-              </FormLabel>
-              <FormControl>
-                <Select
-                  value={field.value ? "true" : "false"}
-                  onValueChange={(value) => field.onChange(value === "true")}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder='Select option' />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value='true'>Allow Download</SelectItem>
-                    <SelectItem value='false'>Disallow Download (Recommended)</SelectItem>
-                  </SelectContent>
-                </Select>
-              </FormControl>
-              <FormDescription>Allow download for file inside protected folder.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name='api.temporaryTokenDuration'
-          render={({ field, fieldState }) => (
-            <FormItem>
-              <FormLabel
-                resetDisabled={!fieldState.isDirty}
-                onFieldReset={() => {
-                  onResetField?.("api.temporaryTokenDuration");
-                }}
-              >
-                Temporary Token Duration
-              </FormLabel>
-              <FormControl>
-                <Input
-                  type='number'
-                  {...field}
-                />
-              </FormControl>
-              <FormDescription>
-                Duration for temporary token in hours. Token will be used for protected folder download.
               </FormDescription>
               <FormMessage />
             </FormItem>
