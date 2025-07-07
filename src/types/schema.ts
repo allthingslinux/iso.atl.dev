@@ -57,14 +57,10 @@ export const Schema_v1_Config = z.object({
     searchResult: z.number().positive(),
 
     specialFile: z.object({
-      password: z.string(),
       readme: z.string(),
       banner: z.string(),
     }),
     hiddenFiles: z.array(z.string()),
-
-    allowDownloadProtectedFile: z.boolean(),
-    temporaryTokenDuration: z.number().positive(),
     maxFileSize: z.number().positive(),
   }),
 
@@ -76,8 +72,6 @@ export const Schema_v1_Config = z.object({
     twitterHandle: z.string().optional().default("@__mbaharip__"),
 
     defaultAccentColor: z.string(),
-
-    privateIndex: z.boolean().optional().default(false),
 
     navbarItems: z.array(
       z.object({
@@ -104,14 +98,10 @@ const Schema_Config_API = z
     streamMaxSize: z.coerce.number(),
 
     specialFile: z.object({
-      password: z.string(),
       readme: z.string(),
       banner: z.string(),
     }),
     hiddenFiles: z.array(z.string()),
-
-    allowDownloadProtectedFile: z.coerce.boolean(),
-    temporaryTokenDuration: z.coerce.number().positive(),
     maxFileSize: z.coerce.number(),
   })
   .refine(
@@ -136,12 +126,16 @@ const Schema_v2_3_Config_Site = z.object({
 
   footer: z.string().array().optional(),
 
-  privateIndex: z.boolean().optional().default(false),
   breadcrumbMax: z.number(),
 
   toaster: z
     .object({
-      position: z.enum(["top-left", "top-right", "bottom-left", "bottom-right"]),
+      position: z.enum([
+        "top-left",
+        "top-right",
+        "bottom-left",
+        "bottom-right",
+      ]),
       duration: z.number().positive(),
     })
     .optional()
@@ -190,12 +184,16 @@ export const Schema_Config_Site = z.object({
     .or(z.enum(["s", "ms"]))
     .default("ms"),
 
-  privateIndex: z.coerce.boolean().optional().default(false),
   breadcrumbMax: z.coerce.number(),
 
   toaster: z
     .object({
-      position: z.enum(["top-left", "top-right", "bottom-left", "bottom-right"]),
+      position: z.enum([
+        "top-left",
+        "top-right",
+        "bottom-left",
+        "bottom-right",
+      ]),
       duration: z.coerce.number().positive(),
     })
     .optional()
@@ -252,7 +250,6 @@ export const Schema_Config = z.object({
 export const Schema_App_Configuration_Env = z.object({
   GD_SERVICE_B64: z.string(),
   ENCRYPTION_KEY: z.string(),
-  SITE_PASSWORD: z.string().optional(),
   NEXT_PUBLIC_DOMAIN: z.string().optional(),
 });
 
@@ -290,10 +287,12 @@ export const Schema_App_Configuration = z.object({
   ),
 });
 
-export type ConfigurationCategory = keyof z.infer<typeof Schema_App_Configuration>;
-export type ConfigurationKeys<T extends keyof z.infer<typeof Schema_App_Configuration>> = keyof z.infer<
+export type ConfigurationCategory = keyof z.infer<
   typeof Schema_App_Configuration
->[T];
+>;
+export type ConfigurationKeys<
+  T extends keyof z.infer<typeof Schema_App_Configuration>,
+> = keyof z.infer<typeof Schema_App_Configuration>[T];
 export type ConfigurationValue<
   T extends keyof z.infer<typeof Schema_App_Configuration>,
   K extends keyof z.infer<typeof Schema_App_Configuration>[T],
