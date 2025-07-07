@@ -1,10 +1,10 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { IS_DEV } from "~/constant";
+import { IS_DEV } from "@/constant";
 
-import { encryptionService } from "~/lib/utils.server";
+import { encryptionService } from "@/lib/utils.server";
 
-import config from "config";
+import config from "@/config/gIndex.config";
 
 export const dynamic = "force-dynamic";
 

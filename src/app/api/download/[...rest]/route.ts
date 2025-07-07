@@ -1,16 +1,18 @@
 import { type NextRequest, NextResponse } from "next/server";
 
-import { encryptionService, gdrive } from "~/lib/utils.server";
+import { encryptionService, gdrive } from "@/lib/utils.server";
 
-import { GetFile } from "~/actions/files";
-import { CheckIndexPassword, CheckPagePassword } from "~/actions/password";
-import { ValidatePaths } from "~/actions/paths";
+import { GetFile } from "@/actions/files";
+import { ValidatePaths } from "@/actions/paths";
 
-import config from "config";
+import config from "@/config/gIndex.config";
 
 export const dynamic = "force-static";
 
-export async function GET(request: NextRequest, { params }: { params: Promise<{ rest: string[] }> }) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ rest: string[] }> },
+) {
   const { rest } = await params;
   const sp = new URL(request.nextUrl).searchParams;
   const forceRedirect = sp.get("redirect") === "1";
@@ -34,23 +36,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       });
     }
 
-    if (config.siteConfig.privateIndex && !config.apiConfig.allowDownloadProtectedFile) {
-      const [indexUnlocked, pageUnlocked] = await Promise.all([
-        CheckIndexPassword(),
-        CheckPagePassword(validatedPaths.data),
-      ]);
-      if (!indexUnlocked.success) {
-        throw new Error(`[401] ${indexUnlocked.message}`, {
-          cause: indexUnlocked.error,
-        });
-      }
-      if (!pageUnlocked.success) {
-        throw new Error(`[401] ${pageUnlocked.message}`, {
-          cause: pageUnlocked.error,
-        });
-      }
-    }
-
     const file = await GetFile(currentFile.id);
     if (!file.success) {
       throw new Error(`[404] ${file.message}`, {
@@ -64,8 +49,14 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     const fileSize = Number(file.data?.size ?? 0);
-    if ((config.apiConfig.maxFileSize > 0 && fileSize > config.apiConfig.maxFileSize) || forceRedirect) {
-      const decryptedContentUrl = await encryptionService.decrypt(file.data.encryptedWebContentLink);
+    if (
+      (config.apiConfig.maxFileSize > 0 &&
+        fileSize > config.apiConfig.maxFileSize) ||
+      forceRedirect
+    ) {
+      const decryptedContentUrl = await encryptionService.decrypt(
+        file.data.encryptedWebContentLink,
+      );
       const contentUrl = new URL(decryptedContentUrl);
       contentUrl.searchParams.set("confirm", "1");
       return new NextResponse(null, {
@@ -112,7 +103,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   } catch (error) {
     const e = error as Error;
     const message = e.message.replace(/\[.*\]/, "").trim();
-    const status = /\[.*\]/.exec(e.message)?.[0].replace(/\[|\]/g, "").trim() ?? 500;
+    const status =
+      /\[.*\]/.exec(e.message)?.[0].replace(/\[|\]/g, "").trim() ?? 500;
 
     return NextResponse.json(
       {

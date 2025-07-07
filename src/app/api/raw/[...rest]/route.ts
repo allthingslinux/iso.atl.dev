@@ -1,13 +1,16 @@
 import { type NextRequest, NextResponse } from "next/server";
 
-import { encryptionService } from "~/lib/utils.server";
+import { encryptionService } from "@/lib/utils.server";
 
-import { GetFile } from "~/actions/files";
-import { ValidatePaths } from "~/actions/paths";
+import { GetFile } from "@/actions/files";
+import { ValidatePaths } from "@/actions/paths";
 
 export const dynamic = "force-static";
 
-export async function GET(request: NextRequest, { params }: { params: Promise<{ rest: string[] }> }) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ rest: string[] }> },
+) {
   const { rest } = await params;
   const paths = rest.map((path) => {
     if (path.startsWith("/")) return decodeURIComponent(path.slice(1));
@@ -41,7 +44,9 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       });
     }
 
-    const decryptedLink = await encryptionService.decrypt(fileMeta.data.encryptedWebContentLink);
+    const decryptedLink = await encryptionService.decrypt(
+      fileMeta.data.encryptedWebContentLink,
+    );
     return new NextResponse(null, {
       status: 302,
       headers: {
@@ -52,7 +57,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   } catch (error) {
     const e = error as Error;
     const message = e.message.replace(/\[.*\]/, "").trim();
-    const status = /\[.*\]/.exec(e.message)?.[0].replace(/\[|\]/g, "").trim() ?? 500;
+    const status =
+      /\[.*\]/.exec(e.message)?.[0].replace(/\[|\]/g, "").trim() ?? 500;
 
     return NextResponse.json(
       {

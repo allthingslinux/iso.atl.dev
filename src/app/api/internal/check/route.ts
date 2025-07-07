@@ -1,15 +1,17 @@
 import { NextResponse } from "next/server";
 
-import { encryptionService } from "~/lib/utils.server";
+import { encryptionService } from "@/lib/utils.server";
 
-import config from "~/config/gIndex.config";
+import config from "@/config/gIndex.config";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
     if (process.env.NODE_ENV !== "development") {
-      throw new Error("This route is only available in development environment");
+      throw new Error(
+        "This route is only available in development environment",
+      );
     }
 
     const rootId = await encryptionService.decrypt(config.apiConfig.rootFolder);

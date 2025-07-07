@@ -1,8 +1,8 @@
 import { type NextRequest, NextResponse } from "next/server";
 
-import { encryptionService, gdrive } from "~/lib/utils.server";
+import { encryptionService, gdrive } from "@/lib/utils.server";
 
-import config from "config";
+import config from "@/config/gIndex.config";
 
 export const dynamic = "force-static";
 
