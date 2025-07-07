@@ -1,8 +1,8 @@
 "use client";
 
-import Icon from "~/components/ui/icon";
+import Icon from "@/components/ui/icon";
 
-import { cn } from "~/lib/utils";
+import { cn } from "@/lib/utils";
 
 type Props = {
   message?: string;
@@ -14,15 +14,15 @@ export default function PageLoader({ message, extra }: Props) {
     <div
       className={cn(
         "h-auto min-h-[50dvh] w-full",
-        "flex flex-grow flex-col items-center justify-center gap-2",
+        "flex grow flex-col items-center justify-center gap-2",
         "text-foreground",
       )}
     >
       <Icon
-        name='LoaderCircle'
-        className='size-10 animate-spin stroke-primary'
+        name="LoaderCircle"
+        className="size-10 animate-spin stroke-primary"
       />
-      <div className='flex flex-col items-center justify-center'>
+      <div className="flex flex-col items-center justify-center">
         <p>{message ?? "Loading..."}</p>
         {extra}
       </div>
