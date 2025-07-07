@@ -7,25 +7,34 @@ import { type NormalComponents } from "react-markdown/lib/complex-types";
 import rehypeKatex from "rehype-katex";
 import rehypePrism from "rehype-prism-plus";
 import rehypeRaw from "rehype-raw";
+import rehypeSlug from "rehype-slug";
 import remarkBreaks from "remark-breaks";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
-import remarkSlug from "remark-slug";
 import remarkToc from "remark-toc";
 import { toast } from "sonner";
 
-import Icon from "~/components/ui/icon";
+import Icon from "@/components/ui/icon";
 
-import { cn } from "~/lib/utils";
+import { cn } from "@/lib/utils";
 
 type Props = {
   content: string;
   view?: "markdown" | "raw";
   className?: string;
-  customComponents?: Partial<Omit<NormalComponents, keyof SpecialComponents> & SpecialComponents>;
+  customComponents?: Partial<
+    Omit<NormalComponents, keyof SpecialComponents> & SpecialComponents
+  >;
 };
-export default function Markdown({ content, view, className, customComponents }: Props) {
-  const [viewState, setViewState] = useState<"markdown" | "raw">(view ?? "markdown");
+export default function Markdown({
+  content,
+  view,
+  className,
+  customComponents,
+}: Props) {
+  const [viewState, setViewState] = useState<"markdown" | "raw">(
+    view ?? "markdown",
+  );
 
   useEffect(() => {
     if (view) setViewState(view);
@@ -33,20 +42,30 @@ export default function Markdown({ content, view, className, customComponents }:
 
   return (
     <div
-      slot='markdown-container'
+      slot="markdown-container"
       className={cn("flex flex-col py-3", className)}
     >
       {viewState === "raw" ? (
         <div className={cn("markdown w-full rounded-lg bg-background")}>
-          <pre className='w-full whitespace-pre-wrap break-words bg-transparent p-0 text-sm tablet:p-2'>{content}</pre>
+          <pre className="w-full whitespace-pre-wrap break-words bg-transparent p-0 text-sm tablet:p-2">
+            {content}
+          </pre>
         </div>
       ) : (
-        <div className={cn("markdown w-full rounded-lg")}>
+        <div
+          className={cn(
+            "markdown w-full rounded-lg prose prose-slate max-w-none! px-0 dark:prose-invert tablet:px-2",
+          )}
+        >
           <ReactMarkdown
-            className='prose w-full !max-w-none px-0 dark:prose-invert tablet:px-2'
             disallowedElements={["script"]}
-            remarkPlugins={[remarkGfm, remarkMath, remarkSlug, remarkToc, remarkBreaks]}
-            rehypePlugins={[rehypeKatex, rehypeRaw, [rehypePrism, { ignoreMissing: true }]]}
+            remarkPlugins={[remarkGfm, remarkMath, remarkToc, remarkBreaks]}
+            rehypePlugins={[
+              rehypeKatex,
+              rehypeRaw,
+              rehypeSlug,
+              [rehypePrism, { ignoreMissing: true }],
+            ]}
             components={{
               img: ({ src, alt, className, ...props }) => {
                 return (
@@ -54,13 +73,20 @@ export default function Markdown({ content, view, className, customComponents }:
                     <img
                       src={src}
                       alt={alt}
-                      className={cn("mx-auto max-w-screen-md cursor-pointer rounded-lg", className)}
+                      className={cn(
+                        "mx-auto max-w-(--breakpoint-md) cursor-pointer rounded-lg",
+                        className,
+                      )}
                       onClick={() => {
                         window.open(src, "_blank");
                       }}
                       {...props}
                     />
-                    {alt && <figcaption className='mt-1 text-center text-sm text-muted-foreground'>{alt}</figcaption>}
+                    {alt && (
+                      <figcaption className="mt-1 text-center text-sm text-muted-foreground">
+                        {alt}
+                      </figcaption>
+                    )}
                   </>
                 );
               },
@@ -73,23 +99,26 @@ export default function Markdown({ content, view, className, customComponents }:
                     href={href}
                     target={isRelative ? target : "_blank"}
                     rel={isRelative ? rel : "noreferer"}
-                    className={cn("!whitespace-pre-wrap !break-words", className)}
+                    className={cn(
+                      "whitespace-pre-wrap! break-words!",
+                      className,
+                    )}
                     {...props}
                   />
                 );
               },
               p: ({ children, ...props }) => (
-                <p
-                  {...props}
-                  className='paragraph text-pretty'
-                >
+                <p {...props} className="paragraph text-pretty">
                   {children}
                 </p>
               ),
               pre: PreComponent,
               code: ({ inline: _inline, className, children, ...props }) => (
                 <code
-                  className={cn(`!whitespace-pre-wrap break-words font-mono !text-sm`, className)}
+                  className={cn(
+                    `whitespace-pre-wrap! break-words font-mono text-sm!`,
+                    className,
+                  )}
                   {...props}
                 >
                   {children}
@@ -109,7 +138,9 @@ export default function Markdown({ content, view, className, customComponents }:
 function PreComponent(props: React.HTMLAttributes<HTMLPreElement>) {
   const codeRef = useRef<HTMLPreElement | null>(null);
 
-  const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "error">("idle");
+  const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "error">(
+    "idle",
+  );
   const copyTimeout = useRef<NodeJS.Timeout>();
 
   const handleCopy = useCallback(async () => {
@@ -148,7 +179,7 @@ function PreComponent(props: React.HTMLAttributes<HTMLPreElement>) {
     <div className={`relative h-full w-full`}>
       <div className={`transition-smooth absolute right-0 top-0 p-1.5`}>
         <div
-          className='group cursor-pointer rounded-lg bg-background p-1.5 opacity-75 transition duration-300 ease-in-out hover:opacity-100'
+          className="group cursor-pointer rounded-lg bg-background p-1.5 opacity-75 transition duration-300 ease-in-out hover:opacity-100"
           data-state={copyStatus}
           onClick={() => {
             handleCopy().catch(() => {
@@ -157,23 +188,23 @@ function PreComponent(props: React.HTMLAttributes<HTMLPreElement>) {
           }}
         >
           <Icon
-            name='Copy'
-            className='hidden size-4 group-data-[state=idle]:block'
+            name="Copy"
+            className="hidden size-4 group-data-[state=idle]:block"
           />
           <Icon
-            name='Check'
-            className='hidden size-4 stroke-green-600 group-data-[state=copied]:block dark:stroke-green-400'
+            name="Check"
+            className="hidden size-4 stroke-green-600 group-data-[state=copied]:block dark:stroke-green-400"
           />
           <Icon
-            name='X'
-            className='hidden size-4 stroke-destructive group-data-[state=error]:block'
+            name="X"
+            className="hidden size-4 stroke-destructive group-data-[state=error]:block"
           />
         </div>
       </div>
       <pre
         ref={codeRef}
         {...props}
-        className='overflow-x-auto border border-border shadow shadow-background'
+        className="overflow-x-auto border border-border shadow shadow-background"
         style={{
           ...props,
           backgroundColor: "var(--syntax-bg) !important",

@@ -2,9 +2,9 @@
 
 import { type icons } from "lucide-react";
 
-import Icon from "~/components/ui/icon";
+import Icon from "@/components/ui/icon";
 
-import { cn } from "~/lib/utils";
+import { cn } from "@/lib/utils";
 
 type Props = {
   icon: keyof typeof icons;
@@ -13,19 +13,23 @@ type Props = {
   destructive?: boolean;
 };
 
-export default function Status({ icon, iconClassName, message, destructive }: Props) {
+export default function Status({
+  icon,
+  iconClassName,
+  message,
+  destructive,
+}: Props) {
   return (
     <div
       className={cn(
         "h-fit min-h-[33dvh] w-full",
         "flex flex-col items-center justify-center gap-2",
-        destructive ? "stroke-destructive text-destructive" : "stroke-muted-foreground text-muted-foreground",
+        destructive
+          ? "stroke-destructive text-destructive"
+          : "stroke-muted-foreground text-muted-foreground",
       )}
     >
-      <Icon
-        name={icon}
-        className={cn("size-10", iconClassName)}
-      />
+      <Icon name={icon} className={cn("size-10", iconClassName)} />
       <p>{message ?? "Something went wrong"}</p>
     </div>
   );
