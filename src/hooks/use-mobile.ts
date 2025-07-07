@@ -47,21 +47,16 @@ export function useIsMobile(): boolean {
 
 // Comprehensive breakpoint hook with all device types
 export function useMediaQuery(): MediaQueryState {
-  const [state, setState] = useState<MediaQueryState>({
-    isMobile: false,
-    isTablet: false,
-    isDesktop: false,
-    isWide: false,
-    breakpoint: "DESKTOP",
-  });
+  // Initialize with undefined to handle SSR properly
+  const [state, setState] = useState<MediaQueryState | undefined>(undefined);
 
   useEffect(() => {
     // Create all media queries
     const queries = {
       mobile: window.matchMedia(`(max-width: ${BREAKPOINTS.MOBILE - 1}px)`),
       tablet: window.matchMedia(`(min-width: ${BREAKPOINTS.MOBILE}px) and (max-width: ${BREAKPOINTS.TABLET - 1}px)`),
-      desktop: window.matchMedia(`(min-width: ${BREAKPOINTS.TABLET}px) and (max-width: ${BREAKPOINTS.DESKTOP - 1}px)`),
-      wide: window.matchMedia(`(min-width: ${BREAKPOINTS.DESKTOP}px)`),
+      desktop: window.matchMedia(`(min-width: ${BREAKPOINTS.TABLET}px) and (max-width: ${BREAKPOINTS.WIDE - 1}px)`),
+      wide: window.matchMedia(`(min-width: ${BREAKPOINTS.WIDE}px)`),
     };
 
     const updateState = (): void => {
@@ -100,7 +95,14 @@ export function useMediaQuery(): MediaQueryState {
     };
   }, []);
 
-  return state;
+  // Return default state for SSR/initial render
+  return state ?? {
+    isMobile: false,
+    isTablet: false,
+    isDesktop: false,
+    isWide: false,
+    breakpoint: "DESKTOP" as Breakpoint,
+  };
 }
 
 // Hook for custom media queries

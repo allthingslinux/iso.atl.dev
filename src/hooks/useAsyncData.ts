@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getErrorMessage } from "@/lib/errors";
 
 // Types for the hook
@@ -99,20 +99,6 @@ export function useAsyncData<T>(
 
   // Execute the fetcher
   const execute = useCallback(async (): Promise<void> => {
-    // Check cache first
-    const cachedData = checkCache();
-    if (cachedData !== null && state.data === null) {
-      setState({
-        data: cachedData,
-        error: null,
-        isLoading: false,
-        isRefreshing: false,
-        isSuccess: true,
-        isError: false,
-      });
-      return;
-    }
-
     // Cancel previous request
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
@@ -121,12 +107,27 @@ export function useAsyncData<T>(
     // Create new abort controller
     abortControllerRef.current = new AbortController();
 
-    setState((prev) => ({
-      ...prev,
-      isLoading: !prev.data,
-      isRefreshing: !!prev.data,
-      error: null,
-    }));
+    setState((prev) => {
+      // Check cache first
+      const cachedData = checkCache();
+      if (cachedData !== null && prev.data === null) {
+        return {
+          data: cachedData,
+          error: null,
+          isLoading: false,
+          isRefreshing: false,
+          isSuccess: true,
+          isError: false,
+        };
+      }
+
+      return {
+        ...prev,
+        isLoading: !prev.data,
+        isRefreshing: !!prev.data,
+        error: null,
+      };
+    });
 
     try {
       const data = await fetcher();
@@ -174,7 +175,7 @@ export function useAsyncData<T>(
         }, retryDelay * retryCountRef.current);
       }
     }
-  }, [fetcher, checkCache, updateCache, onSuccess, onError, retry, retryDelay, state.data]);
+  }, [fetcher, checkCache, updateCache, onSuccess, onError, retry, retryDelay]);
 
   // Reset state
   const reset = useCallback((): void => {
@@ -214,12 +215,19 @@ export function useAsyncData<T>(
     });
   }, []);
 
-  // Effect for initial fetch
+  // Memoize dependencies to prevent infinite loops
+  const memoizedDependencies = useMemo(
+    () => dependencies,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    dependencies
+  );
+
+  // Effect for initial fetch and dependency changes
   useEffect(() => {
-    if (fetchOnMount) {
+    if (fetchOnMount || memoizedDependencies.length > 0) {
       execute();
     }
-  }, [fetchOnMount, ...dependencies]);
+  }, [fetchOnMount, execute, memoizedDependencies]);
 
   // Cleanup
   useEffect(() => {
