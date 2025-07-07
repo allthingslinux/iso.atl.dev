@@ -68,14 +68,14 @@ export default function Markdown({
               [rehypePrism, { ignoreMissing: true }],
             ]}
             components={{
-              img: ({ src, alt, className, ...props }) => {
+              img: ({ src, alt, className, width, height, ...props }) => {
                 return (
                   <>
                     <Image
                       src={typeof src === "string" ? src : ""}
                       alt={alt || ""}
-                      width={512}
-                      height={384}
+                      width={typeof width === "number" ? width : 512}
+                      height={typeof height === "number" ? height : 384}
                       className={cn(
                         "mx-auto max-w-(--breakpoint-md) cursor-pointer rounded-lg",
                         className
