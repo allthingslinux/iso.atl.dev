@@ -1,16 +1,16 @@
 import { type Metadata } from "next";
 import { JetBrains_Mono, Outfit, Source_Sans_3 } from "next/font/google";
 import { headers } from "next/headers";
-import { BASE_URL } from "~/constant";
+import { BASE_URL } from "@/constant";
 
-import { Footer, Navbar, Provider, ToTop } from "~/components/layout";
+import { Footer, Navbar, Provider, ToTop } from "@/components/layout";
 
-import { cn, formatFooterContent } from "~/lib/utils";
-import "~/styles/code-highlight.css";
-import "~/styles/globals.css";
-import "~/styles/markdown.css";
+import { cn, formatFooterContent } from "@/lib/utils";
+import "@/styles/code-highlight.css";
+import "@/styles/globals.css";
+import "@/styles/markdown.css";
 
-import config from "config";
+import config from "@/config/gIndex.config";
 
 const sourceSans3 = Source_Sans_3({
   weight: ["300", "400", "600", "700"],
@@ -35,10 +35,16 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(BASE_URL.includes("http") ? BASE_URL : `https://${BASE_URL}`),
+  metadataBase: new URL(
+    BASE_URL.includes("http") ? BASE_URL : `https://${BASE_URL}`,
+  ),
   title: {
     default: config.siteConfig.siteName,
-    template: config.siteConfig.siteNameTemplate?.replace("%t", config.siteConfig.siteName) ?? "%s",
+    template:
+      config.siteConfig.siteNameTemplate?.replace(
+        "%t",
+        config.siteConfig.siteName,
+      ) ?? "%s",
   },
   description: config.siteConfig.siteDescription,
   authors: config.siteConfig.siteAuthor
@@ -71,19 +77,20 @@ export const metadata: Metadata = {
   robots: config.siteConfig.robots,
 };
 
-export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default async function RootLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
   const head = await headers();
   const pathname = head.get("X-Pathname") ?? "/";
 
   return (
-    <html
-      lang='en'
-      suppressHydrationWarning
-    >
+    <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
           "overflow-x-hidden stroke-foreground font-sans text-foreground",
-          pathname.startsWith("/ngdi-internal/embed/") ? "h-fit bg-transparent" : "h-full min-h-screen bg-background",
+          pathname.startsWith("/ngdi-internal/embed/")
+            ? "h-fit bg-transparent"
+            : "h-full min-h-screen bg-background",
           jetbrainsMono.variable,
           sourceSans3.variable,
           outfit.variable,
@@ -106,17 +113,19 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         >
           <Navbar />
           <main
-            slot='content'
+            slot="content"
             className={cn(
-              "mx-auto h-auto w-full max-w-screen-desktop",
+              "mx-auto h-auto w-full max-w-(--breakpoint-desktop)",
               "relative left-0 top-0",
-              "flex flex-grow flex-col gap-4 px-2 py-6 mobile:px-3 tablet:px-4",
+              "flex grow flex-col gap-4 px-2 py-6 mobile:px-3 tablet:px-4",
               "tablet:gap-6",
             )}
           >
-          {children}
+            {children}
           </main>
-          <Footer content={formatFooterContent(config.siteConfig.footer ?? [])} />
+          <Footer
+            content={formatFooterContent(config.siteConfig.footer ?? [])}
+          />
           <ToTop />
         </Provider>
       </body>
