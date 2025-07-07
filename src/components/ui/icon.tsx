@@ -3,7 +3,7 @@
 import { type LucideProps, icons } from "lucide-react";
 import { Fragment, useCallback } from "react";
 
-import { cn } from "~/lib/utils";
+import { cn } from "@/lib/utils";
 
 export type IconName = keyof typeof icons;
 export const IconNamesArray = Object.keys(icons) as [IconName, ...IconName[]];
@@ -15,9 +15,16 @@ type Props = {
   wrapperProps?: React.HTMLAttributes<HTMLSpanElement>;
 } & LucideProps;
 
-export default function Icon({ name, className, hideWrapper, wrapperProps, ...props }: Props) {
+export default function Icon({
+  name,
+  className,
+  hideWrapper,
+  wrapperProps,
+  ...props
+}: Props) {
   const LucideIcon = icons[name];
-  const { className: wrapperClassName, ...restWrapperProps } = wrapperProps ?? {};
+  const { className: wrapperClassName, ...restWrapperProps } =
+    wrapperProps ?? {};
   // const Wrapper = hideWrapper ? Fragment : "span";
   const Wrapper = useCallback<React.FC<React.HTMLAttributes<HTMLSpanElement>>>(
     () =>
@@ -30,7 +37,10 @@ export default function Icon({ name, className, hideWrapper, wrapperProps, ...pr
         </Fragment>
       ) : (
         <span
-          className={cn("grid aspect-square h-fit w-fit place-items-center", wrapperClassName)}
+          className={cn(
+            "grid aspect-square h-fit w-fit place-items-center",
+            wrapperClassName,
+          )}
           {...restWrapperProps}
         >
           <LucideIcon
@@ -39,7 +49,14 @@ export default function Icon({ name, className, hideWrapper, wrapperProps, ...pr
           />
         </span>
       ),
-    [hideWrapper, wrapperClassName, restWrapperProps, LucideIcon, className, props],
+    [
+      hideWrapper,
+      wrapperClassName,
+      restWrapperProps,
+      LucideIcon,
+      className,
+      props,
+    ],
   );
 
   return <Wrapper />;

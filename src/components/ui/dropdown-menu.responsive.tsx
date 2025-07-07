@@ -6,9 +6,9 @@
  */
 import * as React from "react";
 
-import { useResponsive } from "~/context/responsiveContext";
-import useLoading from "~/hooks/useLoading";
-import { cn } from "~/lib/utils";
+import { useResponsive } from "@/context/responsiveContext";
+import useLoading from "@/hooks/useLoading";
+import { cn } from "@/lib/utils";
 
 import { Button } from "./button";
 import {
@@ -65,18 +65,28 @@ interface ResponsiveDropdownSeparatorProps extends React.PropsWithChildren {
 const ResponsiveDropdownMenu = (props: ResponsiveDropdownMenuRootProps) => {
   const { ...rest } = props;
   const { isDesktop } = useResponsive();
-  const Component = React.useMemo(() => (isDesktop ? DropdownMenu : Drawer), [isDesktop]);
+  const Component = React.useMemo(
+    () => (isDesktop ? DropdownMenu : Drawer),
+    [isDesktop],
+  );
 
   return <Component {...rest} />;
 };
-const ResponsiveDropdownMenuTrigger = (props: ResponsiveDropdownTriggerProps) => {
+const ResponsiveDropdownMenuTrigger = (
+  props: ResponsiveDropdownTriggerProps,
+) => {
   const { ...rest } = props;
   const { isDesktop } = useResponsive();
-  const Component = React.useMemo(() => (isDesktop ? DropdownMenuTrigger : DrawerTrigger), [isDesktop]);
+  const Component = React.useMemo(
+    () => (isDesktop ? DropdownMenuTrigger : DrawerTrigger),
+    [isDesktop],
+  );
 
   return <Component {...rest} />;
 };
-const ResponsiveDropdownMenuContent = (props: ResponsiveDropdownContentProps) => {
+const ResponsiveDropdownMenuContent = (
+  props: ResponsiveDropdownContentProps,
+) => {
   const { children, header, bodyProps, ...rest } = props;
   const { className, ...bodyRest } = bodyProps ?? {};
   const { className: headerClassName, ...headerRest } = header?.props ?? {};
@@ -95,7 +105,9 @@ const ResponsiveDropdownMenuContent = (props: ResponsiveDropdownContentProps) =>
             >
               <DrawerTitle {...header.titleProps}>{header.title}</DrawerTitle>
               {header.description && (
-                <DrawerDescription {...header.descriptionProps}>{header.description}</DrawerDescription>
+                <DrawerDescription {...header.descriptionProps}>
+                  {header.description}
+                </DrawerDescription>
               )}
             </DrawerHeader>
           )}
@@ -108,7 +120,16 @@ const ResponsiveDropdownMenuContent = (props: ResponsiveDropdownContentProps) =>
           </div>
         </DrawerContent>
       ),
-    [isDesktop, rest, children, header, headerClassName, headerRest, className, bodyRest],
+    [
+      isDesktop,
+      rest,
+      children,
+      header,
+      headerClassName,
+      headerRest,
+      className,
+      bodyRest,
+    ],
   );
 
   if (loading) return null;
@@ -120,23 +141,23 @@ const ResponsiveDropdownMenuItem = (props: ResponsiveDropdownMenuItemProps) => {
   const loading = useLoading();
   const Wrapper = React.useCallback<React.FC<{ children: React.ReactNode }>>(
     ({ children }) =>
-      closeOnSelect ? <DrawerClose asChild>{children}</DrawerClose> : <React.Fragment>{children}</React.Fragment>,
+      closeOnSelect ? (
+        <DrawerClose asChild>{children}</DrawerClose>
+      ) : (
+        <React.Fragment>{children}</React.Fragment>
+      ),
     [closeOnSelect],
   );
 
   const Component = React.useMemo(
     () =>
       isDesktop ? (
-        <DropdownMenuItem
-          onSelect={onSelect}
-          disabled={disabled}
-          {...rest}
-        />
+        <DropdownMenuItem onSelect={onSelect} disabled={disabled} {...rest} />
       ) : (
         <Wrapper>
           <Button
             variant={selected ? "secondary" : "outline"}
-            className='w-full'
+            className="w-full"
             disabled={selected ?? disabled}
             onClick={onSelect}
             {...rest}
@@ -149,11 +170,16 @@ const ResponsiveDropdownMenuItem = (props: ResponsiveDropdownMenuItemProps) => {
   if (loading) return null;
   return Component;
 };
-const ResponsiveDropdownMenuSeparator = (props: ResponsiveDropdownSeparatorProps) => {
+const ResponsiveDropdownMenuSeparator = (
+  props: ResponsiveDropdownSeparatorProps,
+) => {
   const { ...rest } = props;
   const { isDesktop } = useResponsive();
   const loading = useLoading();
-  const Component = React.useMemo(() => (isDesktop ? DropdownMenuSeparator : Separator), [isDesktop]);
+  const Component = React.useMemo(
+    () => (isDesktop ? DropdownMenuSeparator : Separator),
+    [isDesktop],
+  );
 
   if (loading) return null;
   return <Component {...rest} />;
