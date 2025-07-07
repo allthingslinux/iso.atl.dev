@@ -20,7 +20,7 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="w-full h-16 px-6">
-        <div className="grid grid-cols-3 h-full items-center max-w-screen-2xl mx-auto">
+        <div className="grid grid-cols-3 h-full items-center mx-auto tablet:grid-cols-2">
           {/* Left Section - Logo */}
           <div className="flex items-center justify-start">
             <Link href="/" className="flex items-center space-x-3">
@@ -42,7 +42,7 @@ export default function Navbar() {
                   {config.siteConfig.siteName}
                 </span>
                 <span className="text-xs text-muted-foreground font-mono leading-tight">
-                  v2.4.2 • ONLINE
+                  v{config.version} • ONLINE
                 </span>
               </div>
             </Link>

@@ -37,7 +37,11 @@ export function formatDate(
     const year = parseInt(yearStr!, 10);
 
     parsedDate = new Date(year, month - 1, day); // JS months are 0-based
-  } else if (typeof date === "string" || typeof date === "number" || date instanceof Date) {
+  } else if (
+    typeof date === "string" ||
+    typeof date === "number" ||
+    date instanceof Date
+  ) {
     parsedDate = new Date(date);
   } else {
     throw new TypeError("Invalid date format");
@@ -74,13 +78,12 @@ export function formatFooterContent(
   const data = siteConfig ?? config.siteConfig;
   const formatMap = {
     year: new Date().getFullYear().toString(),
-    repository: "[Source Code](https://github.com/mbaharip/next-gdrive-index)",
-    poweredBy: `Powered by [next-gdrive-index v${config.version}](https://github.com/mbaharip/next-gdrive-index)`,
-    author: data.siteAuthor ?? "mbaharip",
-    version: config.version ?? "0.0.0",
-    siteName: data.siteName ?? "next-gdrive-index",
-    handle: data.twitterHandle ?? "@__mbaharip__",
-    creator: "mbaharip",
+    repository: "[Source Code](https://github.com/allthingslinux/iso.atl.dev)",
+    poweredBy: `Originally forked from [next-gdrive-index v2.4.2](https://github.com/mbaharip/next-gdrive-index)`,
+    author: data.siteAuthor ?? "allthingslinux",
+    version: config.version ?? "0.0.1",
+    siteName: data.siteName ?? "iso.atl.dev",
+    creator: "allthingslinux",
   };
 
   return text

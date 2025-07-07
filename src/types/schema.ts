@@ -165,11 +165,9 @@ export const Schema_Config_Site = z.object({
   siteNameTemplate: z.string().optional().default("%s"),
   siteDescription: z.string(),
   siteIcon: z.string(),
-  siteAuthor: z.string().optional().default("mbaharip"),
+  siteAuthor: z.string().optional().default("allthingslinux"),
   favIcon: z.string(),
   robots: z.string().optional().default("noindex, nofollow"),
-  twitterHandle: z.string().optional().default("@__mbaharip__"),
-
   showFileExtension: z.coerce.boolean().optional().default(false),
 
   footer: z

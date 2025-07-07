@@ -1,6 +1,5 @@
 import { type Metadata } from "next";
 import { JetBrains_Mono, Outfit, Source_Sans_3 } from "next/font/google";
-import { headers } from "next/headers";
 
 import config from "@/config/gIndex.config";
 import { BASE_URL } from "@/constant";
@@ -52,7 +51,7 @@ export const metadata: Metadata = {
         name: config.siteConfig.siteAuthor,
       }
     : undefined,
-  creator: "mbaharip",
+  creator: "allthingslinux",
   icons: [
     {
       url: config.siteConfig.favIcon,
@@ -70,27 +69,17 @@ export const metadata: Metadata = {
       },
     ],
   },
-  twitter: {
-    card: "summary_large_image",
-    creator: config.siteConfig.twitterHandle,
-  },
   robots: config.siteConfig.robots,
 };
 
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const head = await headers();
-  const pathname = head.get("X-Pathname") ?? "/";
-
   return (
     <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
-          "overflow-x-hidden stroke-foreground font-sans text-foreground",
-          pathname.startsWith("/ngdi-internal/embed/")
-            ? "h-fit bg-transparent"
-            : "h-full min-h-screen bg-background",
+          "overflow-x-hidden stroke-foreground font-sans text-foreground h-full min-h-screen bg-background",
           jetbrainsMono.variable,
           sourceSans3.variable,
           outfit.variable

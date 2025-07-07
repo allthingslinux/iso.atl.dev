@@ -4,11 +4,10 @@ import { type z } from "zod";
 import { type Schema_Config } from "@/types/schema";
 
 const config: z.input<typeof Schema_Config> = {
-  /**
-   * If possible, please don't change this value
-   * Even if you're creating a PR, just let me change it myself
+  /*
+   * version number
    */
-  version: "2.4.2",
+  version: "0.0.1-alpha",
   /**
    * Base path of the app, used for generating links
    *
@@ -171,7 +170,6 @@ const config: z.input<typeof Schema_Config> = {
      * ref: https://nextjs.org/docs/app/api-reference/functions/generate-metadata#robots
      */
     robots: "noindex, nofollow",
-    twitterHandle: "",
 
     /**
      * Show file extension on the file name
@@ -252,18 +250,17 @@ const config: z.input<typeof Schema_Config> = {
      * - {{ year }} will be replaced with the current year
      * - {{ repository }} will be replaced with the original repository link
      * - {{ poweredBy }} will be replaced with "Powered by next-gdrive-index", linked to the repository
-     * - {{ author }} will be replaced with author from siteAuthor config above (If it's not set, it will be set to mbaharip)
+     * - {{ author }} will be replaced with author from siteAuthor config above (If it's not set, it will be set to allthingslinux)
      * - {{ version }} will be replaced with the current version
      * - {{ siteName }} will be replaced with the siteName config above
      * - {{ handle }} will be replaced with the twitter handle from twitterHandle config above
-     * - {{ creator }} will be replaced with mbaharip if you want to credit me
      */
     footer: [
       {
-        value: "{{ poweredBy }}",
+        value: "{{ repository }} :: {{ poweredBy }}",
       },
       {
-        value: " [**{{ author }}**](https://allthingslinux.org)",
+        value: "An [**{{ author }}**](https://allthingslinux.org) project",
       },
     ],
     /**

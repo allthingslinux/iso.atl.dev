@@ -304,11 +304,19 @@ export default function RootPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* System Info Sidebar */}
+        {/* System Info Sidebar and README view*/}
         <div className="lg:col-span-1 space-y-4">
           <SystemInfoPanel
             rootItemCount={(data as FileData).data?.files?.length || 0}
           />
+          {(readme as ReadmeData).data && (
+            <Suspense fallback={<FileReadmeFallback />}>
+              <FileReadme
+                content={(readme as ReadmeData).data.content}
+                title={`README.${(readme as ReadmeData).data.type === "markdown" ? "md" : "txt"}`}
+              />
+            </Suspense>
+          )}
         </div>
 
         {/* Main Content */}
@@ -342,15 +350,6 @@ export default function RootPage() {
           </Card>
         </div>
       </div>
-
-      {(readme as ReadmeData).data && (
-        <Suspense fallback={<FileReadmeFallback />}>
-          <FileReadme
-            content={(readme as ReadmeData).data.content}
-            title={`README.${(readme as ReadmeData).data.type === "markdown" ? "md" : "txt"}`}
-          />
-        </Suspense>
-      )}
     </div>
   );
 }
