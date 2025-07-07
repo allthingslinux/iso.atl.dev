@@ -1,19 +1,17 @@
 import { type NextRequest, NextResponse } from "next/server";
 
-import { encryptionService, gdrive } from "@/lib/utils.server";
-
 import { GetFile } from "@/actions/files";
 import { ValidatePaths } from "@/actions/paths";
-
 import config from "@/config/gIndex.config";
 
-export const runtime = "nodejs";
+import { encryptionService, gdrive } from "@/lib/utils.server";
 
+export const runtime = "nodejs";
 export const dynamic = "force-static";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ rest: string[] }> },
+  { params }: { params: Promise<{ rest: string[] }> }
 ) {
   const { rest } = await params;
   const sp = new URL(request.nextUrl).searchParams;
@@ -57,7 +55,7 @@ export async function GET(
       forceRedirect
     ) {
       const decryptedContentUrl = await encryptionService.decrypt(
-        file.data.encryptedWebContentLink,
+        file.data.encryptedWebContentLink
       );
       const contentUrl = new URL(decryptedContentUrl);
       contentUrl.searchParams.set("confirm", "1");
@@ -78,7 +76,7 @@ export async function GET(
       },
       {
         responseType: "stream",
-      },
+      }
     );
     const fileBuffer = await new Promise<Buffer>((res, rej) => {
       const chunks: Buffer<ArrayBufferLike>[] = [];
@@ -116,7 +114,7 @@ export async function GET(
       },
       {
         status: Number(status),
-      },
+      }
     );
   }
 }

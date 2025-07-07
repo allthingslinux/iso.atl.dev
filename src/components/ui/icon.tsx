@@ -1,7 +1,8 @@
 "use client";
 
-import { type LucideProps, icons } from "lucide-react";
 import { Fragment, useCallback } from "react";
+
+import { type LucideProps, icons } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
@@ -39,7 +40,7 @@ export default function Icon({
         <span
           className={cn(
             "grid aspect-square h-fit w-fit place-items-center",
-            wrapperClassName,
+            wrapperClassName
           )}
           {...restWrapperProps}
         >
@@ -56,7 +57,7 @@ export default function Icon({
       LucideIcon,
       className,
       props,
-    ],
+    ]
   );
 
   return <Wrapper />;

@@ -1,16 +1,16 @@
 import { type Metadata } from "next";
 import { JetBrains_Mono, Outfit, Source_Sans_3 } from "next/font/google";
 import { headers } from "next/headers";
+
+import config from "@/config/gIndex.config";
 import { BASE_URL } from "@/constant";
-
-import { Footer, Navbar, Provider, ToTop } from "@/components/layout";
-
-import { cn, formatFooterContent } from "@/lib/utils";
 import "@/styles/code-highlight.css";
 import "@/styles/globals.css";
 import "@/styles/markdown.css";
 
-import config from "@/config/gIndex.config";
+import { cn, formatFooterContent } from "@/lib/utils";
+
+import { Footer, Navbar, Provider, ToTop } from "@/components/layout";
 
 const sourceSans3 = Source_Sans_3({
   weight: ["300", "400", "600", "700"],
@@ -36,14 +36,14 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-    BASE_URL.includes("http") ? BASE_URL : `https://${BASE_URL}`,
+    BASE_URL.includes("http") ? BASE_URL : `https://${BASE_URL}`
   ),
   title: {
     default: config.siteConfig.siteName,
     template:
       config.siteConfig.siteNameTemplate?.replace(
         "%t",
-        config.siteConfig.siteName,
+        config.siteConfig.siteName
       ) ?? "%s",
   },
   description: config.siteConfig.siteDescription,
@@ -93,7 +93,7 @@ export default async function RootLayout({
             : "h-full min-h-screen bg-background",
           jetbrainsMono.variable,
           sourceSans3.variable,
-          outfit.variable,
+          outfit.variable
         )}
       >
         <Provider
@@ -108,7 +108,6 @@ export default async function RootLayout({
           toaster={{
             position: config.siteConfig.toaster?.position,
             duration: config.siteConfig.toaster?.duration,
-            pauseWhenPageIsHidden: true,
           }}
         >
           <Navbar />
@@ -118,7 +117,7 @@ export default async function RootLayout({
               "mx-auto h-auto w-full max-w-(--breakpoint-desktop)",
               "relative left-0 top-0",
               "flex grow flex-col gap-4 px-2 py-6 mobile:px-3 tablet:px-4",
-              "tablet:gap-6",
+              "tablet:gap-6"
             )}
           >
             {children}

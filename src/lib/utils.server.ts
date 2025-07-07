@@ -17,7 +17,7 @@ class EncryptionService {
   constructor() {
     if (!process.env.ENCRYPTION_KEY) {
       throw new Error(
-        "ENCRYPTION_KEY is required in the environment variables.",
+        "ENCRYPTION_KEY is required in the environment variables."
       );
     }
     this.key = process.env.ENCRYPTION_KEY;
@@ -32,7 +32,7 @@ class EncryptionService {
       const alg = { name: "AES-GCM", iv };
       const keyhash = await crypto.subtle.digest(
         "SHA-256",
-        new TextEncoder().encode(forceKey ?? this.key),
+        new TextEncoder().encode(forceKey ?? this.key)
       );
 
       const encodedData = new TextEncoder().encode(data);
@@ -41,13 +41,13 @@ class EncryptionService {
         keyhash,
         alg,
         false,
-        ["encrypt"],
+        ["encrypt"]
       );
 
       const encryptedData = await crypto.subtle.encrypt(
         alg,
         secretKey,
-        encodedData,
+        encodedData
       );
 
       return [
@@ -75,7 +75,7 @@ class EncryptionService {
       };
       const keyhash = await crypto.subtle.digest(
         "SHA-256",
-        new TextEncoder().encode(forceKey ?? this.key),
+        new TextEncoder().encode(forceKey ?? this.key)
       );
 
       const secretKey = await crypto.subtle.importKey(
@@ -83,13 +83,13 @@ class EncryptionService {
         keyhash,
         alg,
         false,
-        ["decrypt"],
+        ["decrypt"]
       );
 
       const decryptedData = await crypto.subtle.decrypt(
         alg,
         secretKey,
-        new Uint8Array(Buffer.from(cipherText, "hex")),
+        new Uint8Array(Buffer.from(cipherText, "hex"))
       );
 
       return new TextDecoder().decode(decryptedData);
@@ -109,7 +109,7 @@ export const base64Encode = (text: string, type: B64Type = "url") => {
 };
 export const base64Decode = <T = unknown>(
   encoded: string,
-  type: B64Type = "url",
+  type: B64Type = "url"
 ): T | null => {
   try {
     let decoded: Uint8Array<ArrayBufferLike>;

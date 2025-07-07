@@ -1,18 +1,19 @@
 "use client";
 
-import { type TooltipProviderProps } from "@radix-ui/react-tooltip";
-import { ThemeProvider, type ThemeProviderProps } from "next-themes";
 import { usePathname } from "next/navigation";
-import NextTopLoader, { type NextTopLoaderProps } from "nextjs-toploader";
-import { type ToasterProps } from "sonner";
-
-import { Toaster } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
 
 import UseConfirmDialogProvider from "@/context/confirmProvider";
 import { LayoutProvider } from "@/context/layoutContext";
 import { ResponsiveProvider } from "@/context/responsiveContext";
+import { type TooltipProviderProps } from "@radix-ui/react-tooltip";
+import { ThemeProvider, type ThemeProviderProps } from "next-themes";
+import NextTopLoader, { type NextTopLoaderProps } from "nextjs-toploader";
+import { type ToasterProps } from "sonner";
+
 import { cn } from "@/lib/utils";
+
+import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 type Props = {
   loader?: NextTopLoaderProps;
@@ -34,7 +35,7 @@ export default function Provider(props: React.PropsWithChildren<Props>) {
                   "flex w-full flex-col items-start font-sans text-foreground",
                   pathname.startsWith("/ngdi-internal/embed/")
                     ? "h-fit"
-                    : "h-full min-h-screen",
+                    : "h-full min-h-screen"
                 )}
               >
                 {props.children}

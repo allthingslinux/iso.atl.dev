@@ -1,6 +1,12 @@
 "use client";
 
-import { Suspense, useState, useEffect } from "react";
+import { Suspense, useEffect, useState } from "react";
+
+import { GetReadme, ListFiles } from "@/actions/files";
+import config from "@/config/gIndex.config";
+
+import { cn } from "@/lib/utils";
+
 import {
   FileActions,
   FileBreadcrumb,
@@ -8,17 +14,13 @@ import {
   FileReadme,
 } from "@/components/explorer";
 import { Error as ErrorComponent } from "@/components/layout";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import Icon from "@/components/ui/icon";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import Icon from "@/components/ui/icon";
-
-import { cn } from "@/lib/utils";
-
-import { GetReadme, ListFiles } from "@/actions/files";
-
-import config from "@/config/gIndex.config";
+import { type Schema_File } from "@/types/schema";
+import { type z } from "zod";
 
 type StorageInfo = {
   usage: { bytes: number; tb: number; gb: number };
@@ -40,7 +42,19 @@ type StorageInfo = {
   isSharedDrive: boolean;
 };
 
-
+// Define the expected type for data objects
+interface FileData {
+  data: {
+    files: unknown[];
+    nextPageToken?: string;
+  };
+}
+interface ReadmeData {
+  data: {
+    content: string;
+    type: string;
+  };
+}
 
 // Fallback components for Suspense
 const FileActionsFallback = () => (
@@ -72,13 +86,13 @@ const SystemInfoPanel = ({ rootItemCount }: { rootItemCount: number }) => {
   useEffect(() => {
     const fetchStorageInfo = async () => {
       try {
-        const response = await fetch('/api/internal/storage');
+        const response = await fetch("/api/internal/storage");
         if (response.ok) {
           const data = await response.json();
           setStorageInfo(data);
         }
       } catch (error) {
-        console.error('Failed to fetch storage info:', error);
+        console.error("Failed to fetch storage info:", error);
       } finally {
         setIsLoading(false);
       }
@@ -92,7 +106,11 @@ const SystemInfoPanel = ({ rootItemCount }: { rootItemCount: number }) => {
       <CardHeader className="pb-3">
         <CardTitle className="text-sm font-mono flex items-center gap-2">
           <div className="flex items-center justify-center w-6 h-6 rounded-md bg-primary/10 border border-primary/20">
-            <Icon name="Activity" className="h-3 w-3" style={{ color: "hsl(var(--color-primary))" }} />
+            <Icon
+              name="Activity"
+              className="h-3 w-3"
+              style={{ color: "hsl(var(--color-primary))" }}
+            />
           </div>
           System Information
         </CardTitle>
@@ -136,9 +154,9 @@ const SystemInfoPanel = ({ rootItemCount }: { rootItemCount: number }) => {
             </div>
           </div>
         </div>
-        
+
         <Separator />
-        
+
         {/* Storage Information */}
         <div className="space-y-2">
           <div className="flex items-center justify-between text-xs">
@@ -159,9 +177,11 @@ const SystemInfoPanel = ({ rootItemCount }: { rootItemCount: number }) => {
             )}
           </div>
           <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
-            <div 
-              className="bg-gradient-to-r from-green-500 to-yellow-500 h-2 rounded-full transition-all duration-500 ease-out" 
-              style={{ width: storageInfo ? `${storageInfo.percentage}%` : '0%' }}
+            <div
+              className="bg-gradient-to-r from-green-500 to-yellow-500 h-2 rounded-full transition-all duration-500 ease-out"
+              style={{
+                width: storageInfo ? `${storageInfo.percentage}%` : "0%",
+              }}
             />
           </div>
           {storageInfo && (
@@ -170,7 +190,7 @@ const SystemInfoPanel = ({ rootItemCount }: { rootItemCount: number }) => {
             </div>
           )}
         </div>
-        
+
         {/* File Type Statistics */}
         {storageInfo && storageInfo.fileTypeStats.length > 0 && (
           <>
@@ -187,14 +207,19 @@ const SystemInfoPanel = ({ rootItemCount }: { rootItemCount: number }) => {
                     "#10b981", // emerald-500
                     "#f59e0b", // amber-500
                     "#06b6d4", // cyan-500
-                    "#ec4899"  // pink-500
+                    "#ec4899", // pink-500
                   ];
                   return (
-                    <div key={stat.type} className="flex items-center justify-between text-xs group">
+                    <div
+                      key={stat.type}
+                      className="flex items-center justify-between text-xs group"
+                    >
                       <div className="flex items-center gap-2">
-                        <div 
-                          className="w-2 h-2 rounded-full transition-all duration-200 group-hover:scale-125" 
-                          style={{ backgroundColor: colors[index % colors.length] }}
+                        <div
+                          className="w-2 h-2 rounded-full transition-all duration-200 group-hover:scale-125"
+                          style={{
+                            backgroundColor: colors[index % colors.length],
+                          }}
                         />
                         <span className="font-mono uppercase">{stat.type}</span>
                       </div>
@@ -224,7 +249,7 @@ export default function RootPage() {
       try {
         const [filesResult, readmeResult] = await Promise.all([
           ListFiles(),
-          GetReadme()
+          GetReadme(),
         ]);
 
         if (!filesResult.success) {
@@ -240,7 +265,7 @@ export default function RootPage() {
         setData(filesResult);
         setReadme(readmeResult);
       } catch (err) {
-        setError(err instanceof Error ? err : new Error('Failed to load data'));
+        setError(err instanceof Error ? err : new Error("Failed to load data"));
       } finally {
         setIsLoading(false);
       }
@@ -251,7 +276,10 @@ export default function RootPage() {
 
   if (error) return <ErrorComponent error={error} />;
   if (isLoading) return <div className="p-8 text-center">Loading...</div>;
-  if (!data || !readme) return <div className="p-8 text-center">No data available</div>;
+  if (!data || !readme)
+    return <div className="p-8 text-center">No data available</div>;
+
+  const files = (data as FileData).data?.files as z.infer<typeof Schema_File>[];
 
   return (
     <div className={cn("h-fit w-full", "flex flex-col gap-6")}>
@@ -266,7 +294,9 @@ export default function RootPage() {
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
           <Icon name="HardDrive" className="h-4 w-4 text-muted-foreground" />
-          <span className="font-mono text-sm font-medium">Shared Drive • Connected</span>
+          <span className="font-mono text-sm font-medium">
+            Shared Drive • Connected
+          </span>
           <div className="ml-4 text-xs font-mono text-muted-foreground">
             Last sync: {new Date().toLocaleTimeString()}
           </div>
@@ -276,7 +306,9 @@ export default function RootPage() {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* System Info Sidebar */}
         <div className="lg:col-span-1 space-y-4">
-          <SystemInfoPanel rootItemCount={(data as any)?.data?.files?.length || 0} />
+          <SystemInfoPanel
+            rootItemCount={(data as FileData).data?.files?.length || 0}
+          />
         </div>
 
         {/* Main Content */}
@@ -287,7 +319,7 @@ export default function RootPage() {
                 <div className="flex items-center gap-3">
                   <CardTitle className="grow font-mono">File System</CardTitle>
                   <Badge variant="secondary" className="font-mono text-xs">
-                    {(data as any)?.data?.files?.length || 0} items
+                    {(data as FileData).data?.files?.length || 0} items
                   </Badge>
                 </div>
                 <div className="flex items-center gap-2">
@@ -301,19 +333,21 @@ export default function RootPage() {
             <CardContent className="p-2 pt-0 tablet:p-4 tablet:pt-0">
               <FileExplorerLayout
                 encryptedId={config.apiConfig.rootFolder}
-                files={(data as any)?.data?.files || []}
-                nextPageToken={(data as any)?.data?.nextPageToken ?? undefined}
+                files={files}
+                nextPageToken={
+                  (data as FileData).data?.nextPageToken ?? undefined
+                }
               />
             </CardContent>
           </Card>
         </div>
       </div>
 
-      {(readme as any)?.data && (
+      {(readme as ReadmeData).data && (
         <Suspense fallback={<FileReadmeFallback />}>
           <FileReadme
-            content={(readme as any).data.content}
-            title={`README.${(readme as any).data.type === "markdown" ? "md" : "txt"}`}
+            content={(readme as ReadmeData).data.content}
+            title={`README.${(readme as ReadmeData).data.type === "markdown" ? "md" : "txt"}`}
           />
         </Suspense>
       )}

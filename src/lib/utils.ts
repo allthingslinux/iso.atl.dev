@@ -1,10 +1,9 @@
+import config from "@/config/gIndex.config";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { type z } from "zod";
 
 import { Schema_Breadcrumb, type Schema_Config_Site } from "@/types/schema";
-
-import config from "@/config/gIndex.config";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -18,7 +17,7 @@ export function bytesToReadable(bytes: number): string {
   if (bytes === 0) return "0 Byte";
   const i = Math.floor(Math.log(bytes) / Math.log(1024));
   const value = bytes / Math.pow(1024, i);
-  return (i >= 2 ? value.toFixed(2) : Math.round(value)) + " " + sizes[i];
+  return `${i >= 2 ? value.toFixed(2) : Math.round(value)} ${sizes[i]}`;
 }
 
 /**
@@ -70,7 +69,7 @@ export function toUrlPath(paths: { path: string; id: string }[]): string {
  */
 export function formatFooterContent(
   text: { value: string }[],
-  siteConfig?: z.infer<typeof Schema_Config_Site>,
+  siteConfig?: z.infer<typeof Schema_Config_Site>
 ): string {
   const data = siteConfig ?? config.siteConfig;
   const formatMap = {
@@ -89,7 +88,7 @@ export function formatFooterContent(
     .join("\n")
     .replace(
       /{{\s*(\w+)\s*}}/g,
-      (_, key) => formatMap[key as keyof typeof formatMap] ?? "",
+      (_, key) => formatMap[key as keyof typeof formatMap] ?? ""
     );
 }
 
@@ -107,7 +106,7 @@ export function durationToReadable(durationMillis: number): string {
 }
 
 export function formatPathToBreadcrumb(
-  paths: { id: string; path: string; mimeType: string }[],
+  paths: { id: string; path: string; mimeType: string }[]
 ): z.infer<typeof Schema_Breadcrumb>[] {
   const breadcrumb = paths.map((item, index) => {
     const isLast = index === paths.length - 1;

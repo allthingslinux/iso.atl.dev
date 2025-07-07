@@ -1,16 +1,17 @@
 "use client";
 
+import { useState, useEffect } from "react";
+
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+
+import config from "@/config/gIndex.config";
+import { NO_LAYOUT_PATHS } from "@/constant";
 import ReactMarkdown from "react-markdown";
 import remarkBreaks from "remark-breaks";
-import { NO_LAYOUT_PATHS } from "@/constant";
-
-import { Skeleton } from "@/components/ui/skeleton";
 
 import useLoading from "@/hooks/useLoading";
 
-import config from "@/config/gIndex.config";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type Props = {
   content?: string;
@@ -18,8 +19,13 @@ type Props = {
 export default function Footer({ content }: Props) {
   const pathname = usePathname();
   const loading = useLoading();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [loadTime, setLoadTime] = useState<number>(0);
+  const [now, setNow] = useState<string | null>(null);
+
+  useEffect(() => {
+    setNow(`${new Date().toISOString().slice(0, 19)}Z`);
+    setLoadTime(performance.now());
+  }, []);
 
   if (NO_LAYOUT_PATHS.some((path) => new RegExp(path).test(pathname)))
     return null;
@@ -32,9 +38,9 @@ export default function Footer({ content }: Props) {
           <span>SYSTEM STATUS: OPERATIONAL</span>
         </div>
         <div className="text-muted-foreground/60">•</div>
-        <div className="text-xs font-mono text-muted-foreground">
-          {new Date().toISOString().slice(0, 19)}Z
-        </div>
+        {now ? (
+          <div className="text-xs font-mono text-muted-foreground">{now}</div>
+        ) : null}
       </div>
       {config.siteConfig.experimental_pageLoadTime &&
         (loading ? (

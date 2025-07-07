@@ -81,7 +81,7 @@ const extensionsMap: Record<FileTypes, string[]> = {
  */
 export function getFileType(
   fileExtension: string,
-  mimeType: string,
+  mimeType: string
 ): FileTypes | "unknown" {
   // Handle .ts video file
   if (fileExtension === "ts") {
@@ -92,7 +92,7 @@ export function getFileType(
     }
   }
   const type = Object.keys(extensionsMap).find((key) =>
-    extensionsMap[key as keyof typeof extensionsMap].includes(fileExtension),
+    extensionsMap[key as keyof typeof extensionsMap].includes(fileExtension)
   );
 
   return type ? (type as FileTypes) : "unknown";

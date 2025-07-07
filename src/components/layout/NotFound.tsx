@@ -1,9 +1,9 @@
 "use client";
 
+import useRouter from "@/hooks/usePRouter";
+
 import { Status } from "@/components/global";
 import { Button } from "@/components/ui/button";
-
-import useRouter from "@/hooks/usePRouter";
 
 export default function NotFoundClient() {
   const router = useRouter();

@@ -1,7 +1,11 @@
 "use client";
 
-import { useTheme } from "next-themes";
 import { useState } from "react";
+
+import { useTheme } from "next-themes";
+
+import { cn } from "@/lib/utils";
+
 import { useHydration } from "@/hooks/useHydration";
 
 import { Button } from "@/components/ui/button";
@@ -28,8 +32,6 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-
-import { cn } from "@/lib/utils";
 
 interface ThemeToggleProps {
   variant?: "desktop" | "mobile";
@@ -73,9 +75,7 @@ export default function ThemeToggle({ variant = "desktop" }: ThemeToggleProps) {
         <DrawerContent>
           <DrawerHeader className="text-start">
             <DrawerTitle>Theme</DrawerTitle>
-            <DrawerDescription>
-              Choose your preferred theme
-            </DrawerDescription>
+            <DrawerDescription>Choose your preferred theme</DrawerDescription>
           </DrawerHeader>
 
           <div className="grid gap-2 px-4">
@@ -93,11 +93,7 @@ export default function ThemeToggle({ variant = "desktop" }: ThemeToggleProps) {
                 <div className="flex w-full items-center justify-between">
                   <span className={cn("capitalize")}>{item}</span>
                   <Icon
-                    name={
-                      item === theme
-                        ? "Check"
-                        : getThemeIcon(item)
-                    }
+                    name={item === theme ? "Check" : getThemeIcon(item)}
                     size={"1rem"}
                   />
                 </div>
@@ -118,11 +114,7 @@ export default function ThemeToggle({ variant = "desktop" }: ThemeToggleProps) {
   }
 
   return (
-    <DropdownMenu
-      modal={false}
-      open={themeOpen}
-      onOpenChange={setThemeOpen}
-    >
+    <DropdownMenu modal={false} open={themeOpen} onOpenChange={setThemeOpen}>
       <Tooltip>
         <TooltipTrigger asChild>
           <DropdownMenuTrigger asChild>
@@ -133,7 +125,7 @@ export default function ThemeToggle({ variant = "desktop" }: ThemeToggleProps) {
                   "opacity-80",
                   "hover:opacity-100",
                   "cursor-pointer",
-                  "p-1.5",
+                  "p-1.5"
                 )}
               >
                 <Icon name={currentIcon} size={"1.25rem"} />
@@ -156,11 +148,7 @@ export default function ThemeToggle({ variant = "desktop" }: ThemeToggleProps) {
             <div className="flex w-full items-center justify-between">
               <span className={cn("capitalize")}>{item}</span>
               <Icon
-                name={
-                  item === theme
-                    ? "Check"
-                    : getThemeIcon(item)
-                }
+                name={item === theme ? "Check" : getThemeIcon(item)}
                 className="stroke-foreground"
               />
             </div>
@@ -169,4 +157,4 @@ export default function ThemeToggle({ variant = "desktop" }: ThemeToggleProps) {
       </DropdownMenuContent>
     </DropdownMenu>
   );
-} 
+}

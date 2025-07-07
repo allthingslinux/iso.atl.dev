@@ -1,19 +1,21 @@
 "use client";
 
 import * as React from "react";
-import * as LabelPrimitive from "@radix-ui/react-label";
+
+import type * as LabelPrimitive from "@radix-ui/react-label";
 import { Slot } from "@radix-ui/react-slot";
 import {
   Controller,
-  FormProvider,
-  useFormContext,
-  useFormState,
   type ControllerProps,
   type FieldPath,
   type FieldValues,
+  FormProvider,
+  useFormContext,
+  useFormState,
 } from "react-hook-form";
 
 import { cn } from "@/lib/utils";
+
 import { Label } from "@/components/ui/label";
 
 const Form = FormProvider;
@@ -26,7 +28,7 @@ type FormFieldContextValue<
 };
 
 const FormFieldContext = React.createContext<FormFieldContextValue>(
-  {} as FormFieldContextValue,
+  {} as FormFieldContextValue
 );
 
 const FormField = <
@@ -70,10 +72,14 @@ type FormItemContextValue = {
 };
 
 const FormItemContext = React.createContext<FormItemContextValue>(
-  {} as FormItemContextValue,
+  {} as FormItemContextValue
 );
 
-function FormItem({ className, ...props }: React.ComponentProps<"div">) {
+function FormItem(
+  props: React.ComponentProps<"div"> & { disableBorder?: boolean }
+) {
+  const { className, disableBorder, ...rest } = props;
+  const _disableBorder = disableBorder;
   const id = React.useId();
 
   return (
@@ -81,16 +87,21 @@ function FormItem({ className, ...props }: React.ComponentProps<"div">) {
       <div
         data-slot="form-item"
         className={cn("grid gap-2", className)}
-        {...props}
+        {...rest}
       />
     </FormItemContext.Provider>
   );
 }
 
-function FormLabel({
-  className,
-  ...props
-}: React.ComponentProps<typeof LabelPrimitive.Root>) {
+function FormLabel(
+  props: React.ComponentProps<typeof LabelPrimitive.Root> & {
+    resetDisabled?: boolean;
+    onFieldReset?: () => void;
+  }
+) {
+  const { className, resetDisabled, onFieldReset, ...rest } = props;
+  const _resetDisabled = resetDisabled;
+  const _onFieldReset = onFieldReset;
   const { error, formItemId } = useFormField();
 
   return (
@@ -99,7 +110,7 @@ function FormLabel({
       data-error={!!error}
       className={cn("data-[error=true]:text-destructive", className)}
       htmlFor={formItemId}
-      {...props}
+      {...rest}
     />
   );
 }
@@ -155,6 +166,12 @@ function FormMessage({ className, ...props }: React.ComponentProps<"p">) {
     </p>
   );
 }
+
+function _disableBorder() {}
+
+function _resetDisabled() {}
+
+function _onFieldReset() {}
 
 export {
   useFormField,

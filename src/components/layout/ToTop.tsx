@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 
+import { cn } from "@/lib/utils";
+
 import { Button } from "@/components/ui/button";
 import Icon from "@/components/ui/icon";
-
-import { cn } from "@/lib/utils";
 
 export default function ToTop() {
   const [show, setShow] = useState<boolean>(false);
@@ -29,7 +29,7 @@ export default function ToTop() {
         "fixed bottom-4 right-6 z-50 transition",
         show
           ? "pointer-events-auto opacity-100"
-          : "pointer-events-none opacity-0",
+          : "pointer-events-none opacity-0"
       )}
     >
       <Button

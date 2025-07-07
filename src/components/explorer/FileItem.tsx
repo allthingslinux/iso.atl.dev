@@ -1,9 +1,19 @@
 "use client";
 
-import { usePathname } from "next/navigation";
 import React, { useCallback, useMemo, useState } from "react";
+
+import { usePathname } from "next/navigation";
+
+import config from "@/config/gIndex.config";
+import { type TLayout } from "@/context/layoutContext";
 import { toast } from "sonner";
 import { type z } from "zod";
+
+import { type Schema_File } from "@/types/schema";
+
+import { bytesToReadable, durationToReadable, formatDate } from "@/lib/utils";
+
+import useRouter from "@/hooks/usePRouter";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
@@ -28,18 +38,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Icon, { type IconName } from "@/components/ui/icon";
+import Image from "next/image";
 
-import { type TLayout } from "@/context/layoutContext";
-import useRouter from "@/hooks/usePRouter";
-import {
-  bytesToReadable,
-  durationToReadable,
-  formatDate,
-} from "@/lib/utils";
-
-import { type Schema_File } from "@/types/schema";
-
-import config from "@/config/gIndex.config";
 // import { GetMostRecentFileUpdate } from "@/actions/folder";
 
 type Props = {
@@ -95,7 +95,7 @@ const FileInfoModal = ({
   const downloadUrl = useMemo(() => {
     const url = new URL(
       `/api/download${pathname}/${file.name}`.replace(/\/+/g, "/"),
-      config.basePath,
+      config.basePath
     );
     return url.toString();
   }, [pathname, file.name]);
@@ -154,10 +154,7 @@ const FileInfoModal = ({
 // =================================================================================================
 // ICON MAPPING & COLORS
 // =================================================================================================
-const getFileIcon = (
-  isFolder: boolean,
-  extension?: string,
-): IconName => {
+const getFileIcon = (isFolder: boolean, extension?: string): IconName => {
   if (isFolder) return "Folder";
   const ext = extension?.toLowerCase();
   const iconMap: Record<string, IconName> = {
@@ -214,7 +211,7 @@ const getFileIcon = (
 // Enhanced color mapping for different file types
 const getFileColor = (isFolder: boolean, extension?: string): string => {
   if (isFolder) return "hsl(var(--color-folder))";
-  
+
   const ext = extension?.toLowerCase();
   const colorMap: Record<string, string> = {
     // Archives
@@ -223,7 +220,7 @@ const getFileColor = (isFolder: boolean, extension?: string): string => {
     "7z": "hsl(var(--color-archive))",
     tar: "hsl(var(--color-archive))",
     gz: "hsl(var(--color-archive))",
-    
+
     // Code files
     js: "hsl(var(--color-code))",
     ts: "hsl(var(--color-code))",
@@ -237,7 +234,7 @@ const getFileColor = (isFolder: boolean, extension?: string): string => {
     html: "hsl(var(--color-code))",
     json: "hsl(var(--color-code))",
     xml: "hsl(var(--color-code))",
-    
+
     // Media files
     jpg: "hsl(var(--color-media))",
     jpeg: "hsl(var(--color-media))",
@@ -252,7 +249,7 @@ const getFileColor = (isFolder: boolean, extension?: string): string => {
     mp3: "hsl(var(--color-media))",
     wav: "hsl(var(--color-media))",
     flac: "hsl(var(--color-media))",
-    
+
     // ISO and system files
     iso: "hsl(var(--color-warning))",
     img: "hsl(var(--color-warning))",
@@ -262,7 +259,7 @@ const getFileColor = (isFolder: boolean, extension?: string): string => {
     rpm: "hsl(var(--color-success))",
     appimage: "hsl(var(--color-success))",
   };
-  
+
   return colorMap[ext || ""] || "hsl(var(--color-muted-foreground))";
 };
 
@@ -360,7 +357,7 @@ export const FileItem = ({ data: file, layout }: Props) => {
     if (isFolder) return;
     const downloadUrl = new URL(
       `/api/download${filePath}`,
-      config.basePath,
+      config.basePath
     ).toString();
     window.open(downloadUrl, "_blank");
   }, [filePath, isFolder]);
@@ -381,30 +378,35 @@ export const FileItem = ({ data: file, layout }: Props) => {
     >
       <div className="relative flex h-32 w-full items-center justify-center bg-muted/30">
         {file.thumbnailLink && file.mimeType.includes("image") ? (
-          <img
+          <Image
             src={`/api/thumb/${file.encryptedId}`}
             alt={file.name}
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            width={128}
+            height={128}
           />
         ) : (
           <div className="flex flex-col items-center justify-center">
-            <div 
+            <div
               className="flex items-center justify-center w-16 h-16 rounded-xl mb-2 shadow-sm"
-              style={{ backgroundColor: fileColor + "15", border: `2px solid ${fileColor}20` }}
+              style={{
+                backgroundColor: `${fileColor}15`,
+                border: `2px solid ${fileColor}20`,
+              }}
             >
-              <Icon 
-                name={fileIcon} 
-                className="h-8 w-8 transition-colors" 
+              <Icon
+                name={fileIcon}
+                className="h-8 w-8 transition-colors"
                 style={{ color: fileColor }}
               />
             </div>
             {file.fileExtension && (
-              <div 
+              <div
                 className="mt-1 px-2 py-1 rounded text-xs font-mono border transition-colors"
-                style={{ 
-                  backgroundColor: fileColor + "10",
-                  borderColor: fileColor + "30",
-                  color: fileColor
+                style={{
+                  backgroundColor: `${fileColor}10`,
+                  borderColor: `${fileColor}30`,
+                  color: fileColor,
                 }}
               >
                 {file.fileExtension.toUpperCase()}
@@ -424,18 +426,24 @@ export const FileItem = ({ data: file, layout }: Props) => {
           <span className="font-mono flex items-center gap-1">
             {isFolder ? (
               <>
-                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: fileColor }}></div>
+                <div
+                  className="w-2 h-2 rounded-full"
+                  style={{ backgroundColor: fileColor }}
+                ></div>
                 <span>DIR</span>
               </>
             ) : (
               <>
-                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: fileColor }}></div>
+                <div
+                  className="w-2 h-2 rounded-full"
+                  style={{ backgroundColor: fileColor }}
+                ></div>
                 <span>{bytesToReadable(file.size ?? 0)}</span>
               </>
             )}
           </span>
           <span className="font-mono">
-            {formatDate(file.modifiedTime).split(' ')[0]}
+            {formatDate(file.modifiedTime).split(" ")[0]}
           </span>
         </div>
       </CardHeader>
@@ -448,23 +456,26 @@ export const FileItem = ({ data: file, layout }: Props) => {
       onClick={handleClick}
     >
       <div className="flex items-center gap-3">
-        <div 
+        <div
           className="flex items-center justify-center w-8 h-8 rounded-lg shadow-sm"
-          style={{ backgroundColor: fileColor + "15", border: `1px solid ${fileColor}20` }}
+          style={{
+            backgroundColor: `${fileColor}15`,
+            border: `1px solid ${fileColor}20`,
+          }}
         >
-          <Icon 
-            name={fileIcon} 
-            className="h-4 w-4 shrink-0 transition-colors" 
+          <Icon
+            name={fileIcon}
+            className="h-4 w-4 shrink-0 transition-colors"
             style={{ color: fileColor }}
           />
         </div>
         {file.fileExtension && !isFolder && (
-          <div 
+          <div
             className="hidden sm:block px-1.5 py-0.5 rounded text-xs font-mono border transition-colors"
-            style={{ 
-              backgroundColor: fileColor + "10",
-              borderColor: fileColor + "30",
-              color: fileColor
+            style={{
+              backgroundColor: `${fileColor}10`,
+              borderColor: `${fileColor}30`,
+              color: fileColor,
             }}
           >
             {file.fileExtension.toUpperCase()}
@@ -475,14 +486,17 @@ export const FileItem = ({ data: file, layout }: Props) => {
         <div className="font-medium text-foreground">{file.name}</div>
         {!isFolder && file.mimeType && (
           <div className="text-xs text-muted-foreground font-mono mt-0.5">
-            {file.mimeType.split('/')[0]}/{file.mimeType.split('/')[1]}
+            {file.mimeType.split("/")[0]}/{file.mimeType.split("/")[1]}
           </div>
         )}
       </div>
       <div className="hidden w-24 text-sm text-muted-foreground sm:block font-mono">
         {!isFolder ? (
           <div className="flex items-center gap-1">
-            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: fileColor }}></div>
+            <div
+              className="w-2 h-2 rounded-full"
+              style={{ backgroundColor: fileColor }}
+            ></div>
             <span>{bytesToReadable(file.size ?? 0)}</span>
           </div>
         ) : null}

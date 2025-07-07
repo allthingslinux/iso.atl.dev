@@ -79,7 +79,7 @@ export const Schema_v1_Config = z.object({
         name: z.string(),
         href: z.string(),
         external: z.boolean().optional().default(false),
-      }),
+      })
     ),
   }),
 });
@@ -109,7 +109,7 @@ const Schema_Config_API = z
       if (data.isTeamDrive === true && !data.sharedDrive) return false;
       return true;
     },
-    { message: "sharedDrive is required when isTeamDrive is true" },
+    { message: "sharedDrive is required when isTeamDrive is true" }
   );
 
 const Schema_v2_3_Config_Site = z.object({
@@ -150,14 +150,14 @@ const Schema_v2_3_Config_Site = z.object({
       name: z.string(),
       href: z.string(),
       external: z.boolean().optional().default(false),
-    }),
+    })
   ),
   supports: z.array(
     z.object({
       name: z.string(),
       currency: z.string(),
       href: z.string(),
-    }),
+    })
   ),
 });
 export const Schema_Config_Site = z.object({
@@ -176,7 +176,7 @@ export const Schema_Config_Site = z.object({
     .array(
       z.object({
         value: z.string(),
-      }),
+      })
     )
     .default([]),
   experimental_pageLoadTime: z
@@ -208,14 +208,14 @@ export const Schema_Config_Site = z.object({
       name: z.string(),
       href: z.string(),
       external: z.coerce.boolean().optional().default(false),
-    }),
+    })
   ),
   supports: z.array(
     z.object({
       name: z.string(),
       currency: z.string(),
       href: z.string(),
-    }),
+    })
   ),
 
   previewSettings: z.object({
@@ -278,12 +278,12 @@ export const Schema_App_Configuration = z.object({
         sMaxAge: z.coerce.number().min(0),
         staleWhileRevalidate: z.coerce.boolean(),
       }),
-    }),
+    })
   ),
   site: Schema_Config_Site.and(
     z.object({
       guideButton: z.boolean(),
-    }),
+    })
   ),
 });
 

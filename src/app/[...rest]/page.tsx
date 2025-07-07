@@ -2,6 +2,12 @@ import { type Metadata, type ResolvedMetadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { GetBanner, GetFile, GetReadme, ListFiles } from "@/actions/files";
+import { ValidatePaths } from "@/actions/paths";
+
+import { getFileType } from "@/lib/previewHelper";
+import { formatPathToBreadcrumb } from "@/lib/utils";
+
 import {
   FileActions,
   FileBreadcrumb,
@@ -14,12 +20,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Icon from "@/components/ui/icon";
 
-import { getFileType } from "@/lib/previewHelper";
-import { formatPathToBreadcrumb } from "@/lib/utils";
-
-import { GetBanner, GetFile, GetReadme, ListFiles } from "@/actions/files";
-import { ValidatePaths } from "@/actions/paths";
-
 export const revalidate = 3600;
 export const dynamic = "force-static";
 
@@ -31,7 +31,7 @@ type Props = {
 
 export async function generateMetadata(
   { params }: Props,
-  parent: ResolvedMetadata,
+  parent: ResolvedMetadata
 ): Promise<Metadata> {
   const { rest } = await params;
 
@@ -71,7 +71,7 @@ export default async function RestPage({ params }: Props) {
   if (!currentPath)
     return <ErrorComponent error={new Error("Failed to get current path")} />;
 
-  const prevPath = "/" + rest.slice(0, -1).join("/");
+  const prevPath = `/${rest.slice(0, -1).join("/")}`;
 
   const Layout: React.FC<{
     children: React.ReactNode;

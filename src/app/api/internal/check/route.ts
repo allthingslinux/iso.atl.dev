@@ -1,18 +1,17 @@
 import { NextResponse } from "next/server";
 
-import { encryptionService } from "@/lib/utils.server";
-
 import config from "@/config/gIndex.config";
 
-export const runtime = "nodejs";
+import { encryptionService } from "@/lib/utils.server";
 
+export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
     if (process.env.NODE_ENV !== "development") {
       throw new Error(
-        "This route is only available in development environment",
+        "This route is only available in development environment"
       );
     }
 
@@ -26,7 +25,7 @@ export async function GET() {
         rootId,
         sharedDriveId,
       },
-      { status: 200 },
+      { status: 200 }
     );
   } catch (error) {
     const e = error as Error;

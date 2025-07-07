@@ -1,11 +1,10 @@
 import { type NextRequest, NextResponse } from "next/server";
 
-import { encryptionService, gdrive } from "@/lib/utils.server";
-
 import config from "@/config/gIndex.config";
 
-export const runtime = "nodejs";
+import { encryptionService, gdrive } from "@/lib/utils.server";
 
+export const runtime = "nodejs";
 export const dynamic = "force-static";
 
 type Props = {
@@ -48,7 +47,7 @@ export async function GET(request: NextRequest, { params }: Props) {
       },
       {
         status: 500,
-      },
+      }
     );
   }
 }

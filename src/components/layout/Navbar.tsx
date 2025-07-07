@@ -2,12 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
+
+import config from "@/config/gIndex.config";
 import { NO_LAYOUT_PATHS } from "@/constant";
 
-import ThemeToggle from "./ThemeToggle";
-
 import { SearchCommand } from "@/components/search/SearchCommand";
-import config from "@/config/gIndex.config";
+
+import ThemeToggle from "./ThemeToggle";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -23,16 +25,25 @@ export default function Navbar() {
           <div className="flex items-center justify-start">
             <Link href="/" className="flex items-center space-x-3">
               <div className="relative flex items-center justify-center">
-                <img
+                <Image
                   src={config.siteConfig.siteIcon}
                   alt={config.siteConfig.siteName}
+                  width={32}
+                  height={32}
                   className="h-8 w-8"
                 />
-                <div className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-success animate-pulse shadow-sm" style={{ backgroundColor: "hsl(var(--color-success))" }}></div>
+                <div
+                  className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-success animate-pulse shadow-sm"
+                  style={{ backgroundColor: "hsl(var(--color-success))" }}
+                ></div>
               </div>
               <div className="hidden font-mono text-sm font-semibold sm:flex flex-col">
-                <span className="text-foreground leading-tight">{config.siteConfig.siteName}</span>
-                <span className="text-xs text-muted-foreground font-mono leading-tight">v2.4.2 • ONLINE</span>
+                <span className="text-foreground leading-tight">
+                  {config.siteConfig.siteName}
+                </span>
+                <span className="text-xs text-muted-foreground font-mono leading-tight">
+                  v2.4.2 • ONLINE
+                </span>
               </div>
             </Link>
           </div>

@@ -1,18 +1,17 @@
 "use server";
 
-import { type z } from "zod";
+import config from "@/config/gIndex.config";
 import { type ActionResponseSchema } from "@/types";
-
-import { encryptionService, gdrive } from "@/lib/utils.server";
+import { type z } from "zod";
 
 import { Schema_File } from "@/types/schema";
 
-import config from "@/config/gIndex.config";
+import { encryptionService, gdrive } from "@/lib/utils.server";
 
 import { GetFilePaths } from "./paths";
 
 export async function SearchFiles(
-  query: string,
+  query: string
 ): Promise<ActionResponseSchema<z.infer<typeof Schema_File>[]>> {
   const isSharedDrive = !!(
     config.apiConfig.isTeamDrive && config.apiConfig.sharedDrive
@@ -96,13 +95,13 @@ export async function SearchFiles(
 }
 
 export async function GetSearchResultPath(
-  id: string,
+  id: string
 ): Promise<ActionResponseSchema<string>> {
   const isSharedDrive = !!(
     config.apiConfig.isTeamDrive && config.apiConfig.sharedDrive
   );
   const decryptedId = await encryptionService.decrypt(
-    id ?? config.apiConfig.rootFolder,
+    id ?? config.apiConfig.rootFolder
   );
 
   const { data } = await gdrive.files.get({

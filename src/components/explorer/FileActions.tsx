@@ -2,6 +2,12 @@
 
 import React, { useCallback, useState } from "react";
 
+import { useLayout } from "@/context/layoutContext";
+
+import { cn } from "@/lib/utils";
+
+import useLoading from "@/hooks/useLoading";
+
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -17,10 +23,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-import { useLayout } from "@/context/layoutContext";
-import useLoading from "@/hooks/useLoading";
-import { cn } from "@/lib/utils";
-
 const FileActions = React.memo(() => {
   const loading = useLoading();
   const { layout, setLayout, isPending } = useLayout();
@@ -32,7 +34,7 @@ const FileActions = React.memo(() => {
       setLayout(newLayout);
       setLayoutOpen(false);
     },
-    [setLayout],
+    [setLayout]
   );
 
   if (loading) {

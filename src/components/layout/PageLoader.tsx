@@ -1,8 +1,8 @@
 "use client";
 
-import Icon from "@/components/ui/icon";
-
 import { cn } from "@/lib/utils";
+
+import Icon from "@/components/ui/icon";
 
 type Props = {
   message?: string;
@@ -15,7 +15,7 @@ export default function PageLoader({ message, extra }: Props) {
       className={cn(
         "h-auto min-h-[50dvh] w-full",
         "flex grow flex-col items-center justify-center gap-2",
-        "text-foreground",
+        "text-foreground"
       )}
     >
       <Icon
