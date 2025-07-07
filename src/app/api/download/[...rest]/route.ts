@@ -7,6 +7,8 @@ import { ValidatePaths } from "@/actions/paths";
 
 import config from "@/config/gIndex.config";
 
+export const runtime = "nodejs";
+
 export const dynamic = "force-static";
 
 export async function GET(

@@ -6,6 +6,8 @@ import { encryptionService } from "@/lib/utils.server";
 
 import config from "@/config/gIndex.config";
 
+export const runtime = "nodejs";
+
 export const dynamic = "force-dynamic";
 
 type Props = {

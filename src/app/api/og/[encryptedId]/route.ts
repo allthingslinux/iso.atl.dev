@@ -4,6 +4,8 @@ import { encryptionService, gdrive } from "@/lib/utils.server";
 
 import config from "@/config/gIndex.config";
 
+export const runtime = "nodejs";
+
 export const dynamic = "force-static";
 
 type Props = {
