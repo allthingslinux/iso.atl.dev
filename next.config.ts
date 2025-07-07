@@ -38,6 +38,7 @@ const nextConfig: NextConfig = {
       "framer-motion",
       "@tanstack/react-virtual",
     ],
+    nodeMiddleware: true,
     // Server Actions optimization for Google Drive API
     serverActions: {
       allowedOrigins: ["localhost:3000", process.env.VERCEL_URL || ""],

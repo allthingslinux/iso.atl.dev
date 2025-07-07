@@ -1,5 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 
+export const runtime = "nodejs";
+
 export async function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
   const headers = new Headers(req.headers);

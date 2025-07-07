@@ -6,6 +6,8 @@ import { z } from "zod";
 
 import { encryptionService } from "@/lib/utils.server";
 
+export const runtime = "nodejs";
+
 export const dynamic = "force-dynamic";
 
 type Props = {

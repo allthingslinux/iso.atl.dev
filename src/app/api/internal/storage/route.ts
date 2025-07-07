@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 
 import { GetStorageInfo } from "@/actions/files";
 
+export const runtime = "nodejs";
+
 export async function GET() {
   try {
     const result = await GetStorageInfo();

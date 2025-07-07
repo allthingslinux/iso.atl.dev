@@ -5,6 +5,7 @@ import { ValidatePaths } from "@/actions/paths";
 
 import { encryptionService } from "@/lib/utils.server";
 
+export const runtime = "nodejs";
 export const dynamic = "force-static";
 
 export async function GET(

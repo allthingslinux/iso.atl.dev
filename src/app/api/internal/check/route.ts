@@ -4,6 +4,7 @@ import config from "@/config/gIndex.config";
 
 import { encryptionService } from "@/lib/utils.server";
 
+export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
