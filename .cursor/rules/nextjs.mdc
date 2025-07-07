@@ -1,0 +1,303 @@
+---
+alwaysApply: true
+---
+
+Next-GDrive-Index
+Applies to: Node 18+, TypeScript 5, Next.js 15 (App Router), React 19, Tailwind 4, Shadcn/Radix.
+
+────────────────────────────────────────
+1. Development Philosophy
+• Readability, maintainability, testability > premature optimisation  
+• Functional & declarative code; follow SOLID and Composition-over-Inheritance  
+• Server Components first; add 'use client' only when you need the browser  
+• Small, single-purpose functions, components, files, and folders  
+
+────────────────────────────────────────
+2. Project Layout
+src/  
+  app/                     – Next.js routes (RSC by default)  
+  components/feature-x/    – React UI (kebab-case dirs)  
+  hooks/                   – custom hooks  
+  lib/                     – helpers, adapters, utilities  
+  types/                   – shared TypeScript interfaces  
+  tests/                   – co-located *.test.ts(x)  
+scripts/                   – build/CLI helpers  
+
+One named export per file.
+
+────────────────────────────────────────
+3. Naming Conventions
+Directories & files kebab-case  
+React components / types PascalCase  
+Variables, functions, hooks camelCase (hooks start with use)  
+Booleans verbNoun (isLoading, canSubmit)  
+Env vars & constants UPPER_SNAKE_CASE  
+
+────────────────────────────────────────
+4. Code Style (ESLint + Prettier)
+• TypeScript strict mode; never any (use unknown or generics)  
+• Prefer interfaces over type when extending; avoid enums → const maps  
+• Declare with function keyword; arrow funcs only for tiny callbacks  
+• 2-space indent, single quotes, no semicolons (unless required), ≤100 cols  
+• Early return; no deep nesting; ≤20 LOC per function  
+• Iterate with map/filter/reduce; avoid for unless necessary  
+• Dead code & unused imports forbidden (eslint-plugin-unused-imports)  
+
+────────────────────────────────────────
+5. React & Next.js
+• Data fetching ⇒ RSC (cache()/revalidate)  
+• Client components isolated to UI state, event listeners, browser-only libs  
+• Code-split: next/dynamic + <Suspense fallback />  
+• Images: next/image, WebP/AVIF, explicit width/height, loading='lazy'  
+• URL state ⇒ nuqs (search params)  
+• Optimise Web Vitals (LCP, CLS, FID) with proper loading order & layout shifts prevention  
+
+────────────────────────────────────────
+6. Styling & UI
+• Tailwind utility-first; class-variance-authority or tailwind-merge for variants  
+• Shadcn UI (Radix primitives) for accessible components  
+• Mobile-first breakpoints; dark mode via next-themes + Tailwind dark: class  
+
+────────────────────────────────────────
+7. Data Validation
+• Zod for runtime schema validation (forms, API payloads)  
+• Always validate external data at boundaries (fetch responses, env vars)  
+
+────────────────────────────────────────
+8. Error Handling
+• Throw typed errors; catch only to add context or show user feedback  
+• UI errors captured with React error boundaries; log to Sentry (server & client)  
+
+────────────────────────────────────────
+9. Testing
+Tooling: Vitest or Jest, React Testing Library, Playwright for E2E  
+Unit (Arrange-Act-Assert): one *.test.tsx per module, mock I/O  
+Integration: call real fetch handlers when feasible  
+E2E: Playwright flows against built app  
+
+────────────────────────────────────────
+10. Quality Gates (CI)
+npm run validate = type-check + lint + prettier --check + vitest  
+All checks must pass before merging.
+
+────────────────────────────────────────
+11. Skeleton Examples
+components/file-card/file-card.tsx
+----------------------------------
+'use client'
+
+import { type FC } from 'react'
+import Image from 'next/image'
+import { cn } from '@/src/lib/cn'
+
+interface FileCardProps {
+  name: string
+  thumbnailUrl: string
+  isSelected?: boolean
+}
+
+export function FileCard ({ name, thumbnailUrl, isSelected = false }: FileCardProps) {
+  return (
+    <div className={cn(
+      'flex flex-col gap-2 p-2 rounded-lg cursor-pointer',
+      isSelected && 'ring-2 ring-primary'
+    )}>
+      <Image
+        src={thumbnailUrl}
+        alt={`${name} thumbnail`}
+        width={180}
+        height={120}
+        className='rounded-md object-cover'
+        loading='lazy'
+      />
+      <span className='truncate text-sm'>{name}</span>
+    </div>
+  )
+}
+
+lib/cn.ts
+---------
+export function cn (...classes: (string | undefined | false)[]) {
+  return classes.filter(Boolean).join(' ')
+}
+
+────────────────────────────────────────
+12. ESLint / Prettier Quick-Start
+.eslintrc.json
+{
+  "extends": [
+    "next/core-web-vitals",
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:jsx-a11y/recommended",
+    "plugin:prettier/recommended"
+  ],
+  "plugins": ["unused-imports"],
+  "rules": {
+    "curly": ["error", "multi-line"],
+    "unused-imports/no-unused-imports": "error",
+    "@typescript-eslint/consistent-type-imports": "error"
+  }
+}
+
+.prettierrc
+{
+  "singleQuote": true,
+  "semi": false,
+  "trailingComma": "all",
+  "printWidth": 100,
+  "tabWidth": 2
+}
+
+────────────────────────────────────────
+Keep the guide living, concise, and contributor-friendly.Next-GDrive-Index – Engineering Guide (Backend-less Edition)
+Applies to: Node 18+, TypeScript 5, Next.js 15 (App Router), React 19, Tailwind 4, Shadcn/Radix.
+
+────────────────────────────────────────
+1. Development Philosophy
+• Readability, maintainability, testability > premature optimisation  
+• Functional & declarative code; follow SOLID and Composition-over-Inheritance  
+• Server Components first; add 'use client' only when you need the browser  
+• Small, single-purpose functions, components, files, and folders  
+
+────────────────────────────────────────
+2. Project Layout
+src/  
+  app/                     – Next.js routes (RSC by default)  
+  components/feature-x/    – React UI (kebab-case dirs)  
+  hooks/                   – custom hooks  
+  lib/                     – helpers, adapters, utilities  
+  types/                   – shared TypeScript interfaces  
+  tests/                   – co-located *.test.ts(x)  
+scripts/                   – build/CLI helpers  
+
+One named export per file.
+
+────────────────────────────────────────
+3. Naming Conventions
+Directories & files kebab-case  
+React components / types PascalCase  
+Variables, functions, hooks camelCase (hooks start with use)  
+Booleans verbNoun (isLoading, canSubmit)  
+Env vars & constants UPPER_SNAKE_CASE  
+
+────────────────────────────────────────
+4. Code Style (ESLint + Prettier)
+• TypeScript strict mode; never any (use unknown or generics)  
+• Prefer interfaces over type when extending; avoid enums → const maps  
+• Declare with function keyword; arrow funcs only for tiny callbacks  
+• 2-space indent, single quotes, no semicolons (unless required), ≤100 cols  
+• Early return; no deep nesting; ≤20 LOC per function  
+• Iterate with map/filter/reduce; avoid for unless necessary  
+• Dead code & unused imports forbidden (eslint-plugin-unused-imports)  
+
+────────────────────────────────────────
+5. React & Next.js
+• Data fetching ⇒ RSC (cache()/revalidate)  
+• Client components isolated to UI state, event listeners, browser-only libs  
+• Code-split: next/dynamic + <Suspense fallback />  
+• Images: next/image, WebP/AVIF, explicit width/height, loading='lazy'  
+• URL state ⇒ nuqs (search params)  
+• Optimise Web Vitals (LCP, CLS, FID) with proper loading order & layout shifts prevention  
+
+────────────────────────────────────────
+6. Styling & UI
+• Tailwind utility-first; class-variance-authority or tailwind-merge for variants  
+• Shadcn UI (Radix primitives) for accessible components  
+• Mobile-first breakpoints; dark mode via next-themes + Tailwind dark: class  
+
+────────────────────────────────────────
+7. Data Validation
+• Zod for runtime schema validation (forms, API payloads)  
+• Always validate external data at boundaries (fetch responses, env vars)  
+
+────────────────────────────────────────
+8. Error Handling
+• Throw typed errors; catch only to add context or show user feedback  
+• UI errors captured with React error boundaries; log to Sentry (server & client)  
+
+────────────────────────────────────────
+9. Testing
+Tooling: Vitest or Jest, React Testing Library, Playwright for E2E  
+Unit (Arrange-Act-Assert): one *.test.tsx per module, mock I/O  
+Integration: call real fetch handlers when feasible  
+E2E: Playwright flows against built app  
+
+────────────────────────────────────────
+10. Quality Gates (CI)
+npm run validate = type-check + lint + prettier --check + vitest  
+All checks must pass before merging.
+
+────────────────────────────────────────
+11. Skeleton Examples
+components/file-card/file-card.tsx
+----------------------------------
+'use client'
+
+import { type FC } from 'react'
+import Image from 'next/image'
+import { cn } from '@/src/lib/cn'
+
+interface FileCardProps {
+  name: string
+  thumbnailUrl: string
+  isSelected?: boolean
+}
+
+export function FileCard ({ name, thumbnailUrl, isSelected = false }: FileCardProps) {
+  return (
+    <div className={cn(
+      'flex flex-col gap-2 p-2 rounded-lg cursor-pointer',
+      isSelected && 'ring-2 ring-primary'
+    )}>
+      <Image
+        src={thumbnailUrl}
+        alt={`${name} thumbnail`}
+        width={180}
+        height={120}
+        className='rounded-md object-cover'
+        loading='lazy'
+      />
+      <span className='truncate text-sm'>{name}</span>
+    </div>
+  )
+}
+
+lib/cn.ts
+---------
+export function cn (...classes: (string | undefined | false)[]) {
+  return classes.filter(Boolean).join(' ')
+}
+
+────────────────────────────────────────
+12. ESLint / Prettier Quick-Start
+.eslintrc.json
+{
+  "extends": [
+    "next/core-web-vitals",
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:jsx-a11y/recommended",
+    "plugin:prettier/recommended"
+  ],
+  "plugins": ["unused-imports"],
+  "rules": {
+    "curly": ["error", "multi-line"],
+    "unused-imports/no-unused-imports": "error",
+    "@typescript-eslint/consistent-type-imports": "error"
+  }
+}
+
+.prettierrc
+{
+  "singleQuote": true,
+  "semi": false,
+  "trailingComma": "all",
+  "printWidth": 100,
+  "tabWidth": 2
+}
+
+────────────────────────────────────────
+Keep the guide living, concise, and contributor-friendly.

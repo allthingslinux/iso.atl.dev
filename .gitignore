@@ -43,3 +43,5 @@ next-env.d.ts
 /src/utils/_legacy
 /src/components/_legacy
 .env.production
+
+!.cursor/

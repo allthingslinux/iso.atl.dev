@@ -1,0 +1,64 @@
+---
+alwaysApply: true
+---
+ISO Archival Project — Executive Summary
+
+Purpose  
+Create a long-term, publicly searchable archive of operating-system installation media (ISOs) with an emphasis on niche, obsolete, and hard-to-find releases. The archive will preserve software history, simplify research, and prevent data-loss events such as vendor link rot.
+
+Scope  
+1. Coverage  
+   • Primary: Vintage, esoteric, or discontinued OSes (DOS, OS/2, Haiku, Solaris, etc.).  
+   • Secondary: Modern, mainstream distros when they add historical value (Ubuntu LTS snapshots, legacy Windows, etc.).  
+   • Language priority: English editions first; non-English stored separately unless no English build exists.  
+2. Assets  
+   • ISO images and companion files (checksum, signatures, release notes).  
+   • Non-ISO installer formats (floppy sets, images, recovery archives) when they are the canonical distribution format.  
+3. Metadata  
+   • Structured fields: OS Type → Distribution → Version → Edition/Spin → Architecture → ISO Type → Release Date → Language.  
+   • Integrity: SHA-256/512 checksums and optional GPG signatures.
+
+High-Level Architecture  
+Google Drive hosts the raw files. A Google Sheet acts as the authoritative index. Custom Google Apps Scripts maintain bidirectional sync:  
+• New files dropped into a “Data Dump” folder are fingerprinted, renamed, and relocated into a canonical directory tree.  
+• Sheet rows are created/updated automatically; any manual edits in the sheet (e.g., corrected metadata) trigger Drive moves or renames.
+
+Proposed Directory Tree  
+/OS_Type/Letter/Distribution_Name/Version/  
+  └── <filename>.iso  
+  └── <filename>.iso.sha256  
+
+Example:  
+/Linux/U/Ubuntu/22.04/ubuntu-22.04-x64-live-20231001-en-us.iso
+
+Filename Convention  
+<os>-<version>-<arch_wrapper>-<iso_type>-<yyyymmdd>-<lang>.iso  
+Extensible tokens allow editions (XFCE, Lite), build numbers, or init systems when meaningful.
+
+Planned Tooling & Automations  
+• Drive ↔ Sheet Sync: Google Apps Script
+• Verification: Automatic SHA generation and comparison, with a “verified” flag in the sheet.  
+• Download Pipeline: Dedicated server runs JDownloader/aria2, uploads to Drive via rclone.  
+• Gamification: “Completionist” metrics and conditional formatting in Sheets to surface archive progress.  
+• AI Agents: Explore worker automation for metadata enrichment (e.g., scrape distro pages for hashes).
+
+Frontend  
+Requirements: modern UI, no Cloudflare proxying of large binaries, easily maintained. Candidate paths:  
+• Fork next-gdrive-index (Next.js 15) and tailor for ISO browsing/search.  
+• Evaluate minimal Cloudflare Worker or Vue-based GoIndex forks if maintenance burden remains low.
+
+Open Questions  
+• Final decision on including mainstream, actively supported distros.  
+• How spins/editions influence naming vs. directory depth.  
+• Whether to host mobile and Windows images or classify them under “Vintage.”  
+• Long-term off-Drive cold-storage backup strategy.
+
+Current Action Items  
+1. Ratify directory structure and naming convention.  
+2. Finish Drive ↔ Sheet sync script prototype.  
+3. Stand up a minimal Next.js frontend connected to the public Drive.  
+4. Define checksum policy and implement automated validation.  
+5. Draft contributor SOPs (upload, verify, move to “done”).
+
+Outcome  
+A community-maintained, rigorously organised repository that lets anyone locate, verify, and download historical operating-system media through a web interface or API, ensuring these digital artifacts remain available for decades to come.
