@@ -2,8 +2,6 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
-import { type SpecialComponents } from "react-markdown/lib/ast-to-react";
-import { type NormalComponents } from "react-markdown/lib/complex-types";
 import rehypeKatex from "rehype-katex";
 import rehypePrism from "rehype-prism-plus";
 import rehypeRaw from "rehype-raw";
@@ -22,9 +20,7 @@ type Props = {
   content: string;
   view?: "markdown" | "raw";
   className?: string;
-  customComponents?: Partial<
-    Omit<NormalComponents, keyof SpecialComponents> & SpecialComponents
-  >;
+  customComponents?: Record<string, React.ComponentType<Record<string, unknown>>>;
 };
 export default function Markdown({
   content,
@@ -78,7 +74,9 @@ export default function Markdown({
                         className,
                       )}
                       onClick={() => {
-                        window.open(src, "_blank");
+                        if (typeof src === "string") {
+                          window.open(src, "_blank");
+                        }
                       }}
                       {...props}
                     />
@@ -113,7 +111,7 @@ export default function Markdown({
                 </p>
               ),
               pre: PreComponent,
-              code: ({ inline: _inline, className, children, ...props }) => (
+              code: ({ className, children, ...props }) => (
                 <code
                   className={cn(
                     `whitespace-pre-wrap! break-words font-mono text-sm!`,
@@ -141,7 +139,7 @@ function PreComponent(props: React.HTMLAttributes<HTMLPreElement>) {
   const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "error">(
     "idle",
   );
-  const copyTimeout = useRef<NodeJS.Timeout>();
+  const copyTimeout = useRef<NodeJS.Timeout | undefined>(undefined);
 
   const handleCopy = useCallback(async () => {
     if (!codeRef.current) return;
