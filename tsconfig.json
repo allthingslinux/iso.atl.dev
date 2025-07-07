@@ -1,48 +1,74 @@
 {
+  "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
-    "esModuleInterop": true,
-    "skipLibCheck": true,
     "target": "ES2022",
-    "allowJs": true,
-    "resolveJsonModule": true,
-    "moduleDetection": "force",
-
-    "strict": true,
-    "noUncheckedIndexedAccess": false,
-    "checkJs": false,
-    "forceConsistentCasingInFileNames": true,
-    "noImplicitOverride": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "exactOptionalPropertyTypes": false,
-    "noImplicitReturns": true,
-    "noPropertyAccessFromIndexSignature": false,
-
     "lib": ["dom", "dom.iterable", "ES2022"],
-    "noEmit": true,
+    "jsx": "preserve",
+
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "jsx": "preserve",
-    "plugins": [{ "name": "next" }],
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "checkJs": false,
+
+    "noEmit": true,
     "incremental": true,
+
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
+    "moduleDetection": "force",
+    "verbatimModuleSyntax": false,
     "allowImportingTsExtensions": false,
+
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": false,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": false,
+    "exactOptionalPropertyTypes": false,
+    "allowUnusedLabels": false,
+    "allowUnreachableCode": false,
+
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+
+    "plugins": [{ "name": "next" }],
 
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "~/*": ["./public/*"]
     }
   },
   "include": [
-    "eslint.config.mjs",
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "**/*.js",
     ".next/types/**/*.ts",
-    "**/*.cjs",
-    "**/*.mjs"
+    "*.config.js",
+    "*.config.mjs",
+    "*.config.ts"
   ],
-  "exclude": ["node_modules", ".next"]
+  "exclude": [
+    "node_modules",
+    ".next",
+    "out",
+    "build",
+    "dist",
+    "tmp",
+    "temp"
+  ]
 }
