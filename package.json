@@ -15,7 +15,7 @@
     "type-check": "tsc --noEmit",
     "type-check:watch": "tsc --noEmit --watch",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json}\" --cache",
-    "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json}\" --cache",
+    "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json}\" --no-cache",
     "validate": "npm run type-check && npm run lint && npm run format:check",
     "cli": "node ./scripts/cli.mjs",
     "prepare": "husky",
