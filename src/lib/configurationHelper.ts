@@ -6,9 +6,9 @@ import {
   Schema_Config,
   Schema_v1_Config,
   Schema_v2_3_Config,
-} from "~/types/schema";
+} from "@/types/schema";
 
-import config from "~/config/gIndex.config";
+import config from "@/config/gIndex.config";
 
 export const versionExpectMap: Record<"v1" | "v2" | "latest", string[]> = {
   v1: ["1.0.0", "1.0.1", "1.0.2", "1.0.3"],
@@ -96,7 +96,6 @@ export const initialConfiguration: z.input<typeof Schema_App_Configuration> = {
   version: config.version,
   environment: {
     ENCRYPTION_KEY: "",
-    SITE_PASSWORD: "",
     GD_SERVICE_B64: "",
     NEXT_PUBLIC_DOMAIN: "",
   },
@@ -111,7 +110,10 @@ export const initialConfiguration: z.input<typeof Schema_App_Configuration> = {
     rootFolder: "",
     isTeamDrive: false,
     sharedDrive: "",
-    defaultQuery: ["trashed = false", "(not mimeType contains 'google-apps' or mimeType contains 'folder')"],
+    defaultQuery: [
+      "trashed = false",
+      "(not mimeType contains 'google-apps' or mimeType contains 'folder')",
+    ],
     defaultField:
       "id, name, mimeType, thumbnailLink, fileExtension, modifiedTime, size, imageMediaMetadata, videoMediaMetadata, webContentLink, trashed",
     defaultOrder: "folder, name asc, modifiedTime desc",
@@ -120,13 +122,17 @@ export const initialConfiguration: z.input<typeof Schema_App_Configuration> = {
     proxyThumbnail: true,
     streamMaxSize: 100 * 1024 * 1024,
     specialFile: {
-      password: ".password",
       readme: ".readme.md",
       banner: ".banner",
     },
-    hiddenFiles: [".password", ".readme.md", ".banner", ".banner.jpg", ".banner.png", ".banner.webp"],
-    allowDownloadProtectedFile: false,
-    temporaryTokenDuration: 6,
+    hiddenFiles: [
+      ".readme.md",
+      ".banner",
+      ".banner.jpg",
+      ".banner.png",
+      ".banner.webp",
+    ],
+
     maxFileSize: 4 * 1024 * 1024,
   },
 
@@ -145,10 +151,12 @@ export const initialConfiguration: z.input<typeof Schema_App_Configuration> = {
     showFileExtension: true,
     footer: [
       { value: "{{ poweredBy }}" },
-      { value: "Made with ❤️ by [**{{ author }}**](https://github.com/mbaharip)" },
+      {
+        value:
+          "Made with ❤️ by [**{{ author }}**](https://github.com/mbaharip)",
+      },
     ],
     experimental_pageLoadTime: false,
-    privateIndex: false,
     breadcrumbMax: 3,
     toaster: {
       position: "bottom-right",
@@ -166,9 +174,9 @@ export const initialConfiguration: z.input<typeof Schema_App_Configuration> = {
 };
 
 export const configurationTemplate = `import { type z } from "zod";
-import { BASE_URL, IS_DEV } from "~/constant";
+import { BASE_URL, IS_DEV } from "@/constant";
 
-import { type Schema_Config } from "~/types/schema";
+import { type Schema_Config } from "@/types/schema";
 
 const config: z.input<typeof Schema_Config> = {
   /**
@@ -245,7 +253,6 @@ const config: z.input<typeof Schema_Config> = {
      * and will be hidden from the files list by default
      */
     specialFile: {
-      password: "{{ api.specialFile.password }}",
       readme: "{{ api.specialFile.readme }}",
       /**
        * Banner will be used for opengraph image for folder
@@ -306,28 +313,7 @@ const config: z.input<typeof Schema_Config> = {
      */
     maxFileSize: {{ api.maxFileSize }},
 
-    /**
-     * Allow user to download protected file without password.
-     * If this set to false, download link will have temporary token attached to it
-     * If this set to true, user can download the file without password as long as they have the link
-     *
-     * Default: false
-     */
-    allowDownloadProtectedFile: {{ api.allowDownloadProtectedFile }},
 
-    /**
-     * Duration in hours.
-     * In version 2, this will be used for download link expiration.
-     * If you need it under 1 hour, you can use math expression. (e.g: (5 / 60) * 1 = 5 minutes)
-     *
-     * This only affect when the user download the file
-     * For example if you set it for example 30 minutes (0.5)
-     * After 30 minutes, and the user still downloading the file, the download will NOT be interrupted
-     * But if the user refresh the page / trying to download again, the download link will be expired
-     *
-     * Default: 1 hour
-     */
-    temporaryTokenDuration: {{ api.temporaryTokenDuration }},
   },
 
   siteConfig: {
@@ -364,14 +350,7 @@ const config: z.input<typeof Schema_Config> = {
      */
     showFileExtension: {{ site.showFileExtension }},
 
-    /**
-     * Site wide password protection
-     * If this is set, all files and folders will be protected by this password
-     *
-     * The site password are set from Environment Variable (NEXT_GDRIVE_INDEX_PASSWORD)
-     * It's because I don't want to store sensitive data in the code
-     */
-    privateIndex: {{ site.privateIndex }},
+
 
     /**
      * Maximum breadcrumb length
@@ -462,8 +441,6 @@ export const environmentTemplate = `# Base64 Encoded Service Account JSON
 GD_SERVICE_B64={{ serviceAccount }}
 # Secret Key for Encryption
 ENCRYPTION_KEY={{ key }}
-# Index password, used when private mode is enabled
-SITE_PASSWORD={{ password }}
 
 # [Optional] Only domain, without protocol (ex: mbaharip.com)
 # Needed if you're not using Vercel
@@ -484,7 +461,11 @@ type ConfigurationResponse<T extends z.ZodObject<any>> =
     };
 
 export function parseVersion1Config(configuration: string) {
-  const config = (configuration.split(/const config:\s.*?=\s/g)[1]?.split("export default config;")[0] ?? "")
+  const config = (
+    configuration
+      .split(/const config:\s.*?=\s/g)[1]
+      ?.split("export default config;")[0] ?? ""
+  )
 
     .replace(/\\/g, "") // Remove all escape backslashes
     .replace(/\/\*[\s\S]*?\*\//g, "") // Remove all multi-line comments
@@ -515,7 +496,9 @@ export function parseVersion1Config(configuration: string) {
   if (!parsedJson.success) {
     return {
       message: "Failed to match the version 1 schema",
-      details: parsedJson.error.errors.map((error) => `[${error.path.join(".")}] ${error.message}`),
+      details: parsedJson.error.errors.map(
+        (error) => `[${error.path.join(".")}] ${error.message}`,
+      ),
     };
   }
 
@@ -529,7 +512,9 @@ export function parseVersion1Config(configuration: string) {
         public: data.cacheControl.includes("public"),
         maxAge: Number(/max-age=(\d+)/.exec(data.cacheControl)?.[1] ?? 60),
         sMaxAge: Number(/s-maxage=(\d+)/.exec(data.cacheControl)?.[1] ?? 60),
-        staleWhileRevalidate: data.cacheControl.includes("stale-while-revalidate"),
+        staleWhileRevalidate: data.cacheControl.includes(
+          "stale-while-revalidate",
+        ),
       },
       rootFolder: data.apiConfig.rootFolder,
       isTeamDrive: false,
@@ -537,13 +522,10 @@ export function parseVersion1Config(configuration: string) {
       itemsPerPage: data.apiConfig.itemsPerPage,
       searchResult: data.apiConfig.searchResult,
       specialFile: {
-        password: data.apiConfig.specialFile.password,
         readme: data.apiConfig.specialFile.readme,
         banner: data.apiConfig.specialFile.banner,
       },
       hiddenFiles: data.apiConfig.hiddenFiles,
-      allowDownloadProtectedFile: data.apiConfig.allowDownloadProtectedFile,
-      temporaryTokenDuration: data.apiConfig.temporaryTokenDuration,
       maxFileSize: data.apiConfig.maxFileSize,
     },
     site: {
@@ -551,8 +533,10 @@ export function parseVersion1Config(configuration: string) {
       guideButton: false,
       siteName: data.siteConfig.siteName,
       siteDescription: data.siteConfig.siteDescription,
-      twitterHandle: data.siteConfig.twitterHandle ?? initialConfiguration.site.twitterHandle ?? "@__mbaharip__",
-      privateIndex: data.siteConfig.privateIndex,
+      twitterHandle:
+        data.siteConfig.twitterHandle ??
+        initialConfiguration.site.twitterHandle ??
+        "@__mbaharip__",
       navbarItems: data.siteConfig.navbarItems.map((item) => ({
         icon: "File",
         name: item.name,
@@ -566,7 +550,9 @@ export function parseVersion1Config(configuration: string) {
   if (!parsedData.success) {
     return {
       message: "Failed to migrate the old configuration to the new schema",
-      details: parsedData.error.errors.map((error) => `[${error.path.join(".")}] ${error.message}`),
+      details: parsedData.error.errors.map(
+        (error) => `[${error.path.join(".")}] ${error.message}`,
+      ),
     };
   }
 
@@ -575,7 +561,11 @@ export function parseVersion1Config(configuration: string) {
 
 export function parseVersion2Config(configuration: string) {
   const isLatest = configuration.includes('version: "2.0.4"');
-  const config = (configuration.split(/const config:\s.*?=\s/g)[1]?.split("export default config;")[0] ?? "")
+  const config = (
+    configuration
+      .split(/const config:\s.*?=\s/g)[1]
+      ?.split("export default config;")[0] ?? ""
+  )
 
     .replace(/\\/g, "") // Remove all escape backslashes
     .replace(/\/\*[\s\S]*?\*\//g, "") // Remove all multi-line comments
@@ -593,16 +583,7 @@ export function parseVersion2Config(configuration: string) {
       const numbers = value.split("*").map((v) => Number(v ?? "1"));
       return `streamMaxSize: ${numbers.reduce((a, b) => a * b, 1)},`;
     })
-    .replace(/temporaryTokenDuration:(.*?),/g, (str) => {
-      if (!str) return "temporaryTokenDuration: 6,"; // Set temporaryTokenDuration to 6 hours
-      const value = str?.split(":")[1]?.split(",")[0]?.trim() ?? "";
-      if (value.includes("/")) {
-        const numbers = value.split("/").map((v) => Number(v ?? "1"));
-        return `temporaryTokenDuration: ${numbers.reduce((a, b) => a / b, 1)},`;
-      } else {
-        return `temporaryTokenDuration: ${value},`;
-      }
-    })
+
     .replace(/maxFileSize:(.*?),/g, (str) => {
       if (!str) return "maxFileSize: 4194304,"; // Set maxFileSize to 4MB
       const value = str?.split(":")[1]?.split(",")[0]?.trim() ?? "";
@@ -630,7 +611,9 @@ export function parseVersion2Config(configuration: string) {
     if (!parsedJson.success) {
       return {
         message: `Failed to match the schema for ${isLatest ? "latest" : "version 2.3 / below"} configuration`,
-        details: parsedJson.error.errors.map((error) => `[${error.path.join(".")}] ${error.message}`),
+        details: parsedJson.error.errors.map(
+          (error) => `[${error.path.join(".")}] ${error.message}`,
+        ),
       };
     }
 
@@ -648,7 +631,9 @@ export function parseVersion2Config(configuration: string) {
           public: data.cacheControl.includes("public"),
           maxAge: Number(/max-age=(\d+)/.exec(data.cacheControl)?.[1] ?? 60),
           sMaxAge: Number(/s-maxage=(\d+)/.exec(data.cacheControl)?.[1] ?? 60),
-          staleWhileRevalidate: data.cacheControl.includes("stale-while-revalidate"),
+          staleWhileRevalidate: data.cacheControl.includes(
+            "stale-while-revalidate",
+          ),
         },
       },
       site: {
@@ -662,7 +647,9 @@ export function parseVersion2Config(configuration: string) {
     if (!parsedData.success) {
       return {
         message: "Failed to migrate the old configuration to the new schema",
-        details: parsedData.error.errors.map((error) => `[${error.path.join(".")}] ${error.message}`),
+        details: parsedData.error.errors.map(
+          (error) => `[${error.path.join(".")}] ${error.message}`,
+        ),
       };
     }
 
@@ -672,7 +659,9 @@ export function parseVersion2Config(configuration: string) {
     if (!parsedJson.success) {
       return {
         message: `Failed to match the schema for ${isLatest ? "latest" : "version 2.3 / below"} configuration`,
-        details: parsedJson.error.errors.map((error) => `[${error.path.join(".")}] ${error.message}`),
+        details: parsedJson.error.errors.map(
+          (error) => `[${error.path.join(".")}] ${error.message}`,
+        ),
       };
     }
 
@@ -689,7 +678,9 @@ export function parseVersion2Config(configuration: string) {
           public: data.cacheControl.includes("public"),
           maxAge: Number(/max-age=(\d+)/.exec(data.cacheControl)?.[1] ?? 60),
           sMaxAge: Number(/s-maxage=(\d+)/.exec(data.cacheControl)?.[1] ?? 60),
-          staleWhileRevalidate: data.cacheControl.includes("stale-while-revalidate"),
+          staleWhileRevalidate: data.cacheControl.includes(
+            "stale-while-revalidate",
+          ),
         },
       },
       site: {
@@ -704,7 +695,9 @@ export function parseVersion2Config(configuration: string) {
     if (!parsedData.success) {
       return {
         message: "Failed to migrate the old configuration to the new schema",
-        details: parsedData.error.errors.map((error) => `[${error.path.join(".")}] ${error.message}`),
+        details: parsedData.error.errors.map(
+          (error) => `[${error.path.join(".")}] ${error.message}`,
+        ),
       };
     }
 
@@ -712,17 +705,17 @@ export function parseVersion2Config(configuration: string) {
   }
 }
 
-export function parseEnvironment(configuration: string): ConfigurationResponse<typeof latestEnvironmentSchema> {
+export function parseEnvironment(
+  configuration: string,
+): ConfigurationResponse<typeof latestEnvironmentSchema> {
   const lines = configuration.split("\n");
   const result: Record<string, string> = {};
   const availableKeys = [
     "GD_SERVICE_B64",
     "ENCRYPTION_KEY",
-    "SITE_PASSWORD",
     "NEXT_PUBLIC_DOMAIN",
     "NEXT_PUBLIC_VERCEL_URL",
     "NEXT_PUBLIC_ENCRYPTION_KEY",
-    "NEXT_PUBLIC_SITE_PASSWORD",
   ];
   for (const line of lines) {
     if (!availableKeys.some((key) => line.startsWith(key))) {
@@ -732,7 +725,7 @@ export function parseEnvironment(configuration: string): ConfigurationResponse<t
     const [key, value] = line.split("=");
     if (!key || !value) continue;
     const formattedValue = value.replace(/"/g, "").trim();
-    const formattedKey = ["NEXT_PUBLIC_ENCRYPTION_KEY", "NEXT_PUBLIC_SITE_PASSWORD"].includes(key)
+    const formattedKey = ["NEXT_PUBLIC_ENCRYPTION_KEY"].includes(key)
       ? key.replace("NEXT_PUBLIC_", "")
       : key;
     result[formattedKey] = formattedValue;
@@ -741,7 +734,9 @@ export function parseEnvironment(configuration: string): ConfigurationResponse<t
   if (!validated.success)
     return {
       message: "Failed to match the latest environment schema",
-      details: validated.error.errors.map((error) => `[${error.path.join(".")}] ${error.message}`),
+      details: validated.error.errors.map(
+        (error) => `[${error.path.join(".")}] ${error.message}`,
+      ),
     };
 
   return validated.data;

@@ -79,7 +79,10 @@ const extensionsMap: Record<FileTypes, string[]> = {
  * @param mimeType
  * @returns FileTypes or "unknown"
  */
-export function getFileType(fileExtension: string, mimeType: string): FileTypes | "unknown" {
+export function getFileType(
+  fileExtension: string,
+  mimeType: string,
+): FileTypes | "unknown" {
   // Handle .ts video file
   if (fileExtension === "ts") {
     if (mimeType.includes("video")) {
