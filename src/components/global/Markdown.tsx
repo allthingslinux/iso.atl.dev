@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+
 import ReactMarkdown from "react-markdown";
 import rehypeKatex from "rehype-katex";
 import rehypePrism from "rehype-prism-plus";
@@ -12,15 +13,18 @@ import remarkMath from "remark-math";
 import remarkToc from "remark-toc";
 import { toast } from "sonner";
 
-import Icon from "@/components/ui/icon";
-
 import { cn } from "@/lib/utils";
+
+import Icon from "@/components/ui/icon";
 
 type Props = {
   content: string;
   view?: "markdown" | "raw";
   className?: string;
-  customComponents?: Record<string, React.ComponentType<Record<string, unknown>>>;
+  customComponents?: Record<
+    string,
+    React.ComponentType<Record<string, unknown>>
+  >;
 };
 export default function Markdown({
   content,
@@ -29,7 +33,7 @@ export default function Markdown({
   customComponents,
 }: Props) {
   const [viewState, setViewState] = useState<"markdown" | "raw">(
-    view ?? "markdown",
+    view ?? "markdown"
   );
 
   useEffect(() => {
@@ -50,7 +54,7 @@ export default function Markdown({
       ) : (
         <div
           className={cn(
-            "markdown w-full rounded-lg prose prose-slate max-w-none! px-0 dark:prose-invert tablet:px-2",
+            "markdown w-full rounded-lg prose prose-slate max-w-none! px-0 dark:prose-invert tablet:px-2"
           )}
         >
           <ReactMarkdown
@@ -71,7 +75,7 @@ export default function Markdown({
                       alt={alt}
                       className={cn(
                         "mx-auto max-w-(--breakpoint-md) cursor-pointer rounded-lg",
-                        className,
+                        className
                       )}
                       onClick={() => {
                         if (typeof src === "string") {
@@ -99,7 +103,7 @@ export default function Markdown({
                     rel={isRelative ? rel : "noreferer"}
                     className={cn(
                       "whitespace-pre-wrap! break-words!",
-                      className,
+                      className
                     )}
                     {...props}
                   />
@@ -115,7 +119,7 @@ export default function Markdown({
                 <code
                   className={cn(
                     `whitespace-pre-wrap! break-words font-mono text-sm!`,
-                    className,
+                    className
                   )}
                   {...props}
                 >
@@ -137,7 +141,7 @@ function PreComponent(props: React.HTMLAttributes<HTMLPreElement>) {
   const codeRef = useRef<HTMLPreElement | null>(null);
 
   const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "error">(
-    "idle",
+    "idle"
   );
   const copyTimeout = useRef<NodeJS.Timeout | undefined>(undefined);
 

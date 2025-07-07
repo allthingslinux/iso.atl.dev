@@ -1,10 +1,10 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
-import { IS_DEV } from "@/constant";
-
-import { encryptionService } from "@/lib/utils.server";
 
 import config from "@/config/gIndex.config";
+import { IS_DEV } from "@/constant";
+import { z } from "zod";
+
+import { encryptionService } from "@/lib/utils.server";
 
 export const dynamic = "force-dynamic";
 
@@ -59,7 +59,7 @@ export async function GET(request: NextRequest, { params }: Props) {
       },
       {
         status: 500,
-      },
+      }
     );
   }
 }

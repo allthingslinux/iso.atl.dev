@@ -33,7 +33,7 @@ export async function middleware(req: NextRequest) {
   response.headers.set("X-Pathname", req.nextUrl.pathname);
   response.headers.set(
     "Cache-Control",
-    "public, max-age=3600, stale-while-revalidate=59",
+    "public, max-age=3600, stale-while-revalidate=59"
   );
   if (pathname.startsWith("/ngdi-internal/embed/")) {
     response.headers.set("Content-Security-Policy", cspHeader);

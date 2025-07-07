@@ -172,7 +172,7 @@ export function useDebouncedSearch<T>(
   const [results, setResults] = useState<T[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  
+
   const debouncedQuery = useDebounce(query, delay);
   const abortControllerRef = useRef<AbortController | null>(null);
 

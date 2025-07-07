@@ -20,7 +20,9 @@ export interface ApiRequestConfig extends RequestInit {
 type ResponseInterceptor = (response: Response) => Response | Promise<Response>;
 
 // Request interceptor type
-type RequestInterceptor = (config: ApiRequestConfig) => ApiRequestConfig | Promise<ApiRequestConfig>;
+type RequestInterceptor = (
+  config: ApiRequestConfig
+) => ApiRequestConfig | Promise<ApiRequestConfig>;
 
 // API client class
 export class ApiClient {
@@ -48,7 +50,10 @@ export class ApiClient {
   }
 
   // Build URL with params
-  private buildURL(endpoint: string, params?: Record<string, string | number | boolean>): string {
+  private buildURL(
+    endpoint: string,
+    params?: Record<string, string | number | boolean>
+  ): string {
     const url = new URL(endpoint, this.baseURL);
 
     if (params) {
@@ -63,7 +68,9 @@ export class ApiClient {
   }
 
   // Apply request interceptors
-  private async applyRequestInterceptors(config: ApiRequestConfig): Promise<ApiRequestConfig> {
+  private async applyRequestInterceptors(
+    config: ApiRequestConfig
+  ): Promise<ApiRequestConfig> {
     let currentConfig = config;
 
     for (const interceptor of this.requestInterceptors) {
@@ -74,7 +81,9 @@ export class ApiClient {
   }
 
   // Apply response interceptors
-  private async applyResponseInterceptors(response: Response): Promise<Response> {
+  private async applyResponseInterceptors(
+    response: Response
+  ): Promise<Response> {
     let currentResponse = response;
 
     for (const interceptor of this.responseInterceptors) {
@@ -127,7 +136,8 @@ export class ApiClient {
       ...fetchConfig
     } = config;
 
-    const maxRetries = typeof retry === "boolean" ? (retry ? API_CONFIG.MAX_RETRIES : 0) : retry;
+    const maxRetries =
+      typeof retry === "boolean" ? (retry ? API_CONFIG.MAX_RETRIES : 0) : retry;
     let lastError: Error | null = null;
 
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
@@ -149,10 +159,14 @@ export class ApiClient {
 
         return response;
       } catch (error) {
-        lastError = error instanceof Error ? error : new Error(getErrorMessage(error));
+        lastError =
+          error instanceof Error ? error : new Error(getErrorMessage(error));
 
         // Don't retry on client errors
-        if (lastError instanceof ValidationError || lastError instanceof UnauthorizedError) {
+        if (
+          lastError instanceof ValidationError ||
+          lastError instanceof UnauthorizedError
+        ) {
           throw lastError;
         }
 
@@ -162,7 +176,9 @@ export class ApiClient {
         }
 
         // Wait before retrying
-        await new Promise((resolve) => setTimeout(resolve, retryDelay * (attempt + 1)));
+        await new Promise((resolve) =>
+          setTimeout(resolve, retryDelay * (attempt + 1))
+        );
       }
     }
 
@@ -207,11 +223,18 @@ export class ApiClient {
   }
 
   // HTTP methods
-  async get<T>(endpoint: string, config?: Omit<ApiRequestConfig, "body" | "method">): Promise<T> {
+  async get<T>(
+    endpoint: string,
+    config?: Omit<ApiRequestConfig, "body" | "method">
+  ): Promise<T> {
     return this.request<T>(endpoint, { ...config, method: "GET" });
   }
 
-  async post<T>(endpoint: string, data?: unknown, config?: Omit<ApiRequestConfig, "body" | "method">): Promise<T> {
+  async post<T>(
+    endpoint: string,
+    data?: unknown,
+    config?: Omit<ApiRequestConfig, "body" | "method">
+  ): Promise<T> {
     return this.request<T>(endpoint, {
       ...config,
       method: "POST",
@@ -219,7 +242,11 @@ export class ApiClient {
     });
   }
 
-  async put<T>(endpoint: string, data?: unknown, config?: Omit<ApiRequestConfig, "body" | "method">): Promise<T> {
+  async put<T>(
+    endpoint: string,
+    data?: unknown,
+    config?: Omit<ApiRequestConfig, "body" | "method">
+  ): Promise<T> {
     return this.request<T>(endpoint, {
       ...config,
       method: "PUT",
@@ -227,7 +254,11 @@ export class ApiClient {
     });
   }
 
-  async patch<T>(endpoint: string, data?: unknown, config?: Omit<ApiRequestConfig, "body" | "method">): Promise<T> {
+  async patch<T>(
+    endpoint: string,
+    data?: unknown,
+    config?: Omit<ApiRequestConfig, "body" | "method">
+  ): Promise<T> {
     return this.request<T>(endpoint, {
       ...config,
       method: "PATCH",
@@ -235,7 +266,10 @@ export class ApiClient {
     });
   }
 
-  async delete<T>(endpoint: string, config?: Omit<ApiRequestConfig, "body" | "method">): Promise<T> {
+  async delete<T>(
+    endpoint: string,
+    config?: Omit<ApiRequestConfig, "body" | "method">
+  ): Promise<T> {
     return this.request<T>(endpoint, { ...config, method: "DELETE" });
   }
 }
@@ -248,10 +282,11 @@ apiClient.addRequestInterceptor((config) => {
   // Add timestamp to prevent caching
   if (config.method === "GET") {
     const headers = config.headers;
-    const hasCacheControl = headers instanceof Headers 
-      ? headers.has("Cache-Control")
-      : headers && typeof headers === "object" && "Cache-Control" in headers;
-    
+    const hasCacheControl =
+      headers instanceof Headers
+        ? headers.has("Cache-Control")
+        : headers && typeof headers === "object" && "Cache-Control" in headers;
+
     if (!hasCacheControl) {
       config.params = {
         ...config.params,

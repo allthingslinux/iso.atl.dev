@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+
 import { usePathname } from "next/navigation";
 
 // Custom hook for loading state management with debouncing
@@ -11,27 +12,30 @@ export default function useLoading() {
   const previousPathnameRef = useRef<string>(pathname);
 
   // Debounced loading state to prevent flickering
-  const setLoadingWithDebounce = useCallback((loading: boolean, delay = 100) => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
+  const setLoadingWithDebounce = useCallback(
+    (loading: boolean, delay = 100) => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
 
-    if (loading) {
-      // Show loading immediately
-      setIsLoading(true);
-    } else {
-      // Delay hiding loading to prevent flickering
-      timeoutRef.current = setTimeout(() => {
-        setIsLoading(false);
-      }, delay);
-    }
-  }, []);
+      if (loading) {
+        // Show loading immediately
+        setIsLoading(true);
+      } else {
+        // Delay hiding loading to prevent flickering
+        timeoutRef.current = setTimeout(() => {
+          setIsLoading(false);
+        }, delay);
+      }
+    },
+    []
+  );
 
   useEffect(() => {
     // Track pathname changes for loading state
     if (previousPathnameRef.current !== pathname) {
       setLoadingWithDebounce(true);
-      
+
       // Automatically hide loading after navigation
       const navigationTimeout = setTimeout(() => {
         setLoadingWithDebounce(false, 0);

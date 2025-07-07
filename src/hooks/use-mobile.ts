@@ -24,19 +24,21 @@ export function useIsMobile(): boolean {
 
   useEffect(() => {
     // Create media query only on client side
-    const mediaQuery = window.matchMedia(`(max-width: ${BREAKPOINTS.MOBILE - 1}px)`);
-    
+    const mediaQuery = window.matchMedia(
+      `(max-width: ${BREAKPOINTS.MOBILE - 1}px)`
+    );
+
     // Handler for media query changes
     const handleChange = (event: MediaQueryListEvent): void => {
       setIsMobile(event.matches);
     };
-    
+
     // Set initial value
     setIsMobile(mediaQuery.matches);
-    
+
     // Modern event listener (not deprecated addListener)
     mediaQuery.addEventListener("change", handleChange);
-    
+
     return () => {
       mediaQuery.removeEventListener("change", handleChange);
     };
@@ -54,8 +56,12 @@ export function useMediaQuery(): MediaQueryState {
     // Create all media queries
     const queries = {
       mobile: window.matchMedia(`(max-width: ${BREAKPOINTS.MOBILE - 1}px)`),
-      tablet: window.matchMedia(`(min-width: ${BREAKPOINTS.MOBILE}px) and (max-width: ${BREAKPOINTS.TABLET - 1}px)`),
-      desktop: window.matchMedia(`(min-width: ${BREAKPOINTS.TABLET}px) and (max-width: ${BREAKPOINTS.WIDE - 1}px)`),
+      tablet: window.matchMedia(
+        `(min-width: ${BREAKPOINTS.MOBILE}px) and (max-width: ${BREAKPOINTS.TABLET - 1}px)`
+      ),
+      desktop: window.matchMedia(
+        `(min-width: ${BREAKPOINTS.TABLET}px) and (max-width: ${BREAKPOINTS.WIDE - 1}px)`
+      ),
       wide: window.matchMedia(`(min-width: ${BREAKPOINTS.WIDE}px)`),
     };
 
@@ -68,10 +74,10 @@ export function useMediaQuery(): MediaQueryState {
         breakpoint: queries.mobile.matches
           ? "MOBILE"
           : queries.tablet.matches
-          ? "TABLET"
-          : queries.desktop.matches
-          ? "DESKTOP"
-          : "WIDE",
+            ? "TABLET"
+            : queries.desktop.matches
+              ? "DESKTOP"
+              : "WIDE",
       };
       setState(newState);
     };
@@ -80,9 +86,9 @@ export function useMediaQuery(): MediaQueryState {
     updateState();
 
     // Add listeners
-    const handlers: Array<[MediaQueryList, () => void]> = Object.values(queries).map(
-      (query) => [query, updateState]
-    );
+    const handlers: Array<[MediaQueryList, () => void]> = Object.values(
+      queries
+    ).map((query) => [query, updateState]);
 
     handlers.forEach(([query, handler]) => {
       query.addEventListener("change", handler);
@@ -96,13 +102,15 @@ export function useMediaQuery(): MediaQueryState {
   }, []);
 
   // Return default state for SSR/initial render
-  return state ?? {
-    isMobile: false,
-    isTablet: false,
-    isDesktop: false,
-    isWide: false,
-    breakpoint: "DESKTOP" as Breakpoint,
-  };
+  return (
+    state ?? {
+      isMobile: false,
+      isTablet: false,
+      isDesktop: false,
+      isWide: false,
+      breakpoint: "DESKTOP" as Breakpoint,
+    }
+  );
 }
 
 // Hook for custom media queries
@@ -111,14 +119,14 @@ export function useCustomMediaQuery(query: string): boolean {
 
   useEffect(() => {
     const mediaQuery = window.matchMedia(query);
-    
+
     const handleChange = (event: MediaQueryListEvent): void => {
       setMatches(event.matches);
     };
-    
+
     setMatches(mediaQuery.matches);
     mediaQuery.addEventListener("change", handleChange);
-    
+
     return () => {
       mediaQuery.removeEventListener("change", handleChange);
     };
@@ -158,10 +166,10 @@ export function useResponsiveClassName(
   classNames: Partial<Record<Breakpoint | "default", string>>
 ): string {
   const { breakpoint } = useMediaQuery();
-  
+
   const className = useMemo(() => {
     return classNames[breakpoint] ?? classNames.default ?? "";
   }, [breakpoint, classNames]);
-  
+
   return className;
 }

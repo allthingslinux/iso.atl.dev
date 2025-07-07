@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+
 import { toast } from "sonner";
 
 import { Button, LoadingButton } from "@/components/ui/button";
@@ -155,7 +156,7 @@ export default function UseConfirmDialogProvider({
         resolver.current = resolve;
       });
     },
-    [resolvedOptions],
+    [resolvedOptions]
   );
 
   const handleConfirm = React.useCallback(() => {
@@ -171,7 +172,7 @@ export default function UseConfirmDialogProvider({
     () => ({
       confirm: confirmCallback,
     }),
-    [confirmCallback],
+    [confirmCallback]
   );
 
   return (
@@ -189,12 +190,12 @@ export default function UseConfirmDialogProvider({
 }
 
 export const useConfirmDialog = (): ((
-  options: UseConfirmOptions,
+  options: UseConfirmOptions
 ) => Promise<boolean>) => {
   const context = React.useContext(UseConfirmDialogContext);
   if (!context) {
     throw new Error(
-      "useConfirmDialog must be used within a UseConfirmDialogProvider",
+      "useConfirmDialog must be used within a UseConfirmDialogProvider"
     );
   }
   return context.confirm;

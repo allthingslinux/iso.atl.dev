@@ -1,15 +1,15 @@
 import { type NextRequest, NextResponse } from "next/server";
 
-import { encryptionService } from "@/lib/utils.server";
-
 import { GetFile } from "@/actions/files";
 import { ValidatePaths } from "@/actions/paths";
+
+import { encryptionService } from "@/lib/utils.server";
 
 export const dynamic = "force-static";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ rest: string[] }> },
+  { params }: { params: Promise<{ rest: string[] }> }
 ) {
   const { rest } = await params;
   const paths = rest.map((path) => {
@@ -45,7 +45,7 @@ export async function GET(
     }
 
     const decryptedLink = await encryptionService.decrypt(
-      fileMeta.data.encryptedWebContentLink,
+      fileMeta.data.encryptedWebContentLink
     );
     return new NextResponse(null, {
       status: 302,
@@ -71,7 +71,7 @@ export async function GET(
         headers: {
           "Cache-Control": "no-store", // avoid caching error responses
         },
-      },
+      }
     );
   }
 }

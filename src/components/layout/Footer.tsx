@@ -1,16 +1,17 @@
 "use client";
 
-import { usePathname } from "next/navigation";
 import { useState } from "react";
+
+import { usePathname } from "next/navigation";
+
+import config from "@/config/gIndex.config";
+import { NO_LAYOUT_PATHS } from "@/constant";
 import ReactMarkdown from "react-markdown";
 import remarkBreaks from "remark-breaks";
-import { NO_LAYOUT_PATHS } from "@/constant";
-
-import { Skeleton } from "@/components/ui/skeleton";
 
 import useLoading from "@/hooks/useLoading";
 
-import config from "@/config/gIndex.config";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type Props = {
   content?: string;

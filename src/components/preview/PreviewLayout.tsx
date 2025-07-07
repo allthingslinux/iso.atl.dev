@@ -1,16 +1,17 @@
 "use client";
 
 import { useMemo, useState } from "react";
+
 import { type z } from "zod";
 
-import { Information, Rich } from "@/components/preview";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { type Schema_File } from "@/types/schema";
 
 import { type getFileType } from "@/lib/previewHelper";
 import { cn } from "@/lib/utils";
 
-import { type Schema_File } from "@/types/schema";
+import { Information, Rich } from "@/components/preview";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 type Props = {
   data: z.infer<typeof Schema_File>;
@@ -44,7 +45,7 @@ export default function PreviewLayout({ data, fileType }: Props) {
             <div
               className={cn(
                 "flex flex-col gap-4 overflow-hidden",
-                "mobile:flex-row mobile:items-center mobile:justify-between",
+                "mobile:flex-row mobile:items-center mobile:justify-between"
               )}
             >
               <CardTitle className="line-clamp-1 grow whitespace-pre-wrap break-all">

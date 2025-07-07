@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 
+import { cn } from "@/lib/utils";
+
 import { Markdown } from "@/components/global";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
-import { cn } from "@/lib/utils";
 
 type Props = {
   content: string;
@@ -22,7 +22,7 @@ export default function FileReadme({ content, title }: Props) {
           <div
             className={cn(
               "flex flex-col gap-4 overflow-hidden",
-              "mobile:flex-row mobile:items-center mobile:justify-between",
+              "mobile:flex-row mobile:items-center mobile:justify-between"
             )}
           >
             <CardTitle>{title}</CardTitle>

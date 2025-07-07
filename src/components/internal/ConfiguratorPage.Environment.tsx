@@ -1,7 +1,11 @@
 "use client";
 
 import { useState } from "react";
+
+import { GenerateServiceAccountB64 } from "@/actions/configuration";
 import { toast } from "sonner";
+
+import { type PickFileResponse, pickFile } from "@/lib/configurationHelper";
 
 import { LoadingButton } from "@/components/ui/button";
 import {
@@ -13,10 +17,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-
-import { type PickFileResponse, pickFile } from "@/lib/configurationHelper";
-
-import { GenerateServiceAccountB64 } from "@/actions/configuration";
 
 import { type FormProps, FormSection } from "./ConfiguratorPage";
 

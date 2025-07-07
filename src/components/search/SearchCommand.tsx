@@ -1,16 +1,16 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState, useTransition } from "react";
-import { toast } from "sonner";
+
+import { useRouter } from "next/navigation";
+
 import { GetSearchResultPath, SearchFiles } from "@/actions/search";
+import { DialogDescription, DialogTitle } from "@radix-ui/react-dialog";
+import { toast } from "sonner";
 import { type z } from "zod";
 
-import {
-  ResponsiveDialog,
-  ResponsiveDialogContent,
-} from "@/components/ui/dialog.responsive";
-import Icon from "@/components/ui/icon";
+import { type Schema_File } from "@/types/schema";
+
 import {
   Command,
   CommandEmpty,
@@ -19,8 +19,11 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { type Schema_File } from "@/types/schema";
-import { DialogDescription, DialogTitle } from "@radix-ui/react-dialog";
+import {
+  ResponsiveDialog,
+  ResponsiveDialogContent,
+} from "@/components/ui/dialog.responsive";
+import Icon from "@/components/ui/icon";
 
 export function SearchCommand() {
   const router = useRouter();
@@ -76,7 +79,7 @@ export function SearchCommand() {
         }
       });
     },
-    [router],
+    [router]
   );
 
   return (
@@ -136,7 +139,14 @@ export function SearchCommand() {
                           className="font-mono"
                         >
                           <div className="flex items-center gap-2">
-                            <Icon name={file.mimeType.includes("folder") ? "Folder" : "File"} className="h-4 w-4" />
+                            <Icon
+                              name={
+                                file.mimeType.includes("folder")
+                                  ? "Folder"
+                                  : "File"
+                              }
+                              className="h-4 w-4"
+                            />
                             <span>{file.name}</span>
                           </div>
                         </CommandItem>
@@ -151,4 +161,4 @@ export function SearchCommand() {
       </ResponsiveDialog>
     </>
   );
-} 
+}

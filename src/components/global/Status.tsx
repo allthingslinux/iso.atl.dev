@@ -2,9 +2,9 @@
 
 import { type icons } from "lucide-react";
 
-import Icon from "@/components/ui/icon";
-
 import { cn } from "@/lib/utils";
+
+import Icon from "@/components/ui/icon";
 
 type Props = {
   icon: keyof typeof icons;
@@ -26,7 +26,7 @@ export default function Status({
         "flex flex-col items-center justify-center gap-2",
         destructive
           ? "stroke-destructive text-destructive"
-          : "stroke-muted-foreground text-muted-foreground",
+          : "stroke-muted-foreground text-muted-foreground"
       )}
     >
       <Icon name={icon} className={cn("size-10", iconClassName)} />

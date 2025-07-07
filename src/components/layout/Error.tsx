@@ -2,11 +2,12 @@
 
 import { useEffect } from "react";
 
-import { Button } from "@/components/ui/button";
-import Icon from "@/components/ui/icon";
+import { cn } from "@/lib/utils";
 
 import useRouter from "@/hooks/usePRouter";
-import { cn } from "@/lib/utils";
+
+import { Button } from "@/components/ui/button";
+import Icon from "@/components/ui/icon";
 
 type Props = {
   error: Error & { digest?: string };
@@ -23,7 +24,7 @@ export default function ErrorComponent({ error, reset }: Props) {
     <div
       className={cn(
         "mx-auto h-full w-full max-w-(--breakpoint-md)",
-        "flex grow flex-col items-center justify-center gap-2",
+        "flex grow flex-col items-center justify-center gap-2"
       )}
     >
       <Icon name="CircleX" className="size-10 stroke-destructive" />

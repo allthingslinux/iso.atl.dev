@@ -1,12 +1,19 @@
 "use client";
 
-import Link from "next/link";
 import { useMemo, useState } from "react";
+
+import Link from "next/link";
+
+import { useResponsive } from "@/context/responsiveContext";
 import { useFieldArray } from "react-hook-form";
 import ReactMarkdown from "react-markdown";
 import remarkBreaks from "remark-breaks";
 import { toast } from "sonner";
 import { type z } from "zod";
+
+import { type Schema_App_Configuration } from "@/types/schema";
+
+import { cn, formatFooterContent } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
 import { VirtualizedCombobox } from "@/components/ui/combobox.virtualized";
@@ -42,11 +49,6 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
-
-import { useResponsive } from "@/context/responsiveContext";
-import { cn, formatFooterContent } from "@/lib/utils";
-
-import { type Schema_App_Configuration } from "@/types/schema";
 
 import { FormColumn, type FormProps, FormSection } from "./ConfiguratorPage";
 
@@ -381,7 +383,7 @@ function NavbarItemsField({ form, onResetField }: FormProps) {
         ),
         value: icon,
       })),
-    [],
+    []
   );
 
   return (
@@ -478,7 +480,7 @@ function NavbarItemsField({ form, onResetField }: FormProps) {
                               onBlur={field.onBlur}
                               className={cn(
                                 "w-full transition tablet:w-fit",
-                                field.value ? "opacity-100" : "opacity-30",
+                                field.value ? "opacity-100" : "opacity-30"
                               )}
                             >
                               External Link
@@ -678,12 +680,12 @@ function FooterField({ form, onResetField }: FormProps) {
         description: "Twitter handle from configuration",
       },
     ],
-    [],
+    []
   );
   const [content, setContent] = useState<string>(() => {
     return formatFooterContent(
       form.watch("site.footer"),
-      form.getValues("site"),
+      form.getValues("site")
     );
   });
 
@@ -853,8 +855,8 @@ function FooterField({ form, onResetField }: FormProps) {
                 setContent(
                   formatFooterContent(
                     form.watch("site.footer"),
-                    form.getValues("site"),
-                  ),
+                    form.getValues("site")
+                  )
                 );
               }}
               type="button"

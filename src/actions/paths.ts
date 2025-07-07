@@ -1,10 +1,9 @@
 "use server";
 
+import config from "@/config/gIndex.config";
 import { type ActionResponseSchema } from "@/types";
 
 import { encryptionService, gdrive } from "@/lib/utils.server";
-
-import config from "@/config/gIndex.config";
 
 /**
  * Get file paths from the root folder to the file.
@@ -14,10 +13,10 @@ import config from "@/config/gIndex.config";
  */
 export async function GetFilePaths(
   fileName: string,
-  parentId?: string,
+  parentId?: string
 ): Promise<ActionResponseSchema<string>> {
   const decryptedRootId = await encryptionService.decrypt(
-    config.apiConfig.rootFolder,
+    config.apiConfig.rootFolder
   );
   if (!decryptedRootId)
     return {
@@ -64,7 +63,7 @@ type PathFetch = {
  * @returns {ActionResponseSchema<{ id: string; path: string; mimeType: string; }[]>} - The validated paths.
  */
 export async function ValidatePaths(
-  paths: string[],
+  paths: string[]
 ): Promise<
   ActionResponseSchema<{ id: string; path: string; mimeType: string }[]>
 > {
@@ -72,7 +71,7 @@ export async function ValidatePaths(
     config.apiConfig.isTeamDrive && config.apiConfig.sharedDrive
   );
   const decryptedRootId = await encryptionService.decrypt(
-    config.apiConfig.rootFolder,
+    config.apiConfig.rootFolder
   );
   const decryptedSharedDrive = isSharedDrive
     ? await encryptionService.decrypt(config.apiConfig.sharedDrive!)

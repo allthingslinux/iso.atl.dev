@@ -1,7 +1,10 @@
 "use client";
 
 import { useState } from "react";
+
 import { toast } from "sonner";
+
+import { cn } from "@/lib/utils";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -23,8 +26,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-
-import { cn } from "@/lib/utils";
 
 import { FormColumn, type FormProps, FormSection } from "./ConfiguratorPage";
 
@@ -48,7 +49,7 @@ export default function ApiForm({ form, onResetField }: FormProps) {
       [...form.watch("api.hiddenFiles"), inputHiddenFile],
       {
         shouldDirty: true,
-      },
+      }
     );
     setInputHiddenFile("");
   }
@@ -365,7 +366,7 @@ export default function ApiForm({ form, onResetField }: FormProps) {
                                 watch.filter((_, i) => i !== index),
                                 {
                                   shouldDirty: true,
-                                },
+                                }
                               );
                             }}
                           >
@@ -416,7 +417,7 @@ export default function ApiForm({ form, onResetField }: FormProps) {
                       "inline-flex gap-1",
                       watch.includes(form.watch("api.specialFile.banner"))
                         ? "cursor-not-allowed"
-                        : "cursor-pointer",
+                        : "cursor-pointer"
                     )}
                     onClick={() => {
                       if (
@@ -457,7 +458,7 @@ export default function ApiForm({ form, onResetField }: FormProps) {
                       "inline-flex gap-1",
                       watch.includes(form.watch("api.specialFile.readme"))
                         ? "cursor-not-allowed"
-                        : "cursor-pointer",
+                        : "cursor-pointer"
                     )}
                     onClick={() => {
                       if (

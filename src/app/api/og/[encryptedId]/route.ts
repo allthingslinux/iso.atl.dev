@@ -1,8 +1,8 @@
 import { type NextRequest, NextResponse } from "next/server";
 
-import { encryptionService, gdrive } from "@/lib/utils.server";
-
 import config from "@/config/gIndex.config";
+
+import { encryptionService, gdrive } from "@/lib/utils.server";
 
 export const dynamic = "force-static";
 
@@ -46,7 +46,7 @@ export async function GET(request: NextRequest, { params }: Props) {
       },
       {
         status: 500,
-      },
+      }
     );
   }
 }

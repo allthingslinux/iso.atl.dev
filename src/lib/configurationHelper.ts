@@ -1,3 +1,4 @@
+import config from "@/config/gIndex.config";
 import { type z } from "zod";
 
 import {
@@ -7,8 +8,6 @@ import {
   Schema_v1_Config,
   Schema_v2_3_Config,
 } from "@/types/schema";
-
-import config from "@/config/gIndex.config";
 
 export const versionExpectMap: Record<"v1" | "v2" | "latest", string[]> = {
   v1: ["1.0.0", "1.0.1", "1.0.2", "1.0.3"],
@@ -497,7 +496,7 @@ export function parseVersion1Config(configuration: string) {
     return {
       message: "Failed to match the version 1 schema",
       details: parsedJson.error.errors.map(
-        (error) => `[${error.path.join(".")}] ${error.message}`,
+        (error) => `[${error.path.join(".")}] ${error.message}`
       ),
     };
   }
@@ -513,7 +512,7 @@ export function parseVersion1Config(configuration: string) {
         maxAge: Number(/max-age=(\d+)/.exec(data.cacheControl)?.[1] ?? 60),
         sMaxAge: Number(/s-maxage=(\d+)/.exec(data.cacheControl)?.[1] ?? 60),
         staleWhileRevalidate: data.cacheControl.includes(
-          "stale-while-revalidate",
+          "stale-while-revalidate"
         ),
       },
       rootFolder: data.apiConfig.rootFolder,
@@ -551,7 +550,7 @@ export function parseVersion1Config(configuration: string) {
     return {
       message: "Failed to migrate the old configuration to the new schema",
       details: parsedData.error.errors.map(
-        (error) => `[${error.path.join(".")}] ${error.message}`,
+        (error) => `[${error.path.join(".")}] ${error.message}`
       ),
     };
   }
@@ -612,7 +611,7 @@ export function parseVersion2Config(configuration: string) {
       return {
         message: `Failed to match the schema for ${isLatest ? "latest" : "version 2.3 / below"} configuration`,
         details: parsedJson.error.errors.map(
-          (error) => `[${error.path.join(".")}] ${error.message}`,
+          (error) => `[${error.path.join(".")}] ${error.message}`
         ),
       };
     }
@@ -632,7 +631,7 @@ export function parseVersion2Config(configuration: string) {
           maxAge: Number(/max-age=(\d+)/.exec(data.cacheControl)?.[1] ?? 60),
           sMaxAge: Number(/s-maxage=(\d+)/.exec(data.cacheControl)?.[1] ?? 60),
           staleWhileRevalidate: data.cacheControl.includes(
-            "stale-while-revalidate",
+            "stale-while-revalidate"
           ),
         },
       },
@@ -648,7 +647,7 @@ export function parseVersion2Config(configuration: string) {
       return {
         message: "Failed to migrate the old configuration to the new schema",
         details: parsedData.error.errors.map(
-          (error) => `[${error.path.join(".")}] ${error.message}`,
+          (error) => `[${error.path.join(".")}] ${error.message}`
         ),
       };
     }
@@ -660,7 +659,7 @@ export function parseVersion2Config(configuration: string) {
       return {
         message: `Failed to match the schema for ${isLatest ? "latest" : "version 2.3 / below"} configuration`,
         details: parsedJson.error.errors.map(
-          (error) => `[${error.path.join(".")}] ${error.message}`,
+          (error) => `[${error.path.join(".")}] ${error.message}`
         ),
       };
     }
@@ -679,7 +678,7 @@ export function parseVersion2Config(configuration: string) {
           maxAge: Number(/max-age=(\d+)/.exec(data.cacheControl)?.[1] ?? 60),
           sMaxAge: Number(/s-maxage=(\d+)/.exec(data.cacheControl)?.[1] ?? 60),
           staleWhileRevalidate: data.cacheControl.includes(
-            "stale-while-revalidate",
+            "stale-while-revalidate"
           ),
         },
       },
@@ -696,7 +695,7 @@ export function parseVersion2Config(configuration: string) {
       return {
         message: "Failed to migrate the old configuration to the new schema",
         details: parsedData.error.errors.map(
-          (error) => `[${error.path.join(".")}] ${error.message}`,
+          (error) => `[${error.path.join(".")}] ${error.message}`
         ),
       };
     }
@@ -706,7 +705,7 @@ export function parseVersion2Config(configuration: string) {
 }
 
 export function parseEnvironment(
-  configuration: string,
+  configuration: string
 ): ConfigurationResponse<typeof latestEnvironmentSchema> {
   const lines = configuration.split("\n");
   const result: Record<string, string> = {};
@@ -735,7 +734,7 @@ export function parseEnvironment(
     return {
       message: "Failed to match the latest environment schema",
       details: validated.error.errors.map(
-        (error) => `[${error.path.join(".")}] ${error.message}`,
+        (error) => `[${error.path.join(".")}] ${error.message}`
       ),
     };
 

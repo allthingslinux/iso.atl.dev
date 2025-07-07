@@ -1,8 +1,11 @@
 "use client";
 
+import * as React from "react";
+
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { Check, ChevronsUpDown } from "lucide-react";
-import * as React from "react";
+
+import { cn } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -18,8 +21,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-
-import { cn } from "@/lib/utils";
 
 type Option = {
   value: string;
@@ -70,8 +71,8 @@ const VirtualizedCommand = ({
     setIsKeyboardNavActive(false);
     setFilteredOptions(
       options.filter((option) =>
-        option.value.toLowerCase().includes(search.toLowerCase() ?? []),
-      ),
+        option.value.toLowerCase().includes(search.toLowerCase() ?? [])
+      )
     );
   };
 
@@ -114,7 +115,7 @@ const VirtualizedCommand = ({
   React.useEffect(() => {
     if (selectedOption) {
       const option = filteredOptions.find(
-        (option) => option.value === selectedOption,
+        (option) => option.value === selectedOption
       );
       if (option) {
         const index = filteredOptions.indexOf(option);
@@ -131,15 +132,15 @@ const VirtualizedCommand = ({
       shouldFilter={false}
       onKeyDown={handleKeyDown}
       style={{
-        width: width,
-        maxWidth: maxWidth,
+        width,
+        maxWidth,
       }}
     >
       <CommandInput onValueChange={handleSearch} placeholder={placeholder} />
       <CommandList
         ref={parentRef}
         style={{
-          height: height,
+          height,
           width: "100%",
           overflow: "auto",
         }}
@@ -165,7 +166,7 @@ const VirtualizedCommand = ({
                     "bg-accent text-accent-foreground",
                   isKeyboardNavActive &&
                     focusedIndex !== virtualOption.index &&
-                    "aria-selected:bg-transparent aria-selected:text-primary",
+                    "aria-selected:bg-transparent aria-selected:text-primary"
                 )}
                 style={{
                   height: `${virtualOption.size}px`,
@@ -184,7 +185,7 @@ const VirtualizedCommand = ({
                     selectedOption ===
                       filteredOptions[virtualOption.index]?.value
                       ? "opacity-100"
-                      : "opacity-0",
+                      : "opacity-0"
                   )}
                 />
                 {filteredOptions[virtualOption.index]?.label}
@@ -230,9 +231,9 @@ export function VirtualizedCombobox({
           aria-expanded={open}
           className="justify-between"
           style={{
-            width: width,
-            minWidth: minWidth,
-            maxWidth: maxWidth,
+            width,
+            minWidth,
+            maxWidth,
           }}
         >
           {selectedOption
@@ -241,10 +242,7 @@ export function VirtualizedCombobox({
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent
-        className="p-0"
-        style={{ width: width, minWidth: minWidth, maxWidth: maxWidth }}
-      >
+      <PopoverContent className="p-0" style={{ width, minWidth, maxWidth }}>
         <VirtualizedCommand
           width={width}
           maxWidth={maxWidth}

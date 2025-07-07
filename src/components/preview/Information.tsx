@@ -1,19 +1,20 @@
 "use client";
 
-import { usePathname } from "next/navigation";
 import { useCallback, useMemo } from "react";
+
+import { usePathname } from "next/navigation";
+
+import config from "@/config/gIndex.config";
 import { toast } from "sonner";
 import { type z } from "zod";
+
+import { type Schema_File } from "@/types/schema";
+
+import { bytesToReadable, durationToReadable } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Icon from "@/components/ui/icon";
-
-import { bytesToReadable, durationToReadable } from "@/lib/utils";
-
-import { type Schema_File } from "@/types/schema";
-
-import config from "@/config/gIndex.config";
 
 type Props = {
   file: z.infer<typeof Schema_File>;
@@ -42,7 +43,7 @@ export default function PreviewInformation({ file }: Props) {
         value: `${file.imageMediaMetadata.width}px x ${file.imageMediaMetadata.height}px (${
           Math.round(
             (file.imageMediaMetadata.width / file.imageMediaMetadata.height) *
-              100,
+              100
           ) / 100
         })`,
       });
@@ -53,7 +54,7 @@ export default function PreviewInformation({ file }: Props) {
         value: `${file.videoMediaMetadata.width}px x ${file.videoMediaMetadata.height}px (${
           Math.round(
             (file.videoMediaMetadata.width / file.videoMediaMetadata.height) *
-              100,
+              100
           ) / 100
         })`,
       });
@@ -68,7 +69,7 @@ export default function PreviewInformation({ file }: Props) {
   const downloadUrl = useMemo<string>(() => {
     const downloadUrl = new URL(
       `/api/download/${pathname}`.replace(/\/+/g, "/"),
-      config.basePath,
+      config.basePath
     );
     return downloadUrl.toString();
   }, [pathname]);

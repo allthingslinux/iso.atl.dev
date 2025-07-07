@@ -46,7 +46,12 @@ export class RateLimitError extends AppError {
 
 export class ExternalServiceError extends AppError {
   constructor(service: string, originalError?: unknown) {
-    super(`External service error: ${service}`, 503, "EXTERNAL_SERVICE_ERROR", originalError);
+    super(
+      `External service error: ${service}`,
+      503,
+      "EXTERNAL_SERVICE_ERROR",
+      originalError
+    );
   }
 }
 
@@ -75,7 +80,8 @@ export function handleApiError(error: unknown): NextResponse<ErrorResponse> {
           code: error.code,
           statusCode: error.statusCode,
           timestamp: new Date().toISOString(),
-          details: process.env.NODE_ENV === "development" ? error.details : undefined,
+          details:
+            process.env.NODE_ENV === "development" ? error.details : undefined,
         },
       },
       { status: error.statusCode }
@@ -88,13 +94,15 @@ export function handleApiError(error: unknown): NextResponse<ErrorResponse> {
     return NextResponse.json(
       {
         error: {
-          message: process.env.NODE_ENV === "production" 
-            ? "Internal server error" 
-            : error.message,
+          message:
+            process.env.NODE_ENV === "production"
+              ? "Internal server error"
+              : error.message,
           code: "INTERNAL_ERROR",
           statusCode,
           timestamp: new Date().toISOString(),
-          details: process.env.NODE_ENV === "development" ? error.stack : undefined,
+          details:
+            process.env.NODE_ENV === "development" ? error.stack : undefined,
         },
       },
       { status: statusCode }
@@ -121,16 +129,19 @@ function logError(error: unknown): void {
   const errorInfo = {
     timestamp,
     environment: process.env.NODE_ENV,
-    error: error instanceof Error ? {
-      name: error.name,
-      message: error.message,
-      stack: error.stack,
-      ...(error instanceof AppError && {
-        code: error.code,
-        statusCode: error.statusCode,
-        details: error.details,
-      }),
-    } : error,
+    error:
+      error instanceof Error
+        ? {
+            name: error.name,
+            message: error.message,
+            stack: error.stack,
+            ...(error instanceof AppError && {
+              code: error.code,
+              statusCode: error.statusCode,
+              details: error.details,
+            }),
+          }
+        : error,
   };
 
   // In production, send to monitoring service
@@ -156,8 +167,14 @@ export function withErrorHandler<T extends (...args: any[]) => Promise<any>>(
 }
 
 // Type guard for checking if error has statusCode
-export function hasStatusCode(error: unknown): error is Error & { statusCode: number } {
-  return error instanceof Error && "statusCode" in error && typeof (error as any).statusCode === "number";
+export function hasStatusCode(
+  error: unknown
+): error is Error & { statusCode: number } {
+  return (
+    error instanceof Error &&
+    "statusCode" in error &&
+    typeof (error as any).statusCode === "number"
+  );
 }
 
 // Safe error message extraction

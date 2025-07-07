@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+
 import { CACHE_HEADERS, HTTP_STATUS, SECURITY_HEADERS } from "./constants";
 
 // Standard API response types
@@ -61,7 +62,8 @@ export class ResponseBuilder<T = unknown> {
   // Error methods
   withError(message: string, code?: string, details?: unknown): this {
     this.error = { message, code, details };
-    this.status = this.status === HTTP_STATUS.OK ? HTTP_STATUS.BAD_REQUEST : this.status;
+    this.status =
+      this.status === HTTP_STATUS.OK ? HTTP_STATUS.BAD_REQUEST : this.status;
     return this;
   }
 
@@ -144,10 +146,7 @@ export class ResponseBuilder<T = unknown> {
 export const ApiResponses = {
   // Success responses
   success<T>(data: T, status = HTTP_STATUS.OK): NextResponse {
-    return new ResponseBuilder<T>()
-      .withData(data)
-      .withStatus(status)
-      .build();
+    return new ResponseBuilder<T>().withData(data).withStatus(status).build();
   },
 
   created<T>(data: T): NextResponse {
@@ -204,7 +203,10 @@ export const ApiResponses = {
       .build();
   },
 
-  serverError(message = "Internal server error", details?: unknown): NextResponse {
+  serverError(
+    message = "Internal server error",
+    details?: unknown
+  ): NextResponse {
     return new ResponseBuilder()
       .withError(message, "INTERNAL_ERROR", details)
       .withStatus(HTTP_STATUS.INTERNAL_SERVER_ERROR)

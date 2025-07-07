@@ -1,10 +1,10 @@
 import React, {
   createContext,
+  useCallback,
   useEffect,
+  useMemo,
   useState,
   useTransition,
-  useCallback,
-  useMemo,
 } from "react";
 
 export type TLayout = "grid" | "list";
@@ -53,11 +53,14 @@ export const LayoutProvider = React.memo(({ children }: TLayoutProvider) => {
   }, []);
 
   // Memoize context value to prevent unnecessary re-renders
-  const contextValue = useMemo<TLayoutContext>(() => ({
-    layout,
-    setLayout: onChangeLayout,
-    isPending,
-  }), [layout, onChangeLayout, isPending]);
+  const contextValue = useMemo<TLayoutContext>(
+    () => ({
+      layout,
+      setLayout: onChangeLayout,
+      isPending,
+    }),
+    [layout, onChangeLayout, isPending]
+  );
 
   return (
     <LayoutContext.Provider value={contextValue}>

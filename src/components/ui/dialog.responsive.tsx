@@ -7,8 +7,10 @@
 import * as React from "react";
 
 import { useResponsive } from "@/context/responsiveContext";
-import useLoading from "@/hooks/useLoading";
+
 import { cn } from "@/lib/utils";
+
+import useLoading from "@/hooks/useLoading";
 
 import {
   Dialog,
@@ -51,7 +53,7 @@ const ResponsiveDialog = (props: ResponsiveDialogRootProps) => {
   const { isDesktop } = useResponsive();
   const Component = React.useMemo(
     () => (isDesktop ? Dialog : Drawer),
-    [isDesktop],
+    [isDesktop]
   );
   return <Component {...rest} />;
 };
@@ -61,7 +63,7 @@ const ResponsiveDialogTrigger = (props: ResponsiveDialogProps) => {
   const { isDesktop } = useResponsive();
   const Component = React.useMemo(
     () => (isDesktop ? DialogTrigger : DrawerTrigger),
-    [isDesktop],
+    [isDesktop]
   );
 
   return <Component {...rest} />;
@@ -73,7 +75,7 @@ const ResponsiveDialogClose = (props: ResponsiveDialogProps) => {
   const loading = useLoading();
   const Component = React.useMemo(
     () => (isDesktop ? DialogClose : DrawerClose),
-    [isDesktop],
+    [isDesktop]
   );
 
   if (loading) return null;
@@ -85,7 +87,7 @@ const ResponsiveDialogContent = (props: ResponsiveDialogBodyProps) => {
   const { isDesktop } = useResponsive();
   const Component = React.useMemo(
     () => (isDesktop ? DialogContent : DrawerContent),
-    [isDesktop],
+    [isDesktop]
   );
 
   return <Component aria-describedby={undefined} {...rest} />;
@@ -94,13 +96,13 @@ const ResponsiveDialogContent = (props: ResponsiveDialogBodyProps) => {
 const ResponsiveDialogHeader = (
   props: ResponsiveDialogProps & {
     align?: "start" | "center" | "end";
-  },
+  }
 ) => {
   const { align = "start", className, ...rest } = props;
   const { isDesktop } = useResponsive();
   const Component = React.useMemo(
     () => (isDesktop ? DialogHeader : DrawerHeader),
-    [isDesktop],
+    [isDesktop]
   );
 
   return (
@@ -109,7 +111,7 @@ const ResponsiveDialogHeader = (
         align === "center" && "text-center",
         align === "start" && "text-start",
         align === "end" && "text-end",
-        className,
+        className
       )}
       {...rest}
     />
@@ -121,7 +123,7 @@ const ResponsiveDialogTitle = (props: ResponsiveDialogProps) => {
   const { isDesktop } = useResponsive();
   const Component = React.useMemo(
     () => (isDesktop ? DialogTitle : DrawerTitle),
-    [isDesktop],
+    [isDesktop]
   );
 
   return <Component {...rest} />;
@@ -133,7 +135,7 @@ const ResponsiveDialogDescription = (props: ResponsiveDialogProps) => {
   const loading = useLoading();
   const Component = React.useMemo(
     () => (isDesktop ? DialogDescription : DrawerDescription),
-    [isDesktop],
+    [isDesktop]
   );
 
   if (loading) return null;
@@ -152,7 +154,7 @@ const ResponsiveDialogFooter = (props: ResponsiveDialogProps) => {
   const loading = useLoading();
   const Component = React.useMemo(
     () => (isDesktop ? DialogFooter : DrawerFooter),
-    [isDesktop],
+    [isDesktop]
   );
 
   if (loading) return null;

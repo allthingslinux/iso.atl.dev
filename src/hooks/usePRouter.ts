@@ -1,4 +1,5 @@
 import { useRouter as useNextRouter } from "next/navigation";
+
 import NProgress from "nprogress";
 
 /**
@@ -8,7 +9,7 @@ import NProgress from "nprogress";
  */
 export default function useRouter() {
   const router = useNextRouter();
-   
+
   const { push } = router;
 
   router.push = (...args: Parameters<typeof push>) => {

@@ -23,18 +23,32 @@ export const FILE_CONFIG = {
   MAX_FILE_SIZE: 100 * 1024 * 1024, // 100MB
   CHUNK_SIZE: 1024 * 1024, // 1MB
   SUPPORTED_PREVIEW_EXTENSIONS: [
-    "txt", "md", "json", "js", "ts", "jsx", "tsx", 
-    "css", "html", "xml", "yaml", "yml", "toml"
+    "txt",
+    "md",
+    "json",
+    "js",
+    "ts",
+    "jsx",
+    "tsx",
+    "css",
+    "html",
+    "xml",
+    "yaml",
+    "yml",
+    "toml",
   ],
   SUPPORTED_IMAGE_EXTENSIONS: [
-    "jpg", "jpeg", "png", "gif", "webp", "svg", "bmp", "ico"
+    "jpg",
+    "jpeg",
+    "png",
+    "gif",
+    "webp",
+    "svg",
+    "bmp",
+    "ico",
   ],
-  SUPPORTED_VIDEO_EXTENSIONS: [
-    "mp4", "webm", "ogg", "mov", "avi", "mkv"
-  ],
-  SUPPORTED_AUDIO_EXTENSIONS: [
-    "mp3", "wav", "ogg", "m4a", "flac"
-  ],
+  SUPPORTED_VIDEO_EXTENSIONS: ["mp4", "webm", "ogg", "mov", "avi", "mkv"],
+  SUPPORTED_AUDIO_EXTENSIONS: ["mp3", "wav", "ogg", "m4a", "flac"],
 } as const;
 
 // UI Configuration
@@ -112,7 +126,8 @@ export const SECURITY_HEADERS = {
   "X-Content-Type-Options": "nosniff",
   "X-XSS-Protection": "1; mode=block",
   "Referrer-Policy": "strict-origin-when-cross-origin",
-  "Permissions-Policy": "camera=(), microphone=(), geolocation=(), browsing-topics=()",
+  "Permissions-Policy":
+    "camera=(), microphone=(), geolocation=(), browsing-topics=()",
 } as const;
 
 // Type exports for better type safety

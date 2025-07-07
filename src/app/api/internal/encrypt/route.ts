@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
     if (!query)
       return new NextResponse(
         "Add query parameter 'q' with the value to encrypt",
-        { status: 400 },
+        { status: 400 }
       );
 
     if (process.env.NODE_ENV !== "development" && !key) {
@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
     const encrypted = await encryptionService.encrypt(query, key ?? undefined);
     const decrypted = await encryptionService.decrypt(
       encrypted,
-      key ?? undefined,
+      key ?? undefined
     );
 
     return NextResponse.json(
@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
         decryptedValue: decrypted,
         key: key ?? process.env.ENCRYPTION_KEY,
       },
-      { status: 200 },
+      { status: 200 }
     );
   } catch (error) {
     const e = error as Error;

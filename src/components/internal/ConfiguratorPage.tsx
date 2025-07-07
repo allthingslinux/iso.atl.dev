@@ -1,11 +1,30 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import Link from "next/link";
 import { type PropsWithChildren, useState } from "react";
+
+import Link from "next/link";
+
+import {
+  GenerateConfiguration,
+  ProcessConfiguration,
+  ProcessEnvironmentConfig,
+} from "@/actions/configuration";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { type FieldPath, type UseFormReturn, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { type z } from "zod";
+
+import {
+  type ConfigurationCategory,
+  Schema_App_Configuration,
+} from "@/types/schema";
+
+import {
+  type PickFileResponse,
+  initialConfiguration,
+  pickFile,
+  versionExpectMap,
+} from "@/lib/configurationHelper";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button, LoadingButton } from "@/components/ui/button";
@@ -19,24 +38,6 @@ import {
 } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
 import { Separator } from "@/components/ui/separator";
-
-import {
-  type PickFileResponse,
-  initialConfiguration,
-  pickFile,
-  versionExpectMap,
-} from "@/lib/configurationHelper";
-
-import {
-  type ConfigurationCategory,
-  Schema_App_Configuration,
-} from "@/types/schema";
-
-import {
-  GenerateConfiguration,
-  ProcessConfiguration,
-  ProcessEnvironmentConfig,
-} from "@/actions/configuration";
 
 import {
   APIConfigurator as ApiForm,
@@ -61,7 +62,7 @@ export default function ConfiguratorPage() {
     toast.success("Form reverted to initial state");
   }
   async function onFormSubmit(
-    values: z.infer<typeof Schema_App_Configuration>,
+    values: z.infer<typeof Schema_App_Configuration>
   ) {
     const id = `download-${Date.now()}`;
     toast.loading("Generating configuration...", {
@@ -158,7 +159,7 @@ export default function ConfiguratorPage() {
     }
 
     const loadedVersion = /version:\s*["']?(\d+\.\d+\.\d+)["']?/.exec(
-      response.data,
+      response.data
     )?.[1];
     if (!loadedVersion) {
       toast.error("Version not found in configuration file", {
@@ -169,7 +170,7 @@ export default function ConfiguratorPage() {
     }
 
     const versionGroup = Object.entries(versionExpectMap).find(([_, v]) =>
-      v.includes(loadedVersion),
+      v.includes(loadedVersion)
     )?.[0];
     if (!versionGroup) {
       toast.error("Version not recognized", {
@@ -190,7 +191,7 @@ export default function ConfiguratorPage() {
     });
     const data = await ProcessConfiguration(
       response.data,
-      versionGroup as "v1" | "v2" | "latest",
+      versionGroup as "v1" | "v2" | "latest"
     );
     if (!data.success) {
       toast.error(data.message, {
@@ -403,6 +404,6 @@ export function FormSection({
 export type FormProps = {
   form: UseFormReturn<z.infer<typeof Schema_App_Configuration>>;
   onResetField?: (
-    field: FieldPath<z.infer<typeof Schema_App_Configuration>>,
+    field: FieldPath<z.infer<typeof Schema_App_Configuration>>
   ) => void;
 } & Omit<FormSectionProps, "title" | "description">;

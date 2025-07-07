@@ -1,8 +1,13 @@
 "use server";
 
+import { type ActionResponseSchema } from "@/types";
 import { type AsyncZippable, strToU8, zipSync } from "fflate";
 import { type z } from "zod";
-import { type ActionResponseSchema } from "@/types";
+
+import {
+  type Schema_App_Configuration,
+  type Schema_App_Configuration_Env,
+} from "@/types/schema";
 
 import {
   configurationTemplate,
@@ -17,13 +22,8 @@ import {
   encryptionService,
 } from "@/lib/utils.server";
 
-import {
-  type Schema_App_Configuration,
-  type Schema_App_Configuration_Env,
-} from "@/types/schema";
-
 export async function GenerateServiceAccountB64(
-  serviceAccount: string,
+  serviceAccount: string
 ): Promise<ActionResponseSchema<string>> {
   const b64 = base64Encode(serviceAccount, "standard");
 
@@ -54,7 +54,7 @@ export async function GenerateServiceAccountB64(
 }
 
 export async function ProcessEnvironmentConfig(
-  configuration: string,
+  configuration: string
 ): Promise<ActionResponseSchema<z.infer<typeof Schema_App_Configuration_Env>>> {
   const data = parseEnvironment(configuration);
   if ("message" in data && "details" in data) {
@@ -85,7 +85,7 @@ export async function ProcessEnvironmentConfig(
 
 export async function ProcessConfiguration(
   configuration: string,
-  version: "v1" | "v2" | "latest",
+  version: "v1" | "v2" | "latest"
 ): Promise<
   ActionResponseSchema<
     Omit<z.infer<typeof Schema_App_Configuration>, "environment">
@@ -111,7 +111,7 @@ export async function ProcessConfiguration(
 }
 
 export async function GenerateConfiguration(
-  values: z.infer<typeof Schema_App_Configuration>,
+  values: z.infer<typeof Schema_App_Configuration>
 ): Promise<
   ActionResponseSchema<{ configuration: string; env: string; zip: Blob }>
 > {
@@ -134,7 +134,7 @@ export async function GenerateConfiguration(
       key: "api.rootFolder",
       value: await encryptionService.encrypt(
         values.api.rootFolder,
-        values.environment.ENCRYPTION_KEY,
+        values.environment.ENCRYPTION_KEY
       ),
     },
     {
@@ -146,7 +146,7 @@ export async function GenerateConfiguration(
       value: values.api.sharedDrive
         ? await encryptionService.encrypt(
             values.api.sharedDrive,
-            values.environment.ENCRYPTION_KEY,
+            values.environment.ENCRYPTION_KEY
           )
         : "",
     },

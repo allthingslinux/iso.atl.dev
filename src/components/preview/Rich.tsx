@@ -1,19 +1,20 @@
 "use client";
 
 import { useState } from "react";
+
+import { GetContent } from "@/actions/files";
 import { type z } from "zod";
+
+import { type Schema_File } from "@/types/schema";
+
+import { cn } from "@/lib/utils";
+
+import useLoading from "@/hooks/useLoading";
 
 import { Markdown, Status } from "@/components/global";
 import { PageLoader } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import Icon from "@/components/ui/icon";
-
-import useLoading from "@/hooks/useLoading";
-import { cn } from "@/lib/utils";
-
-import { type Schema_File } from "@/types/schema";
-
-import { GetContent } from "@/actions/files";
 
 type Props = {
   file: z.infer<typeof Schema_File>;
@@ -44,7 +45,7 @@ export default function PreviewRich({ file, isCode, view }: Props) {
         <div
           className={cn(
             "relative w-full overflow-hidden",
-            expand ? "h-full" : "max-h-[50dvh]",
+            expand ? "h-full" : "max-h-[50dvh]"
           )}
         >
           <div
@@ -52,7 +53,7 @@ export default function PreviewRich({ file, isCode, view }: Props) {
               "w-full overflow-hidden",
               expand
                 ? "[mask-image:linear-gradient(180deg,white_65%,white] h-full"
-                : "h-[50dvh] max-h-[50dvh] mask-[linear-gradient(180deg,white_65%,rgba(255,255,255,0))]",
+                : "h-[50dvh] max-h-[50dvh] mask-[linear-gradient(180deg,white_65%,rgba(255,255,255,0))]"
             )}
           >
             <Markdown
@@ -67,7 +68,7 @@ export default function PreviewRich({ file, isCode, view }: Props) {
           <div
             className={cn(
               "bottom-0 z-10 flex w-full items-center justify-center py-3 transition",
-              expand ? "relative" : "absolute",
+              expand ? "relative" : "absolute"
             )}
           >
             <Button

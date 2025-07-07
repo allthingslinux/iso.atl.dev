@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+
 import { getErrorMessage } from "@/lib/errors";
 
 // Types for the hook
@@ -90,12 +91,15 @@ export function useAsyncData<T>(
   }, [key, cacheTime, staleTime]);
 
   // Update cache
-  const updateCache = useCallback((data: T): void => {
-    dataCache.set(key, {
-      data,
-      timestamp: Date.now(),
-    });
-  }, [key]);
+  const updateCache = useCallback(
+    (data: T): void => {
+      dataCache.set(key, {
+        data,
+        timestamp: Date.now(),
+      });
+    },
+    [key]
+  );
 
   // Execute the fetcher
   const execute = useCallback(async (): Promise<void> => {
@@ -152,7 +156,8 @@ export function useAsyncData<T>(
       // Don't handle aborted requests as errors
       if (error instanceof Error && error.name === "AbortError") return;
 
-      const errorObj = error instanceof Error ? error : new Error(getErrorMessage(error));
+      const errorObj =
+        error instanceof Error ? error : new Error(getErrorMessage(error));
 
       setState({
         data: null,
@@ -166,7 +171,10 @@ export function useAsyncData<T>(
       onError?.(errorObj);
 
       // Handle retry
-      if (retry && (typeof retry === "boolean" || retryCountRef.current < retry)) {
+      if (
+        retry &&
+        (typeof retry === "boolean" || retryCountRef.current < retry)
+      ) {
         retryCountRef.current++;
         setTimeout(() => {
           if (isMountedRef.current) {
@@ -191,17 +199,20 @@ export function useAsyncData<T>(
   }, [initialData]);
 
   // Set data manually
-  const setData = useCallback((data: T): void => {
-    setState({
-      data,
-      error: null,
-      isLoading: false,
-      isRefreshing: false,
-      isSuccess: true,
-      isError: false,
-    });
-    updateCache(data);
-  }, [updateCache]);
+  const setData = useCallback(
+    (data: T): void => {
+      setState({
+        data,
+        error: null,
+        isLoading: false,
+        isRefreshing: false,
+        isSuccess: true,
+        isError: false,
+      });
+      updateCache(data);
+    },
+    [updateCache]
+  );
 
   // Set error manually
   const setError = useCallback((error: Error): void => {
@@ -251,7 +262,10 @@ export function useAsyncData<T>(
 // Hook for mutations (POST, PUT, DELETE)
 export function useAsyncMutation<TData, TVariables = void>(
   mutationFn: (variables: TVariables) => Promise<TData>,
-  options: Omit<UseAsyncDataOptions<TData>, "fetchOnMount" | "dependencies"> = {}
+  options: Omit<
+    UseAsyncDataOptions<TData>,
+    "fetchOnMount" | "dependencies"
+  > = {}
 ): {
   mutate: (variables: TVariables) => Promise<void>;
   mutateAsync: (variables: TVariables) => Promise<TData>;
@@ -270,65 +284,77 @@ export function useAsyncMutation<TData, TVariables = void>(
   const isMountedRef = useRef(true);
   const retryCountRef = useRef(0);
 
-  const mutateAsync = useCallback(async (variables: TVariables): Promise<TData> => {
-    setState((prev) => ({
-      ...prev,
-      isLoading: true,
-      error: null,
-    }));
-
-    try {
-      const data = await mutationFn(variables);
-
-      if (!isMountedRef.current) throw new Error("Component unmounted");
-
-      setState({
-        data,
+  const mutateAsync = useCallback(
+    async (variables: TVariables): Promise<TData> => {
+      setState((prev) => ({
+        ...prev,
+        isLoading: true,
         error: null,
-        isLoading: false,
-        isRefreshing: false,
-        isSuccess: true,
-        isError: false,
-      });
+      }));
 
-      retryCountRef.current = 0;
-      onSuccess?.(data);
+      try {
+        const data = await mutationFn(variables);
 
-      return data;
-    } catch (error) {
-      if (!isMountedRef.current) throw error;
+        if (!isMountedRef.current) throw new Error("Component unmounted");
 
-      const errorObj = error instanceof Error ? error : new Error(getErrorMessage(error));
+        setState({
+          data,
+          error: null,
+          isLoading: false,
+          isRefreshing: false,
+          isSuccess: true,
+          isError: false,
+        });
 
-      setState({
-        data: null,
-        error: errorObj,
-        isLoading: false,
-        isRefreshing: false,
-        isSuccess: false,
-        isError: true,
-      });
+        retryCountRef.current = 0;
+        onSuccess?.(data);
 
-      onError?.(errorObj);
+        return data;
+      } catch (error) {
+        if (!isMountedRef.current) throw error;
 
-      // Handle retry
-      if (retry && (typeof retry === "boolean" || retryCountRef.current < retry)) {
-        retryCountRef.current++;
-        await new Promise((resolve) => setTimeout(resolve, retryDelay * retryCountRef.current));
-        return mutateAsync(variables);
+        const errorObj =
+          error instanceof Error ? error : new Error(getErrorMessage(error));
+
+        setState({
+          data: null,
+          error: errorObj,
+          isLoading: false,
+          isRefreshing: false,
+          isSuccess: false,
+          isError: true,
+        });
+
+        onError?.(errorObj);
+
+        // Handle retry
+        if (
+          retry &&
+          (typeof retry === "boolean" || retryCountRef.current < retry)
+        ) {
+          retryCountRef.current++;
+          await new Promise((resolve) =>
+            setTimeout(resolve, retryDelay * retryCountRef.current)
+          );
+          return mutateAsync(variables);
+        }
+
+        throw errorObj;
       }
+    },
+    [mutationFn, onSuccess, onError, retry, retryDelay]
+  );
 
-      throw errorObj;
-    }
-  }, [mutationFn, onSuccess, onError, retry, retryDelay]);
-
-  const mutate = useCallback(async (variables: TVariables): Promise<void> => {
-    try {
-      await mutateAsync(variables);
-    } catch {
-      // Error is already handled in state
-    }
-  }, [mutateAsync]);
+  const mutate = useCallback(
+    async (variables: TVariables): Promise<void> => {
+      try {
+        await mutateAsync(variables);
+      } catch {
+        // Error is already handled in state
+      }
+    },
+    [mutateAsync]
+  );
 
   useEffect(() => {
     return () => {
