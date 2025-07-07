@@ -1,6 +1,6 @@
 import { type Metadata } from "next";
 
-import { ConfiguratorPage } from "~/components/internal";
+import { ConfiguratorPage } from "@/components/internal";
 
 export const dynamic = "force-static";
 
