@@ -38,7 +38,7 @@ export interface UseAsyncDataReturn<T> extends UseAsyncDataState<T> {
 }
 
 // Cache for storing data
-const dataCache = new Map<string, { data: any; timestamp: number }>();
+const dataCache = new Map<string, { data: unknown; timestamp: number }>();
 
 export function useAsyncData<T>(
   key: string,
@@ -84,7 +84,7 @@ export function useAsyncData<T>(
     }
 
     if (age <= staleTime) {
-      return cached.data;
+      return cached.data as T;
     }
 
     return null;

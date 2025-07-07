@@ -531,12 +531,12 @@ export async function GetStorageInfo(): Promise<
       config.apiConfig.isTeamDrive && config.apiConfig.sharedDrive
     );
 
-    console.log("[GetStorageInfo] isSharedDrive:", isSharedDrive);
-    console.log(
+    console.info("[GetStorageInfo] isSharedDrive:", isSharedDrive);
+    console.info(
       "[GetStorageInfo] config.apiConfig.isTeamDrive:",
       config.apiConfig.isTeamDrive
     );
-    console.log(
+    console.info(
       "[GetStorageInfo] config.apiConfig.sharedDrive:",
       config.apiConfig.sharedDrive
     );
@@ -561,12 +561,12 @@ export async function GetStorageInfo(): Promise<
         {};
       let pageToken: string | null | undefined = null;
 
-      console.log(
+      console.info(
         "[GetStorageInfo] Starting comprehensive scan of shared drive..."
       );
 
       do {
-        const response: any = await gdrive.files.list({
+        const response: unknown = await gdrive.files.list({
           q: "trashed = false",
           fields: "files(id,name,size,mimeType,fileExtension), nextPageToken",
           supportsAllDrives: true,
@@ -577,8 +577,8 @@ export async function GetStorageInfo(): Promise<
           pageToken: pageToken || undefined,
         });
 
-        if (response.data.files) {
-          for (const file of response.data.files) {
+        if (response && (response as any).data.files) {
+          for (const file of (response as any).data.files) {
             if (file.mimeType === "application/vnd.google-apps.folder") {
               totalFolders++;
             } else {
@@ -619,13 +619,13 @@ export async function GetStorageInfo(): Promise<
           }
         }
 
-        pageToken = response.data.nextPageToken;
-        console.log(
+        pageToken = (response as any).data.nextPageToken;
+        console.info(
           `[GetStorageInfo] Processed page, total files so far: ${totalFiles}, folders: ${totalFolders}, size: ${(totalSize / 1024 ** 4).toFixed(2)} TB`
         );
       } while (pageToken);
 
-      console.log("[GetStorageInfo] Final stats:", {
+      console.info("[GetStorageInfo] Final stats:", {
         totalFiles,
         totalFolders,
         totalSize,

@@ -103,7 +103,7 @@ const FileExplorerLayout = React.memo(
             <p className="text-muted-foreground text-center max-w-md font-mono text-sm">
               No files or directories found in current path.
               <br />
-              <span className="text-xs mt-2 block flex items-center justify-center gap-2">
+              <span className="text-xs mt-2 block items-center justify-center gap-2">
                 <div className="w-1 h-1 bg-destructive rounded-full animate-pulse"></div>
                 errno: ENOENT • status: 404
               </span>

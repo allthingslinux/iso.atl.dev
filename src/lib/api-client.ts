@@ -96,21 +96,25 @@ export class ApiClient {
   // Handle response errors
   private async handleResponseError(response: Response): Promise<never> {
     const contentType = response.headers.get("content-type");
-    let errorBody: any = {};
+    let errorBody: unknown = {};
 
     if (contentType?.includes("application/json")) {
-      try {
-        errorBody = await response.json();
-      } catch {
-        // Failed to parse JSON
-      }
+      errorBody = await response.json();
     }
 
-    const message = errorBody.message || errorBody.error || response.statusText;
+    // Use type assertion for errorBody
+    const errorObj = errorBody as Record<string, unknown>;
+
+    const message = String(
+      errorObj.message || errorObj.error || response.statusText
+    );
 
     switch (response.status) {
       case 400:
-        throw new ValidationError(message, errorBody.details);
+        throw new ValidationError(
+          message,
+          errorObj.details as string | undefined
+        );
       case 401:
         throw new UnauthorizedError(message);
       case 429:
@@ -118,9 +122,9 @@ export class ApiClient {
       case 502:
       case 503:
       case 504:
-        throw new ExternalServiceError("API", errorBody);
+        throw new ExternalServiceError("API", errorObj);
       default:
-        throw new AppError(message, response.status, undefined, errorBody);
+        throw new AppError(message, response.status, undefined, errorObj);
     }
   }
 

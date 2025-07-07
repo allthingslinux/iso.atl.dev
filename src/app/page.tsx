@@ -19,6 +19,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Icon from "@/components/ui/icon";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
+import { type Schema_File } from "@/types/schema";
+import { type z } from "zod";
 
 type StorageInfo = {
   usage: { bytes: number; tb: number; gb: number };
@@ -39,6 +41,20 @@ type StorageInfo = {
   } | null;
   isSharedDrive: boolean;
 };
+
+// Define the expected type for data objects
+interface FileData {
+  data: {
+    files: unknown[];
+    nextPageToken?: string;
+  };
+}
+interface ReadmeData {
+  data: {
+    content: string;
+    type: string;
+  };
+}
 
 // Fallback components for Suspense
 const FileActionsFallback = () => (
@@ -263,6 +279,8 @@ export default function RootPage() {
   if (!data || !readme)
     return <div className="p-8 text-center">No data available</div>;
 
+  const files = (data as FileData).data?.files as z.infer<typeof Schema_File>[];
+
   return (
     <div className={cn("h-fit w-full", "flex flex-col gap-6")}>
       {/* Combined Navigation/Status Bar */}
@@ -289,7 +307,7 @@ export default function RootPage() {
         {/* System Info Sidebar */}
         <div className="lg:col-span-1 space-y-4">
           <SystemInfoPanel
-            rootItemCount={(data as any)?.data?.files?.length || 0}
+            rootItemCount={(data as FileData).data?.files?.length || 0}
           />
         </div>
 
@@ -301,7 +319,7 @@ export default function RootPage() {
                 <div className="flex items-center gap-3">
                   <CardTitle className="grow font-mono">File System</CardTitle>
                   <Badge variant="secondary" className="font-mono text-xs">
-                    {(data as any)?.data?.files?.length || 0} items
+                    {(data as FileData).data?.files?.length || 0} items
                   </Badge>
                 </div>
                 <div className="flex items-center gap-2">
@@ -315,19 +333,21 @@ export default function RootPage() {
             <CardContent className="p-2 pt-0 tablet:p-4 tablet:pt-0">
               <FileExplorerLayout
                 encryptedId={config.apiConfig.rootFolder}
-                files={(data as any)?.data?.files || []}
-                nextPageToken={(data as any)?.data?.nextPageToken ?? undefined}
+                files={files}
+                nextPageToken={
+                  (data as FileData).data?.nextPageToken ?? undefined
+                }
               />
             </CardContent>
           </Card>
         </div>
       </div>
 
-      {(readme as any)?.data && (
+      {(readme as ReadmeData).data && (
         <Suspense fallback={<FileReadmeFallback />}>
           <FileReadme
-            content={(readme as any).data.content}
-            title={`README.${(readme as any).data.type === "markdown" ? "md" : "txt"}`}
+            content={(readme as ReadmeData).data.content}
+            title={`README.${(readme as ReadmeData).data.type === "markdown" ? "md" : "txt"}`}
           />
         </Suspense>
       )}

@@ -4,7 +4,7 @@ import { type Metric, onCLS, onFCP, onINP, onLCP, onTTFB } from "web-vitals";
 export function reportWebVitals(metric: Metric) {
   if (process.env.NODE_ENV === "development") {
     // Log to console in development for debugging
-    console.log(`[Web Vitals] ${metric.name}:`, metric.value);
+    console.info(`[Web Vitals] ${metric.name}:`, metric.value);
   }
 
   // In production, you could send this to an analytics service
@@ -109,7 +109,7 @@ export function measurePerformance<T>(name: string, fn: () => T): T {
   const end = performance.now();
 
   if (process.env.NODE_ENV === "development") {
-    console.log(`[Performance] ${name}: ${(end - start).toFixed(2)}ms`);
+    console.info(`[Performance] ${name}: ${(end - start).toFixed(2)}ms`);
   }
 
   return result;
@@ -126,7 +126,9 @@ export async function measureAsyncPerformance<T>(
     const end = performance.now();
 
     if (process.env.NODE_ENV === "development") {
-      console.log(`[Async Performance] ${name}: ${(end - start).toFixed(2)}ms`);
+      console.info(
+        `[Async Performance] ${name}: ${(end - start).toFixed(2)}ms`
+      );
     }
 
     return result;

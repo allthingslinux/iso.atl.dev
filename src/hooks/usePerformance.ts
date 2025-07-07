@@ -13,7 +13,7 @@ export function usePerformanceMonitor(componentName: string) {
       const lifespan = unmountTime - mountTimeRef.current;
 
       if (process.env.NODE_ENV === "development") {
-        console.log(
+        console.info(
           `[Performance] ${componentName} lifespan: ${lifespan.toFixed(2)}ms, renders: ${renderCountRef.current}`
         );
       }
@@ -28,7 +28,7 @@ export function usePerformanceMonitor(componentName: string) {
       const timeBetweenRenders = renderTime - lastRenderTimeRef.current;
 
       if (process.env.NODE_ENV === "development" && timeBetweenRenders < 16) {
-        console.warn(
+        console.debug(
           `[Performance Warning] ${componentName} re-rendered within ${timeBetweenRenders.toFixed(2)}ms`
         );
       }
@@ -44,7 +44,7 @@ export function usePerformanceMonitor(componentName: string) {
       const end = performance.now();
 
       if (process.env.NODE_ENV === "development") {
-        console.log(
+        console.info(
           `[Performance] ${componentName}.${functionName}: ${(end - start).toFixed(2)}ms`
         );
       }
@@ -69,7 +69,7 @@ export function useAsyncPerformanceMonitor() {
         const end = performance.now();
 
         if (process.env.NODE_ENV === "development") {
-          console.log(
+          console.info(
             `[Async Performance] ${operationName}: ${(end - start).toFixed(2)}ms`
           );
         }
@@ -120,7 +120,7 @@ export function useRenderOptimization(componentName: string, threshold = 16) {
           process.env.NODE_ENV === "development" &&
           warningCountRef.current >= 3
         ) {
-          console.warn(
+          console.debug(
             `[Render Optimization] ${componentName} has ${warningCountRef.current} rapid re-renders (< ${threshold}ms apart). Consider optimization.`
           );
           warningCountRef.current = 0; // Reset to avoid spam
