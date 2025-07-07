@@ -306,13 +306,73 @@ const { data, isLoading } = useAsyncData(
 4. **Maintainability**: Cleaner, more organized code
 5. **Developer Experience**: Better tooling and utilities
 
-## 📚 Resources
+## � CI/CD and Code Quality Setup
+
+### Git Hooks (Husky)
+- **Pre-commit**: Runs lint-staged for ESLint, Prettier, and TypeScript checks
+- **Commit-msg**: Validates conventional commit format
+- **Pre-push**: Runs full validation suite
+
+### Code Quality Tools
+- **Prettier**: Consistent formatting with import sorting
+- **ESLint**: Modern flat config with Next.js 15 best practices
+- **lint-staged**: Faster commits by checking only staged files
+- **Commitlint**: Enforces conventional commit standards
+
+### GitHub Actions Workflows
+- **CI Pipeline**: Lint, type-check, build, and security scanning
+- **Dependency Review**: Automated vulnerability detection in PRs
+- **CodeQL**: Weekly security and code quality analysis
+- **Lighthouse CI**: Performance and accessibility testing
+
+### VS Code Integration
+- **Settings**: Auto-format on save, ESLint integration
+- **Extensions**: Curated list of recommended extensions
+- **IntelliSense**: Full TypeScript and TailwindCSS support
+
+### Documentation
+- Created `CI_CD_SETUP.md` with comprehensive guide
+- Conventional commit examples and best practices
+- Troubleshooting guide for common issues
+
+## 🚀 Future Improvements
+
+1. **Testing Framework**
+   - Jest for unit testing
+   - React Testing Library for component tests
+   - Playwright for E2E testing
+
+2. **Component Documentation**
+   - Storybook for UI component library
+   - Interactive documentation
+
+3. **Performance Monitoring**
+   - Bundle size tracking
+   - Runtime performance metrics
+   - Web Vitals monitoring
+
+4. **Automation**
+   - Semantic versioning
+   - Automated changelog generation
+   - Dependency updates via Renovate/Dependabot
+
+5. **Accessibility**
+   - Automated a11y testing
+   - WCAG 2.1 compliance checks
+
+6. **Internationalization**
+   - next-intl integration
+   - Locale-based routing
+
+## �📚 Resources
 
 - [Next.js 15 Documentation](https://nextjs.org/docs)
 - [React 19 Features](https://react.dev/blog)
 - [TypeScript Best Practices](https://www.typescriptlang.org/docs/)
 - [ESLint Configuration](https://eslint.org/docs/latest/)
+- [Conventional Commits](https://www.conventionalcommits.org/)
+- [GitHub Actions](https://docs.github.com/en/actions)
 
 ---
 
-This refactoring provides a solid foundation for building scalable, maintainable React applications with Next.js 15.
+This refactoring provides a solid foundation for building scalable, maintainable React applications with Next.js 15, complete with modern CI/CD practices and automated code quality enforcement.
