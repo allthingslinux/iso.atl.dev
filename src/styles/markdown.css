@@ -1,118 +1,198 @@
-@tailwind components;
+@import "tailwindcss";
 
-@layer components {
-  .markdown {
-    @apply text-base leading-relaxed tracking-wide;
-  }
+/* Markdown utility class */
+.markdown {
+  font-size: 0.875rem;
+  line-height: 1.625;
+  letter-spacing: 0.025em;
+}
 
-  .markdown p {
-    @apply leading-loose;
-  }
+.markdown p {
+  line-height: 2;
+}
 
-  /* .markdown h1 {
-    @apply text-4xl font-medium;
-  }
-  .markdown h2 {
-    @apply text-3xl font-medium;
-  }
-  .markdown h3 {
-    @apply text-2xl font-medium;
-  }
-  .markdown h4 {
-    @apply text-xl font-medium;
-  }
-  .markdown h5 {
-    @apply text-lg font-medium;
-  }
-  .markdown h6 {
-    @apply text-base;
-  } */
+.markdown h1 {
+  margin-top: 1rem;
+  border-bottom: 2px solid var(--color-border);
+  text-transform: capitalize;
+}
 
-  .markdown h1,
-  .markdown h2,
-  .markdown h3 {
-    @apply mt-4 border-b-2 border-b-border first-letter:capitalize;
-  }
+.markdown h2 {
+  margin-top: 1rem;
+  border-bottom: 2px solid var(--color-border);
+  text-transform: capitalize;
+}
 
-  .markdown code:not(pre code) {
-    @apply mx-1 select-all whitespace-nowrap rounded-[0.375rem] border bg-[--syntax-bg] px-1 py-1 leading-normal tracking-wide text-foreground;
-  }
+.markdown h3 {
+  margin-top: 1rem;
+  border-bottom: 2px solid var(--color-border);
+  text-transform: capitalize;
+}
 
+.markdown code:not(pre code) {
+  margin: 0 0.25rem;
+  user-select: all;
+  white-space: nowrap;
+  border-radius: 0.375rem;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-syntax-bg);
+  padding: 0.25rem;
+  line-height: 1.5;
+  letter-spacing: 0.025em;
+  color: var(--color-foreground);
+}
+
+.markdown a {
+  color: #2563eb;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+}
+
+.markdown a:hover {
+  opacity: 1;
+}
+
+@media (prefers-color-scheme: dark) {
   .markdown a {
-    @apply text-blue-600 opacity-80 transition-all duration-300 hover:opacity-100 dark:text-blue-400;
+    color: #60a5fa;
   }
+}
 
-  .markdown p {
-    @apply whitespace-normal text-pretty;
-  }
+.markdown p {
+  white-space: normal;
+  text-wrap: pretty;
+}
 
-  .markdown img {
-    @apply rounded-lg;
-  }
+.markdown img {
+  border-radius: 0.5rem;
+}
 
-  .markdown ul {
-    @apply my-3 !list-outside list-disc leading-loose;
-  }
+.markdown ul {
+  margin: 0.75rem 0;
+  list-style-position: outside;
+  list-style-type: disc;
+  line-height: 2;
+}
 
-  .markdown ol {
-    @apply my-3 !list-inside list-decimal leading-loose;
-  }
+.markdown ol {
+  margin: 0.75rem 0;
+  list-style-position: inside;
+  list-style-type: decimal;
+  line-height: 2;
+}
 
-  .markdown li {
-    @apply my-0 ml-2;
-  }
+.markdown li {
+  margin: 0;
+  margin-left: 0.5rem;
+}
 
-  .markdown table {
-    @apply mb-4 block w-full border-collapse border-spacing-0 overflow-auto;
-  }
+.markdown table {
+  margin-bottom: 1rem;
+  display: block;
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  overflow: auto;
+}
 
-  .markdown table th,
-  .markdown table td {
-    @apply border border-border px-2 py-1;
-  }
+.markdown table th {
+  border: 1px solid var(--color-border);
+  padding: 0.5rem;
+}
 
-  .markdown table th {
-    @apply bg-background text-foreground;
-  }
+.markdown table td {
+  border: 1px solid var(--color-border);
+  padding: 0.5rem;
+}
 
-  .markdown table tr {
-    @apply bg-secondary/50 text-foreground;
-  }
+.markdown table th {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+}
 
-  .markdown table tr:nth-child(2n) {
-    @apply bg-secondary/25 text-foreground;
-  }
+.markdown table tr {
+  background-color: color-mix(in srgb, var(--color-secondary) 50%, transparent);
+  color: var(--color-foreground);
+}
 
-  .markdown ul.contains-task-list {
-    @apply list-none;
-  }
+.markdown table tr:nth-child(2n) {
+  background-color: color-mix(in srgb, var(--color-secondary) 25%, transparent);
+  color: var(--color-foreground);
+}
 
-  .markdown ul.contains-task-list li {
-    @apply ml-1 flex items-center;
-  }
-  .markdown del {
-    @apply text-muted-foreground;
-  }
+.markdown ul.contains-task-list {
+  list-style: none;
+}
 
-  .markdown input[type="checkbox"] {
-    @apply mr-2 aspect-square h-4 w-4 rounded-full p-2;
-    @apply appearance-none border border-border;
-    @apply disabled:bg-primary disabled:checked:bg-blue-600 dark:disabled:checked:bg-blue-400;
-  }
+.markdown ul.contains-task-list li {
+  margin-left: 0.25rem;
+  display: flex;
+  align-items: center;
+}
 
-  .markdown blockquote {
-    quotes: none !important;
-    @apply border border-l-4 bg-primary/5 py-2 text-sm not-italic text-foreground/75;
-    /* @apply my-2 rounded-r-lg border-l-4 border-l-primary/50 bg-muted/25 py-1.5 pl-3 text-foreground; */
-  }
-  .markdown blockquote > p > strong:first-child {
-    @apply text-base font-semibold text-foreground;
-  }
-  .markdown blockquote > p {
-    @apply my-0 !important;
-  }
+.markdown del {
+  color: var(--color-muted-foreground);
+}
 
-  .markdown hr {
-    @apply my-4 border-b border-t-0 border-b-border;
+.markdown input[type="checkbox"] {
+  margin-right: 0.5rem;
+  aspect-ratio: 1;
+  height: 1rem;
+  width: 1rem;
+  border-radius: 9999px;
+  padding: 0.5rem;
+  appearance: none;
+  border: 1px solid var(--color-border);
+}
+
+.markdown input[type="checkbox"]:disabled {
+  background-color: var(--color-primary);
+}
+
+.markdown input[type="checkbox"]:disabled:checked {
+  background-color: #2563eb;
+}
+
+@media (prefers-color-scheme: dark) {
+  .markdown input[type="checkbox"]:disabled:checked {
+    background-color: #60a5fa;
   }
+}
+
+.markdown blockquote {
+  quotes: none !important;
+  border: 1px solid var(--color-border);
+  border-left: 4px solid var(--color-border);
+  background-color: color-mix(in srgb, var(--color-primary) 5%, transparent);
+  padding: 0.5rem 0;
+  font-size: 0.875rem;
+  font-style: normal;
+  color: color-mix(in srgb, var(--color-foreground) 75%, transparent);
+}
+
+.markdown blockquote > p > strong:first-child {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-foreground);
+}
+
+.markdown blockquote > p {
+  margin: 0 !important;
+}
+
+.markdown hr {
+  margin: 1rem 0;
+  border-bottom: 1px solid var(--color-border);
+  border-top: 0;
+}
+
+/* Task list utility */
+.contains-task-list ul {
+  list-style: none;
+}
+
+.contains-task-list ul li {
+  margin-left: 0.25rem;
+  display: flex;
+  align-items: center;
 }

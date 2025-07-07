@@ -1,187 +1,445 @@
-/* Version: ${pkg.version} */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
 
 /* Shadcn/ui theme */
-@layer base {
-  :root {
-    --background: 0 0% 97.69%;
-    --foreground: 334 55% 1%;
-    --muted: 0 0% 93.85%;
-    --muted-foreground: 0 0% 10.2%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 10.2%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 13.73%;
-    --border: 0 0% 80.78%;
-    --input: 0 0% 80.78%;
-    --primary: 211.29 100% 50%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 0 0% 85.49%;
-    --secondary-foreground: 334 0% 10%;
-    --accent: 211.29 100% 50%;
-    --accent-foreground: 334 0% 100%;
-    --destructive: 3.19 100% 59.41%;
-    --destructive-foreground: 18 0% 100%;
-    --ring: 0 0% 60%;
-    --chart-1: 211.29 100% 50%;
-    --chart-2: 0 0% 85.49%;
-    --chart-3: 211.29 100% 50%;
-    --chart-4: 0 0% 88.49%;
-    --chart-5: 211.29 103% 50%;
-    --radius: 0.5rem;
+@theme {
+  --color-background: 0 0% 97.69%;
+  --color-foreground: 334 55% 1%;
+  --color-muted: 0 0% 93.85%;
+  --color-muted-foreground: 0 0% 10.2%;
+  --color-popover: 0 0% 100%;
+  --color-popover-foreground: 0 0% 10.2%;
+  --color-card: 0 0% 100%;
+  --color-card-foreground: 0 0% 13.73%;
+  --color-border: 0 0% 80.78%;
+  --color-input: 0 0% 80.78%;
+  --color-primary: 211.29 100% 50%;
+  --color-primary-foreground: 0 0% 100%;
+  --color-secondary: 0 0% 85.49%;
+  --color-secondary-foreground: 334 0% 10%;
+  --color-accent: 211.29 100% 50%;
+  --color-accent-foreground: 334 0% 100%;
+  --color-destructive: 3.19 100% 59.41%;
+  --color-destructive-foreground: 18 0% 100%;
+  --color-ring: 0 0% 60%;
+  --color-chart-1: 211.29 100% 50%;
+  --color-chart-2: 0 0% 85.49%;
+  --color-chart-3: 211.29 100% 50%;
+  --color-chart-4: 0 0% 88.49%;
+  --color-chart-5: 211.29 103% 50%;
+  --radius: 0.5rem;
 
-    /**
-    * One Light theme for prism.js
-    * Based on Atom's One Light theme: https://github.com/atom/atom/tree/master/packages/one-light-syntax
-    */
-    /* From colors.less */
-    --mono-1: hsl(230, 8%, 24%);
-    --mono-2: hsl(230, 6%, 44%);
-    --mono-3: hsl(230, 4%, 64%);
-    --hue-1: hsl(198, 99%, 37%);
-    --hue-2: hsl(221, 87%, 60%);
-    --hue-3: hsl(301, 63%, 40%);
-    --hue-4: hsl(119, 34%, 47%);
-    --hue-5: hsl(5, 74%, 59%);
-    --hue-5-2: hsl(344, 84%, 43%);
-    --hue-6: hsl(35, 99%, 36%);
-    --hue-6-2: hsl(35, 99%, 40%);
-    --syntax-fg: hsl(230, 8%, 24%);
-    --syntax-bg: hsl(230, 1%, 98%);
-    --syntax-gutter: hsl(230, 1%, 62%);
-    --syntax-guide: hsla(230, 8%, 24%, 0.2);
-    --syntax-accent: hsl(230, 100%, 66%);
-    /* From syntax-variables.less */
-    --syntax-selection-color: hsl(230, 1%, 90%);
-    --syntax-gutter-background-color-selected: hsl(230, 1%, 90%);
-    --syntax-cursor-line: hsla(230, 8%, 24%, 0.05);
+  /* Enhanced colors for better visual hierarchy */
+  --color-success: 142 76% 36%;
+  --color-success-foreground: 0 0% 100%;
+  --color-warning: 38 92% 50%;
+  --color-warning-foreground: 0 0% 100%;
+  --color-info: 199 89% 48%;
+  --color-info-foreground: 0 0% 100%;
+  --color-folder: 45 93% 47%;
+  --color-folder-foreground: 0 0% 100%;
+  --color-file: 220 14% 96%;
+  --color-file-foreground: 220 9% 46%;
+  --color-archive: 280 100% 70%;
+  --color-archive-foreground: 0 0% 100%;
+  --color-code: 120 100% 25%;
+  --color-code-foreground: 0 0% 100%;
+  --color-media: 340 82% 52%;
+  --color-media-foreground: 0 0% 100%;
 
-    @apply text-[100%];
-  }
+  /* Prism.js theme variables */
+  --color-mono-1: hsl(230, 8%, 24%);
+  --color-mono-2: hsl(230, 6%, 44%);
+  --color-mono-3: hsl(230, 4%, 64%);
+  --color-hue-1: hsl(198, 99%, 37%);
+  --color-hue-2: hsl(221, 87%, 60%);
+  --color-hue-3: hsl(301, 63%, 40%);
+  --color-hue-4: hsl(119, 34%, 47%);
+  --color-hue-5: hsl(5, 74%, 59%);
+  --color-hue-5-2: hsl(344, 84%, 43%);
+  --color-hue-6: hsl(35, 99%, 36%);
+  --color-hue-6-2: hsl(35, 99%, 40%);
+  --color-syntax-fg: hsl(230, 8%, 24%);
+  --color-syntax-bg: hsl(230, 1%, 98%);
+  --color-syntax-gutter: hsl(230, 1%, 62%);
+  --color-syntax-guide: hsla(230, 8%, 24%, 0.2);
+  --color-syntax-accent: hsl(230, 100%, 66%);
+  --color-syntax-selection: hsl(230, 1%, 90%);
+  --color-syntax-gutter-background-selected: hsl(230, 1%, 90%);
+  --color-syntax-cursor-line: hsla(230, 8%, 24%, 0.05);
+}
 
-  .dark {
-    --background: 217.5 9.09% 17.25%;
-    --foreground: 334 34% 98%;
-    --muted: 210 9.09% 12.94%;
-    --muted-foreground: 334 0% 60.77%;
-    --popover: 210 9.09% 12.94%;
-    --popover-foreground: 334 34% 98%;
-    --card: 210 9.09% 12.94%;
-    --card-foreground: 334 34% 98%;
-    --border: 334 0% 18.46%;
-    --input: 214.29 5.04% 27.25%;
-    --primary: 226.73 58.43% 65.1%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 214.29 5.04% 27.25%;
-    --secondary-foreground: 334 0% 100%;
-    --accent: 217.5 9.09% 17.25%;
-    --accent-foreground: 226.73 58.43% 65.1%;
-    --destructive: 358.16 68.78% 53.53%;
-    --destructive-foreground: 0 0% 100%;
-    --ring: 217.5 9.09% 17.25%;
-    --chart-1: 226.73 58.43% 65.1%;
-    --chart-2: 214.29 5.04% 27.25%;
-    --chart-3: 217.5 9.09% 17.25%;
-    --chart-4: 214.29 5.04% 30.25%;
-    --chart-5: 226.73 61.43% 65.1%;
+@media (prefers-color-scheme: dark) {
+  @theme {
+    --color-background: 217.5 9.09% 21.5%;
+    --color-foreground: 334 34% 98%;
+    --color-muted: 210 9.09% 16.5%;
+    --color-muted-foreground: 334 0% 60.77%;
+    --color-popover: 210 9.09% 16.5%;
+    --color-popover-foreground: 334 34% 98%;
+    --color-card: 210 9.09% 16.5%;
+    --color-card-foreground: 334 34% 98%;
+    --color-border: 334 0% 22.5%;
+    --color-input: 214.29 5.04% 31.5%;
+    --color-primary: 226.73 58.43% 65.1%;
+    --color-primary-foreground: 0 0% 100%;
+    --color-secondary: 214.29 5.04% 27.25%;
+    --color-secondary-foreground: 334 0% 100%;
+    --color-accent: 217.5 9.09% 17.25%;
+    --color-accent-foreground: 226.73 58.43% 65.1%;
+    --color-destructive: 358.16 68.78% 53.53%;
+    --color-destructive-foreground: 0 0% 100%;
+    --color-ring: 217.5 9.09% 17.25%;
+    --color-chart-1: 226.73 58.43% 65.1%;
+    --color-chart-2: 214.29 5.04% 27.25%;
+    --color-chart-3: 217.5 9.09% 17.25%;
+    --color-chart-4: 214.29 5.04% 30.25%;
+    --color-chart-5: 226.73 61.43% 65.1%;
 
-    /**
-    * One Dark theme for prism.js
-    * Based on Atom's One Dark theme: https://github.com/atom/atom/tree/master/packages/one-dark-syntax
-    */
-    /* From colors.less */
-    --mono-1: hsl(220, 14%, 71%);
-    --mono-2: hsl(220, 9%, 55%);
-    --mono-3: hsl(220, 10%, 40%);
-    --hue-1: hsl(187, 47%, 55%);
-    --hue-2: hsl(207, 82%, 66%);
-    --hue-3: hsl(286, 60%, 67%);
-    --hue-4: hsl(95, 38%, 62%);
-    --hue-5: hsl(355, 65%, 65%);
-    --hue-5-2: hsl(5, 48%, 51%);
-    --hue-6: hsl(29, 54%, 61%);
-    --hue-6-2: hsl(39, 67%, 69%);
-    --syntax-fg: hsl(220, 14%, 71%);
-    --syntax-bg: hsl(220, 13%, 18%);
-    --syntax-gutter: hsl(220, 14%, 45%);
-    --syntax-guide: hsla(220, 14%, 71%, 0.15);
-    --syntax-accent: hsl(220, 100%, 66%);
-    /* From syntax-variables.less */
-    --syntax-selection-color: hsl(220, 13%, 28%);
-    --syntax-gutter-background-color-selected: hsl(220, 13%, 26%);
-    --syntax-cursor-line: hsla(220, 100%, 80%, 0.04);
-  }
+    /* Enhanced colors for dark theme */
+    --color-success: 142 76% 36%;
+    --color-success-foreground: 0 0% 100%;
+    --color-warning: 38 92% 50%;
+    --color-warning-foreground: 0 0% 100%;
+    --color-info: 199 89% 48%;
+    --color-info-foreground: 0 0% 100%;
+    --color-folder: 45 93% 47%;
+    --color-folder-foreground: 0 0% 100%;
+    --color-file: 220 13% 18%;
+    --color-file-foreground: 220 14% 71%;
+    --color-archive: 280 100% 70%;
+    --color-archive-foreground: 0 0% 100%;
+    --color-code: 120 100% 25%;
+    --color-code-foreground: 0 0% 100%;
+    --color-media: 340 82% 52%;
+    --color-media-foreground: 0 0% 100%;
 
-  div.preview * {
-    @apply !transition-none;
-  }
-
-  * {
-    @apply border-border;
-    /* @apply outline outline-1 outline-red-500; */
-  }
-
-  ::-webkit-scrollbar {
-    @apply h-1.5 w-1.5;
-  }
-  ::-webkit-scrollbar-track {
-    @apply bg-primary/5;
-  }
-  ::-webkit-scrollbar-thumb {
-    @apply rounded-full bg-primary/25 hover:bg-primary/50;
-  }
-
-  /* Typography */
-  h1 {
-    @apply scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl;
-  }
-  h2 {
-    @apply scroll-m-20 text-3xl font-semibold tracking-tight first:mt-0;
-  }
-  h3 {
-    @apply scroll-m-20 text-2xl font-semibold tracking-tight;
-  }
-  h4 {
-    @apply scroll-m-20 text-xl font-semibold tracking-tight;
-  }
-  p {
-    @apply leading-7 [&:not(:first-of-type)]:mt-6;
-  }
-  blockquote {
-    @apply mt-6 border-l-2 pl-6 italic;
-  }
-  ul {
-    @apply my-6 ml-6 list-disc [&>li]:mt-2;
-  }
-  .lead {
-    @apply text-xl text-muted-foreground;
-  }
-  .large {
-    @apply text-lg font-semibold;
-  }
-  .muted {
-    @apply text-sm text-muted-foreground;
-  }
-  small {
-    @apply text-sm font-medium leading-none;
+    /* Dark theme prism.js variables */
+    --color-mono-1: hsl(220, 14%, 71%);
+    --color-mono-2: hsl(220, 9%, 55%);
+    --color-mono-3: hsl(220, 10%, 40%);
+    --color-hue-1: hsl(187, 47%, 55%);
+    --color-hue-2: hsl(207, 82%, 66%);
+    --color-hue-3: hsl(286, 60%, 67%);
+    --color-hue-4: hsl(95, 38%, 62%);
+    --color-hue-5: hsl(355, 65%, 65%);
+    --color-hue-5-2: hsl(5, 48%, 51%);
+    --color-hue-6: hsl(29, 54%, 61%);
+    --color-hue-6-2: hsl(39, 67%, 69%);
+    --color-syntax-fg: hsl(220, 14%, 71%);
+    --color-syntax-bg: hsl(220, 13%, 18%);
+    --color-syntax-gutter: hsl(220, 14%, 45%);
+    --color-syntax-guide: hsla(220, 14%, 71%, 0.15);
+    --color-syntax-accent: hsl(220, 100%, 66%);
+    --color-syntax-selection: hsl(220, 13%, 28%);
+    --color-syntax-gutter-background-selected: hsl(220, 13%, 26%);
+    --color-syntax-cursor-line: hsla(220, 100%, 80%, 0.04);
   }
 }
 
-html,
+/* Base styles */
+* {
+  border-color: color-mix(in srgb, var(--color-border), transparent);
+}
+
+/* Enhanced animations and transitions */
+@keyframes gentle-pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.6;
+  }
+}
+
+@keyframes subtle-glow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 5px color-mix(in srgb, var(--color-primary) 20%, transparent);
+  }
+
+  50% {
+    box-shadow: 0 0 10px color-mix(in srgb, var(--color-primary) 30%, transparent);
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Subtle hover effects */
+.subtle-hover {
+  transition: all 0.2s ease-in-out;
+}
+
+.subtle-hover:hover {
+  transform: translateY(-1px);
+}
+
 body {
+  background-color: var(--color-background);
+  /* Enhanced dot pattern with subtle gradient */
+  background-image:
+    radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--color-primary) 3%, transparent) 1.5px, transparent 1.5px),
+    radial-gradient(circle at 25% 25%, color-mix(in srgb, var(--color-muted) 5%, transparent) 1px, transparent 1px);
+  background-size: 32px 32px, 16px 16px;
+  background-position: 0 0, 8px 8px;
+  color: var(--color-foreground);
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
-@layer base {
+
+/* Preview styles */
+div.preview * {
+  transition: none !important;
+}
+
+/* Enhanced scrollbar styles */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: color-mix(in srgb, var(--color-muted) 30%, transparent);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(45deg,
+      color-mix(in srgb, var(--color-primary) 40%, transparent),
+      color-mix(in srgb, var(--color-primary) 60%, transparent));
+  border-radius: 4px;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 20%, transparent);
+  transition: all 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(45deg,
+      color-mix(in srgb, var(--color-primary) 60%, transparent),
+      color-mix(in srgb, var(--color-primary) 80%, transparent));
+  border-color: color-mix(in srgb, var(--color-primary) 40%, transparent);
+  box-shadow: 0 2px 4px color-mix(in srgb, var(--color-primary) 20%, transparent);
+}
+
+::-webkit-scrollbar-corner {
+  background: color-mix(in srgb, var(--color-muted) 30%, transparent);
+}
+
+/* Typography base styles */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  scroll-margin-top: 5rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+h1 {
+  font-size: 3rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+}
+
+h2 {
+  font-size: 1.875rem;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+h4 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+p {
+  line-height: 1.75;
+}
+
+p:not(:first-child) {
+  margin-top: 1.5rem;
+}
+
+blockquote {
+  margin-top: 1.5rem;
+  border-left: 2px solid var(--color-border);
+  padding-left: 1.5rem;
+  font-style: italic;
+}
+
+ul {
+  margin: 1.5rem 0;
+  margin-left: 1.5rem;
+  list-style-type: disc;
+}
+
+ul > li {
+  margin-top: 0.5rem;
+}
+
+.lead {
+  font-size: 1.25rem;
+  color: var(--color-muted-foreground);
+}
+
+.large {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.muted {
+  font-size: 0.875rem;
+  color: var(--color-muted-foreground);
+}
+
+small {
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1;
+}
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+:root {
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: 210 40% 98%;
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+.dark {
+  --background: oklch(0.18 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.24 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.24 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.32 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.32 0 0);
+  --muted-foreground: oklch(0.75 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --destructive-foreground: 0 0% 100%;
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
 }
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
