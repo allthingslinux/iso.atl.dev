@@ -304,7 +304,7 @@ const FileItemActions = ({
         <Icon name="Link" className="mr-2 h-4 w-4" />
         <span>Copy Link</span>
       </DropdownMenuItem>
-      <DropdownMenuItem onSelect={onShowInfo}>
+      <DropdownMenuItem onSelect={onShowInfo} disabled={isFolder}>
         <Icon name="Info" className="mr-2 h-4 w-4" />
         <span>Info</span>
       </DropdownMenuItem>
@@ -525,7 +525,10 @@ export const FileItem = ({ data: file, layout }: Props) => {
             <Icon name="Link" className="mr-2 h-4 w-4" />
             <span>Copy Link</span>
           </ContextMenuItem>
-          <ContextMenuItem onSelect={actionProps.onShowInfo}>
+          <ContextMenuItem
+            onSelect={actionProps.onShowInfo}
+            disabled={actionProps.isFolder}
+          >
             <Icon name="Info" className="mr-2 h-4 w-4" />
             <span>Info</span>
           </ContextMenuItem>
