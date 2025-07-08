@@ -73,6 +73,9 @@ jobs:
         env:
           NEXT_TELEMETRY_DISABLED: 1
           GD_SERVICE_B64: ${{ secrets.GD_SERVICE_B64 }}
+          ENCRYPTION_KEY: ${{ secrets.ENCRYPTION_KEY }}
+          SITE_PASSWORD: ${{ secrets.SITE_PASSWORD }}
+          NEXT_PUBLIC_DOMAIN: ${{ secrets.NEXT_PUBLIC_DOMAIN }}
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
