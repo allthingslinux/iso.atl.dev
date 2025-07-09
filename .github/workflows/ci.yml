@@ -77,11 +77,14 @@ jobs:
           SITE_PASSWORD: ${{ secrets.SITE_PASSWORD }}
           NEXT_PUBLIC_DOMAIN: ${{ secrets.NEXT_PUBLIC_DOMAIN }}
 
+      - name: List .next directory
+        run: ls -la .next
+
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: build-artifacts
-          path: .next
+          path: ./.next
           retention-days: 7
 
   test:
