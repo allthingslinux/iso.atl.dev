@@ -16,7 +16,6 @@ import { bytesToReadable, durationToReadable, formatDate } from "@/lib/utils";
 import useRouter from "@/hooks/usePRouter";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   ContextMenu,
   ContextMenuContent,
@@ -38,7 +37,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Icon, { type IconName } from "@/components/ui/icon";
-import Image from "next/image";
 
 // import { GetMostRecentFileUpdate } from "@/actions/folder";
 
@@ -320,7 +318,7 @@ const FileItemActions = ({
 // =================================================================================================
 // MAIN FILE ITEM COMPONENT
 // =================================================================================================
-export const FileItem = ({ data: file, layout }: Props) => {
+export const FileItem = ({ data: file }: Props) => {
   const router = useRouter();
   const pathname = usePathname();
   const [isInfoModalOpen, setInfoModalOpen] = useState(false);
@@ -370,85 +368,6 @@ export const FileItem = ({ data: file, layout }: Props) => {
     onDownload: handleDownload,
     isFolder,
   };
-
-  const renderGridItem = () => (
-    <Card
-      className="group relative cursor-pointer overflow-hidden transition-all duration-200 hover:shadow-sm"
-      onClick={handleClick}
-    >
-      <div className="relative flex h-32 w-full items-center justify-center bg-muted/30">
-        {file.thumbnailLink && file.mimeType.includes("image") ? (
-          <Image
-            src={`/api/thumb/${file.encryptedId}`}
-            alt={file.name}
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-            width={128}
-            height={128}
-          />
-        ) : (
-          <div className="flex flex-col items-center justify-center">
-            <div
-              className="flex items-center justify-center w-16 h-16 rounded-xl mb-2 shadow-sm"
-              style={{
-                backgroundColor: `${fileColor}15`,
-                border: `2px solid ${fileColor}20`,
-              }}
-            >
-              <Icon
-                name={fileIcon}
-                className="h-8 w-8 transition-colors"
-                style={{ color: fileColor }}
-              />
-            </div>
-            {file.fileExtension && (
-              <div
-                className="mt-1 px-2 py-1 rounded text-xs font-mono border transition-colors"
-                style={{
-                  backgroundColor: `${fileColor}10`,
-                  borderColor: `${fileColor}30`,
-                  color: fileColor,
-                }}
-              >
-                {file.fileExtension.toUpperCase()}
-              </div>
-            )}
-          </div>
-        )}
-        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-          <FileItemActions {...actionProps} />
-        </div>
-      </div>
-      <CardHeader className="p-3">
-        <CardTitle className="line-clamp-2 text-sm font-medium mb-2">
-          {file.name}
-        </CardTitle>
-        <div className="flex items-center justify-between text-xs text-muted-foreground">
-          <span className="font-mono flex items-center gap-1">
-            {isFolder ? (
-              <>
-                <div
-                  className="w-2 h-2 rounded-full"
-                  style={{ backgroundColor: fileColor }}
-                ></div>
-                <span>DIR</span>
-              </>
-            ) : (
-              <>
-                <div
-                  className="w-2 h-2 rounded-full"
-                  style={{ backgroundColor: fileColor }}
-                ></div>
-                <span>{bytesToReadable(file.size ?? 0)}</span>
-              </>
-            )}
-          </span>
-          <span className="font-mono">
-            {formatDate(file.modifiedTime).split(" ")[0]}
-          </span>
-        </div>
-      </CardHeader>
-    </Card>
-  );
 
   const renderListItem = () => (
     <div
@@ -513,9 +432,7 @@ export const FileItem = ({ data: file, layout }: Props) => {
   return (
     <>
       <ContextMenu>
-        <ContextMenuTrigger>
-          {layout === "grid" ? renderGridItem() : renderListItem()}
-        </ContextMenuTrigger>
+        <ContextMenuTrigger>{renderListItem()}</ContextMenuTrigger>
         <ContextMenuContent className="w-48">
           <ContextMenuItem onSelect={actionProps.onOpen}>
             <Icon name="ArrowRight" className="mr-2 h-4 w-4" />

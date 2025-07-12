@@ -9,7 +9,6 @@ import { getFileType } from "@/lib/previewHelper";
 import { formatPathToBreadcrumb } from "@/lib/utils";
 
 import {
-  FileActions,
   FileBreadcrumb,
   FileExplorerLayout,
   FileReadme,
@@ -108,7 +107,6 @@ export default async function RestPage({ params }: Props) {
               <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform">
                 <CardTitle>Browse files</CardTitle>
               </div>
-              <FileActions />
             </div>
           </CardHeader>
 

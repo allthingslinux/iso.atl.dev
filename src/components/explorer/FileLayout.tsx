@@ -9,8 +9,6 @@ import { type z } from "zod";
 
 import { type Schema_File } from "@/types/schema";
 
-import { cn } from "@/lib/utils";
-
 import useLoading from "@/hooks/useLoading";
 
 import { FileItem } from "@/components/explorer";
@@ -137,14 +135,8 @@ const FileExplorerLayout = React.memo(
           </div>
         )}
 
-        {/* Files Grid/List */}
-        <div
-          className={cn(
-            layout === "list"
-              ? "flex flex-col"
-              : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
-          )}
-        >
+        {/* Files List */}
+        <div className="flex flex-col">
           {filesList.map((file) => (
             <div key={file.encryptedId}>
               <FileItem data={file} layout={layout} />

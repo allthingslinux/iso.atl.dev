@@ -8,7 +8,6 @@ import config from "@/config/gIndex.config";
 import { cn } from "@/lib/utils";
 
 import {
-  FileActions,
   FileBreadcrumb,
   FileExplorerLayout,
   FileReadme,
@@ -55,14 +54,6 @@ interface ReadmeData {
     type: string;
   };
 }
-
-// Fallback components for Suspense
-const FileActionsFallback = () => (
-  <div className="flex items-center gap-2">
-    <Skeleton className="h-10 w-16" />
-    <Skeleton className="h-10 w-10" />
-  </div>
-);
 
 const FileReadmeFallback = () => (
   <Card>
@@ -329,11 +320,6 @@ export default function RootPage() {
                   <Badge variant="secondary" className="font-mono text-xs">
                     {(data as FileData).data?.files?.length || 0} items
                   </Badge>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Suspense fallback={<FileActionsFallback />}>
-                    <FileActions />
-                  </Suspense>
                 </div>
               </div>
             </CardHeader>
