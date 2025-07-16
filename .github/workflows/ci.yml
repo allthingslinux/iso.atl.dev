@@ -156,7 +156,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build-artifacts
-          path: .next
+          path: .next/*
           
       - name: Start application server
         run: npm start & # Use '&' to run in background
