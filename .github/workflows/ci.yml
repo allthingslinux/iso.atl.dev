@@ -78,13 +78,13 @@ jobs:
           NEXT_PUBLIC_DOMAIN: ${{ secrets.NEXT_PUBLIC_DOMAIN }}
 
       - name: List .next directory
-        run: ls -la .next/*
+        run: ls -la .next
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: build-artifacts
-          path: .next/*
+          path: .next
           retention-days: 7
 
   test:
@@ -156,7 +156,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build-artifacts
-          path: .next/*
+          path: .next
           
       - name: Start application server
         run: npm start & # Use '&' to run in background
