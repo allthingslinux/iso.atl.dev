@@ -84,7 +84,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: build-artifacts
-          path: .next/**
+          path: ./.next
           retention-days: 7
 
   test:
@@ -151,13 +151,13 @@ jobs:
 
           - name: Install dependencies
             run: npm ci
-          - name: List .next directory before upload (Diagnostic)
-            run: ls -laR .next
+
           - name: Download build artifacts
             uses: actions/download-artifact@v4
             with:
               name: build-artifacts
               path: .next
+
           - name: Start application server
             run: npx next start 
 
