@@ -159,7 +159,7 @@ jobs:
               path: .next
               
           - name: Start application server
-            run: npm start & # 
+            run: npx next start 
 
           - name: Wait for server to be ready 
             run: sleep 10
