@@ -160,7 +160,7 @@ jobs:
           
       - name: Start application server
         run: npm start & # Use '&' to run in background
-        working-directory: .next 
+        working-directory: .
 
       - name: Run Lighthouse CI
         uses: treosh/lighthouse-ci-action@v12
