@@ -157,7 +157,8 @@ jobs:
             with:
               name: build-artifacts
               path: .next
-              
+          - name: List .next directory before upload (Diagnostic)
+            run: ls -laR .next
           - name: Start application server
             run: npx next start 
 
