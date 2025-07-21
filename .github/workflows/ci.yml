@@ -80,7 +80,7 @@ jobs:
         run: ls -la .next
 
       - name: Compress .next directory
-        run: tar -czf .next.tar.gz .next
+        run: tar -czf ./.next.tar.gz .next
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
