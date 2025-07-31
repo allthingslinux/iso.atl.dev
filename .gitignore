@@ -244,3 +244,5 @@ public/workbox-*.js
 public/worker-*.js
 public/fallback-*.js
 public/precache.*.js
+
+!.kiro
