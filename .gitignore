@@ -244,3 +244,14 @@ public/workbox-*.js
 public/worker-*.js
 public/fallback-*.js
 public/precache.*.js
+
+# ================================================================
+# Exclusions for ISO Downloader Scripts
+# ================================================================
+Scans/
+results.csv
+service_account.json
+download_state.json
+OpenDirectoryDownloader.exe
+OpenDirectoryDownloader-*
+*.txt
