@@ -1,66 +1,15 @@
 {
-  "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
-    "target": "ES2022",
-    "lib": ["dom", "dom.iterable", "ES2022"],
-    "jsx": "preserve",
-
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "resolveJsonModule": true,
-    "allowJs": true,
-    "checkJs": false,
-
-    "noEmit": true,
-    "incremental": true,
-
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true,
-    "isolatedModules": true,
-    "moduleDetection": "force",
-    "verbatimModuleSyntax": false,
-    "allowImportingTsExtensions": false,
-
+    "target": "ES2020",
+    "module": "commonjs",
     "strict": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "strictFunctionTypes": true,
-    "strictBindCallApply": true,
-    "strictPropertyInitialization": true,
-    "noImplicitThis": true,
-    "alwaysStrict": true,
-
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUncheckedIndexedAccess": false,
-    "noImplicitOverride": true,
-    "noPropertyAccessFromIndexSignature": false,
-    "exactOptionalPropertyTypes": false,
-    "allowUnusedLabels": false,
-    "allowUnreachableCode": false,
-
+    "esModuleInterop": true,
     "skipLibCheck": true,
-    "skipDefaultLibCheck": true,
-
-    "plugins": [{ "name": "next" }],
-
+    "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "~/*": ["./public/*"]
+      "@iso/db": ["packages/db/src/index.ts"]
     }
   },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    ".next/types/**/*.ts",
-    "*.config.js",
-    "*.config.mjs",
-    "*.config.ts"
-  ],
-  "exclude": ["node_modules", ".next", "out", "build", "dist", "tmp", "temp"]
+  "exclude": ["node_modules", "dist"]
 }
