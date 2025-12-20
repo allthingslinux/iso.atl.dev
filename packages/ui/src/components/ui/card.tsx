@@ -1,4 +1,4 @@
-import { cn } from "@iso/ui/lib/utils";
+import { cn } from "../../lib/utils";
 import React from "react";
 
 const Card = React.forwardRef<

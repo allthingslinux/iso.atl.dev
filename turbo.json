@@ -1,22 +1,42 @@
 {
-  "$schema": "https://turbo.build/schema.json",
+  "$schema": "https://turborepo.com/schema.json",
+  "globalEnv": [
+    "DATABASE_URL",
+    "NODE_ENV"
+  ],
   "tasks": {
+    "topo": {
+      "dependsOn": [
+        "^topo"
+      ]
+    },
     "build": {
-      "dependsOn": ["^build"],
-      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
-    },
-    "//#check": {},
-    "//#fix": {
-      "cache": false
-    },
-    "//#format": {
-      "cache": false
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        ".next/**",
+        "!.next/cache/**",
+        "dist/**"
+      ]
     },
     "typecheck": {
-      "dependsOn": ["^typecheck"]
+      "dependsOn": [
+        "topo"
+      ],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "!README.md"
+      ]
     },
     "lint": {
-      "dependsOn": ["^lint"]
+      "dependsOn": [
+        "topo"
+      ],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "!README.md"
+      ]
     },
     "dev": {
       "cache": false,
@@ -28,7 +48,18 @@
     },
     "clean": {
       "cache": false
+    },
+    "//#check:root": {
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "!README.md"
+      ]
+    },
+    "//#fix:root": {
+      "cache": false
+    },
+    "//#format:root": {
+      "cache": false
     }
-  },
-  "globalPassThroughEnv": ["DATABASE_URL"]
+  }
 }

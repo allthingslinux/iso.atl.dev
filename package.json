@@ -1,5 +1,5 @@
 {
-  "name": "iso-archive-monorepo",
+  "name": "iso.atl.dev",
   "private": true,
   "scripts": {
     "build": "turbo build",
@@ -7,17 +7,27 @@
     "dev:web": "turbo dev --filter=web",
     "dev:api": "turbo dev --filter=api",
     "clean": "turbo clean",
-    "check": "ultracite check",
-    "fix": "ultracite fix",
-    "format": "ultracite format",
+    "check": "turbo run check:root",
+    "check:root": "ultracite check",
+    "fix": "turbo run fix:root",
+    "fix:root": "ultracite fix",
+    "format": "turbo run format:root",
+    "format:root": "ultracite format",
     "typecheck": "turbo typecheck"
   },
   "devDependencies": {
     "turbo": "latest",
     "ultracite": "^6.4.2"
   },
-  "packageManager": "pnpm@9.0.0",
+  "packageManager": "pnpm@10.0.0",
   "engines": {
     "node": ">=20"
+  },
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": ">=20",
+      "onFail": "download"
+    }
   }
 }

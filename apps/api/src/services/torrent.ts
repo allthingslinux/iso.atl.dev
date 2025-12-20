@@ -5,13 +5,12 @@
 export function createTorrentMetadata(
   _file: { name: string; size: number },
   _announceList: string[] = []
-): Promise<Buffer> {
+): Promise<Uint8Array> {
   // Stub: In real implementation, we would use 'create-torrent' package
-  // But dealing with Node Buffers in Cloudflare Workers can be tricky.
-  // For MVP, we pretend to return a .torrent buffer.
+  // For MVP, we use TextEncoder to return a Uint8Array.
 
   const mockContent = `d8:announce${_announceList[0] || "http://tracker.opentrackr.org:1337/announce"}...fake_torrent_data...e`;
-  return Buffer.from(mockContent);
+  return Promise.resolve(new TextEncoder().encode(mockContent));
 }
 
 export function getMagnetLink(infoHash: string, name: string): string {
