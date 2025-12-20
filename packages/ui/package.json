@@ -9,8 +9,10 @@
     "./components/*": "./src/components/*.tsx"
   },
   "scripts": {
-    "lint": "ultracite lint .",
-    "typecheck": "tsc --noEmit"
+    "check": "ultracite check .",
+    "typecheck": "tsc --noEmit",
+    "fix": "ultracite fix .",
+    "format": "ultracite format ."
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.1.0",

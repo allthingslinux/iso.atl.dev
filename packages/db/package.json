@@ -5,16 +5,24 @@
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "scripts": {
-    "generate": "drizzle-kit generate:pg",
-    "push": "drizzle-kit push:pg",
-    "studio": "drizzle-kit studio",
-    "typecheck": "tsc --noEmit"
+    "db:generate": "drizzle-kit generate",
+    "db:push": "drizzle-kit push",
+    "db:pull": "drizzle-kit pull",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio",
+    "db:check": "drizzle-kit check",
+    "db:up": "drizzle-kit up",
+    "typecheck": "tsc --noEmit",
+    "check": "ultracite check .",
+    "fix": "ultracite fix .",
+    "format": "ultracite format ."
   },
   "dependencies": {
     "drizzle-orm": "catalog:",
+    "drizzle-zod": "^0.6.1",
     "postgres": "catalog:"
   },
   "devDependencies": {
-    "drizzle-kit": "^0.20.13"
+    "drizzle-kit": "^0.31.8"
   }
 }

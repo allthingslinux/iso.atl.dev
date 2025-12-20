@@ -19,7 +19,7 @@ export class CurationService {
         version: isos.version,
         arch: isos.arch,
         distroName: distros.name,
-        confidence: isos.confidence_score, // Aliased to confidence for frontend compatibility
+        confidence: isos.confidenceScore, // Aliased to confidence for frontend compatibility
         status: isos.status,
       })
       .from(isos)

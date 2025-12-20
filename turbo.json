@@ -20,6 +20,20 @@
         "dist/**"
       ]
     },
+    "db:generate": {
+      "inputs": [
+        "src/schema.ts"
+      ],
+      "outputs": [
+        "drizzle/**"
+      ]
+    },
+    "db:check": {
+      "inputs": [
+        "src/schema.ts",
+        "drizzle/**"
+      ]
+    },
     "typecheck": {
       "dependsOn": [
         "topo"
@@ -29,7 +43,7 @@
         "!README.md"
       ]
     },
-    "lint": {
+    "check": {
       "dependsOn": [
         "topo"
       ],
@@ -38,6 +52,18 @@
         "!README.md"
       ]
     },
+    "fix": {
+      "dependsOn": [
+        "topo"
+      ],
+      "cache": false
+    },
+    "format": {
+      "dependsOn": [
+        "topo"
+      ],
+      "cache": false
+    },
     "dev": {
       "cache": false,
       "persistent": true
@@ -45,6 +71,9 @@
     "db:push": {
       "cache": false,
       "interactive": true
+    },
+    "db:migrate": {
+      "cache": false
     },
     "clean": {
       "cache": false

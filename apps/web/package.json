@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "ultracite lint .",
+    "check": "ultracite check .",
+    "fix": "ultracite fix .",
+    "format": "ultracite format .",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

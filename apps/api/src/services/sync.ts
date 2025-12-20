@@ -62,7 +62,7 @@ export class SyncService {
           driveId: file.id,
           version: metadata.version,
           arch: metadata.arch,
-          confidence_score: metadata.confidence,
+          confidenceScore: metadata.confidence,
           status: "STAGING",
           metadata: {
             original_metadata: metadata,

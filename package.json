@@ -7,13 +7,18 @@
     "dev:web": "turbo dev --filter=web",
     "dev:api": "turbo dev --filter=api",
     "clean": "turbo clean",
-    "check": "turbo run check:root",
+    "check": "turbo check",
     "check:root": "ultracite check",
-    "fix": "turbo run fix:root",
+    "fix": "turbo fix",
     "fix:root": "ultracite fix",
-    "format": "turbo run format:root",
+    "format": "turbo format",
     "format:root": "ultracite format",
-    "typecheck": "turbo typecheck"
+    "typecheck": "turbo typecheck",
+    "db:generate": "turbo run db:generate",
+    "db:push": "pnpm --filter=@iso/db push",
+    "db:migrate": "pnpm --filter=@iso/db migrate",
+    "db:studio": "pnpm --filter=@iso/db studio",
+    "db:check": "turbo run db:check"
   },
   "devDependencies": {
     "turbo": "latest",

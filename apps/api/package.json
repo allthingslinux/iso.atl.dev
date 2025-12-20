@@ -5,14 +5,17 @@
   "scripts": {
     "dev": "wrangler dev src/index.ts",
     "deploy": "wrangler deploy --minify src/index.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "check": "ultracite check .",
+    "fix": "ultracite fix .",
+    "format": "ultracite format ."
   },
   "dependencies": {
     "hono": "^4.0.0",
     "@trpc/server": "^11.0.0-rc.0",
-    "zod": "^3.22.4",
-    "drizzle-orm": "^0.29.3",
-    "postgres": "^3.4.3",
+    "zod": "catalog:",
+    "drizzle-orm": "catalog:",
+    "postgres": "catalog:",
     "parse-torrent": "^11.0.0",
     "@iso/db": "workspace:*"
   },

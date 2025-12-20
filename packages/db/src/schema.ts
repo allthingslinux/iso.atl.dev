@@ -7,6 +7,7 @@ import {
   timestamp,
   varchar,
 } from "drizzle-orm/pg-core";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
 export const distros = pgTable("distros", {
   id: serial("id").primaryKey(),
@@ -25,7 +26,7 @@ export const isos = pgTable("isos", {
   version: varchar("version", { length: 50 }),
   arch: varchar("arch", { length: 50 }),
   status: varchar("status", { length: 20 }).default("STAGING"), // STAGING, LIVE
-  confidence_score: integer("confidence_score").default(0),
+  confidenceScore: integer("confidence_score").default(0),
   metadata: jsonb("metadata"), // Flexible fields
   createdAt: timestamp("created_at").defaultNow(),
 });
@@ -36,3 +37,23 @@ export const profiles = pgTable("profiles", {
   reputation: integer("reputation").default(10).notNull(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
+
+// Zod Schemas
+export const insertDistroSchema = createInsertSchema(distros);
+export const selectDistroSchema = createSelectSchema(distros);
+
+export const insertIsoSchema = createInsertSchema(isos);
+export const selectIsoSchema = createSelectSchema(isos);
+
+export const insertProfileSchema = createInsertSchema(profiles);
+export const selectProfileSchema = createSelectSchema(profiles);
+
+// Types
+export type Distro = typeof distros.$inferSelect;
+export type NewDistro = typeof distros.$inferInsert;
+
+export type Iso = typeof isos.$inferSelect;
+export type NewIso = typeof isos.$inferInsert;
+
+export type Profile = typeof profiles.$inferSelect;
+export type NewProfile = typeof profiles.$inferInsert;
