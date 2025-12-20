@@ -1,0 +1,23 @@
+{
+  "name": "@iso/api",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "check": "ultracite check .",
+    "fix": "ultracite fix .",
+    "format": "ultracite format ."
+  },
+  "dependencies": {
+    "@iso/db": "workspace:*",
+    "@iso/validators": "workspace:^",
+    "@trpc/server": "catalog:",
+    "superjson": "^2.2.1",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "typescript": "catalog:"
+  }
+}
