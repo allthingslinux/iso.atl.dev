@@ -187,6 +187,7 @@ interface CurationSystem {
   buildConsensus(conflictId: string): Promise<ConsensusResult>
 }
 
+
 interface MetadataEdit {
   isoId: string
   field: string
@@ -230,6 +231,31 @@ interface AnalyticsEvent {
 
 ### Core Data Structures
 
+
+naming_convention = {os_name}.{os_family}.{release_date}.iso
+
+dirty_file_name.iso: drive_1234
+
+rename files.id(1234) -> edubuntu.ubuntu.24.04.
+
+drive_1234 {
+  id: 1234
+  osName: whatever
+}
+
+ON field update, RENAME file where ID = id
+
+"workflow" / "pipeline"
+
+{type}.{letter}.{os_family}.{version}
+linux/a/ubuntu/24.04/daskhjdksadnj.iso
+bsd/a/
+
+
+on field update, MOVE file to the correct path
+reupdates the db of the new path and etc
+
+
 ```typescript
 interface ISODocument {
   id: string
@@ -238,6 +264,7 @@ interface ISODocument {
   canonicalPath: string
   
   // Parsed metadata
+  osType: string
   osName: string
   osFamily: string
   version: string
@@ -247,6 +274,12 @@ interface ISODocument {
   isoType: string
   buildDate: Date
   language: string
+
+  endangered: boolean <- this is what should always keep archived
+  (where as for newer distros that are likely on official mirrors, we can redirect if storage becomes low)
+
+  magnetUrl: string
+  torrentHash: string
   
   // File properties
   size: number
@@ -290,7 +323,7 @@ interface CurationWorkflow {
 
 interface ContributorProfile {
   id: string
-  reputation: number
+  reputation: number (if above 5, allow voting on edits, if above 10, allow auto accepted edits)
   specializations: string[]
   contributionStats: {
     editsSubmitted: number
@@ -302,6 +335,28 @@ interface ContributorProfile {
   joinDate: Date
 }
 ```
+
+joe updates xyz.iso and gives it a distro name of ubuntu
+bill votes +1 on that edit
+bob votes +1 on that edit
+edit approved
+
+sally (lvl 10) makes edit, auto accepted
+
+sally edited xyz.iso with a new value of distro: ubuntu
+
+
+
+| pending for review |
+
+- edit 1 [+1 -
+- edit 2 [+1 -1]
+- edit 3 
+
+
+
+
+
 
 ### Schema Evolution Strategy
 
@@ -411,3 +466,44 @@ interface TestEnvironment {
 **Performance Monitoring**: Lighthouse CI, Core Web Vitals tracking, real user monitoring
 
 The testing strategy emphasizes automation, continuous integration, and production-like testing environments to ensure system reliability and user experience quality.
+
+
+
+
+
+
+total (20/100%)
+
+ubuntu (80/100 %)
+- file.iso (100%)
+- file2.iso (50%)
+- file3.iso (10%)
+
+  edubuntu ()
+
+  lubuntu
+
+
+debian (80/100 %)
+- file.iso (100%)
+- file2.iso (50%)
+- file3.iso (10%)
+
+
+
+kubuntu.blahlbha.iso:
+
+ {os_family}
+[ ubuntu ] -> link -> /ubuntu index of the archives -> which shows all the other ubuntu isos/completionm scores/useful info
+[ descriptions
+  history
+  release date
+  company
+  blahlbhalh      ]
+  : distrowatch
+  : wikipedia
+  : official pages
+  : waybackmachine
+  : atl.wiki
+  : archwiki
+  

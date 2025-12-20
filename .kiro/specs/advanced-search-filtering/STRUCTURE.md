@@ -329,3 +329,28 @@ next-gdrive-index/
 **Documentation**: Living documentation that stays synchronized with code changes and architectural decisions.
 
 This structure supports the evolution from the current Google Drive index to a sophisticated, community-driven archival platform while maintaining the existing Next.js foundation and allowing for incremental implementation of new features.
+
+
+
+
+
+dirty_good_good_good_dirty_name.iso
+
+regex: /dsdljasdjksd/
+
+x_good_good_good_x.iso
+
+file {
+	a: ___
+	b: good
+	c: good
+	d: good
+	e: ___
+}
+
+amd64
+i386
+
+timestamp/isodates/epoc dates
+
+ubuntu -> os_family
