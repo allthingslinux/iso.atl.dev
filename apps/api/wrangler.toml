@@ -1,0 +1,11 @@
+name = "iso-api"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+DATABASE_URL = "postgres://admin:password@localhost:5432/iso_archive"
+
+[[kv_namespaces]]
+binding = "ISO_CACHE"
+id = "xxxx"
+preview_id = "xxxx"
