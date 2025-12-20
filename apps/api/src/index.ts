@@ -1,76 +1,46 @@
-import { initTRPC } from "@trpc/server";
+import { trpcServer } from "@hono/trpc-server";
+import { createTRPCContext } from "@iso/api";
+import { createDbClient } from "@iso/db";
 import { Hono } from "hono";
-import { z } from "zod";
+import { cors } from "hono/cors";
+import { appRouter } from "./router";
 
-const app = new Hono();
+type Bindings = {
+  DATABASE_URL: string;
+};
 
-// tRPC Setup
-const t = initTRPC.create();
-const publicProcedure = t.procedure;
-const router = t.router;
+const app = new Hono<{ Bindings: Bindings }>();
 
-import { CurationService } from "./services/curation";
-import { SearchService } from "./services/search";
-import { SyncService } from "./services/sync";
+// Enable CORS for the web app
+app.use(
+  "*",
+  cors({
+    origin: ["http://localhost:3000"],
+    allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowHeaders: ["Content-Type", "Authorization", "x-trpc-source"],
+    exposeHeaders: ["Content-Length"],
+    maxAge: 600,
+    credentials: true,
+  })
+);
 
-const appRouter = router({
-  hello: publicProcedure
-    .input(z.object({ name: z.string().optional() }))
-    .query(
-      ({ input }) => `Hello ${input.name ?? "World"} from Hono on Cloudflare!`
-    ),
-
-  triggerSync: publicProcedure.mutation(async () => {
-    const syncer = new SyncService();
-    const stats = await syncer.runSync("root_folder_id");
-    return { status: "completed", ...stats };
-  }),
-
-  search: publicProcedure
-    .input(
-      z.object({
-        q: z.string().optional(),
-        arch: z.string().optional(),
-      })
-    )
-    .query(async ({ input }) => {
-      const searcher = new SearchService();
-      return await searcher.search(input.q || "", { arch: input.arch });
-    }),
-
-  curation: router({
-    getPending: publicProcedure.query(async () => {
-      const curator = new CurationService();
-      return await curator.getPendingIsos();
-    }),
-
-    getReputation: publicProcedure
-      .input(z.object({ userId: z.string() }))
-      .query(async ({ input }) => {
-        const curator = new CurationService();
-        return await curator.getReputation(input.userId);
-      }),
-
-    approve: publicProcedure
-      .input(z.object({ id: z.number(), userId: z.string() }))
-      .mutation(async ({ input }) => {
-        const curator = new CurationService();
-        return await curator.approveIso(input.id, input.userId);
-      }),
-
-    reject: publicProcedure
-      .input(z.object({ id: z.number(), userId: z.string() }))
-      .mutation(async ({ input }) => {
-        const curator = new CurationService();
-        return await curator.rejectIso(input.id, input.userId);
-      }),
-  }),
-});
-
-export type AppRouter = typeof appRouter;
-
-// Hono Adapter for tRPC would go here,
-// strictly simplified for MVP:
+// Health check
 app.get("/", (c) => c.text("ISO Archive API is running"));
+
+// tRPC Adapter
+import { createApiEnv } from "./env";
+
+app.use(
+  "/trpc/*",
+  trpcServer({
+    router: appRouter,
+    createContext: async (_opts, c) => {
+      // Validate environment variables using the runtime env
+      const env = createApiEnv(c.env);
+      const db = createDbClient(env.DATABASE_URL);
+      return await createTRPCContext({ db });
+    },
+  })
+);
 
 export default app;

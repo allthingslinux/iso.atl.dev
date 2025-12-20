@@ -1,4 +1,4 @@
-import { createDbClient, distros, isos } from "@iso/db";
+import { type createDbClient, distros, isos } from "@iso/db";
 import { eq } from "drizzle-orm";
 import { type DriveService, MockDriveService } from "./drive";
 import { parseFilename } from "./parser";
@@ -7,12 +7,9 @@ export class SyncService {
   private readonly drive: DriveService;
   private readonly db: ReturnType<typeof createDbClient>;
 
-  constructor() {
+  constructor(db: ReturnType<typeof createDbClient>) {
     this.drive = new MockDriveService(); // Dependency Injection later
-    this.db = createDbClient(
-      process.env.DATABASE_URL ||
-        "postgres://admin:password@localhost:5432/iso_archive"
-    );
+    this.db = db;
   }
 
   async runSync(folderId: string) {

@@ -1,14 +1,10 @@
-import { createDbClient, distros, isos } from "@iso/db";
+import { type createDbClient, distros, isos } from "@iso/db";
 import { and, eq, ilike, or, type SQL } from "drizzle-orm";
 
 export class SearchService {
   private readonly db: ReturnType<typeof createDbClient>;
-
-  constructor() {
-    this.db = createDbClient(
-      process.env.DATABASE_URL ||
-        "postgres://admin:password@localhost:5432/iso_archive"
-    );
+  constructor(db: ReturnType<typeof createDbClient>) {
+    this.db = db;
   }
 
   async search(query: string, filters?: { distro?: string; arch?: string }) {

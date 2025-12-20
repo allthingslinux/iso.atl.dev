@@ -6,7 +6,7 @@ import { keepPreviousData } from "@tanstack/react-query";
 import { Library, RefreshCw } from "lucide-react";
 import { useQueryState } from "nuqs";
 import { Suspense, useState } from "react";
-import { trpc } from "../trpc/client";
+import { trpc } from "@/trpc/client";
 
 function SearchPageContent() {
   const [query, setQuery] = useQueryState("q", { defaultValue: "" });

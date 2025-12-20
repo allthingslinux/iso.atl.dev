@@ -2,66 +2,40 @@
   "$schema": "https://turborepo.com/schema.json",
   "globalEnv": [
     "DATABASE_URL",
-    "NODE_ENV"
+    "NODE_ENV",
+    "PORT",
+    "SKIP_ENV_VALIDATION",
+    "VERCEL_URL"
   ],
   "tasks": {
     "topo": {
-      "dependsOn": [
-        "^topo"
-      ]
+      "dependsOn": ["^topo"]
     },
     "build": {
-      "dependsOn": [
-        "^build"
-      ],
-      "outputs": [
-        ".next/**",
-        "!.next/cache/**",
-        "dist/**"
-      ]
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
     },
     "db:generate": {
-      "inputs": [
-        "src/schema.ts"
-      ],
-      "outputs": [
-        "drizzle/**"
-      ]
+      "inputs": ["src/schema.ts"],
+      "outputs": ["drizzle/**"]
     },
     "db:check": {
-      "inputs": [
-        "src/schema.ts",
-        "drizzle/**"
-      ]
+      "inputs": ["src/schema.ts", "drizzle/**"]
     },
     "typecheck": {
-      "dependsOn": [
-        "topo"
-      ],
-      "inputs": [
-        "$TURBO_DEFAULT$",
-        "!README.md"
-      ]
+      "dependsOn": ["topo"],
+      "inputs": ["$TURBO_DEFAULT$", "!README.md"]
     },
     "check": {
-      "dependsOn": [
-        "topo"
-      ],
-      "inputs": [
-        "$TURBO_DEFAULT$",
-        "!README.md"
-      ]
+      "dependsOn": ["topo"],
+      "inputs": ["$TURBO_DEFAULT$", "!README.md"]
     },
     "fix": {
-      "dependsOn": [
-        "topo"
-      ],
+      "dependsOn": ["topo"],
       "cache": false
     },
     "format": {
-      "dependsOn": [
-        "topo"
-      ],
+      "dependsOn": ["topo"],
       "cache": false
     },
     "dev": {
@@ -79,10 +53,7 @@
       "cache": false
     },
     "//#check:root": {
-      "inputs": [
-        "$TURBO_DEFAULT$",
-        "!README.md"
-      ]
+      "inputs": ["$TURBO_DEFAULT$", "!README.md"]
     },
     "//#fix:root": {
       "cache": false

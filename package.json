@@ -22,7 +22,8 @@
   },
   "devDependencies": {
     "turbo": "latest",
-    "ultracite": "^6.4.2"
+    "ultracite": "^6.4.2",
+    "typescript": "^5.6.2"
   },
   "packageManager": "pnpm@10.0.0",
   "engines": {

@@ -4,7 +4,7 @@ import { Button } from "@iso/ui/components/ui/button";
 import { cn } from "@iso/ui/lib/utils";
 import { LayoutGrid, RefreshCw } from "lucide-react";
 import { useState } from "react";
-import { trpc } from "../../trpc/client";
+import { trpc } from "@/trpc/client";
 
 export default function StagingPage() {
   const [processingId, setProcessingId] = useState<number | null>(null);

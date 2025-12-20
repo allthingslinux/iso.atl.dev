@@ -1,6 +1,7 @@
 {
   "name": "api",
   "version": "0.0.1",
+  "type": "module",
   "private": true,
   "scripts": {
     "dev": "wrangler dev src/index.ts",
@@ -11,18 +12,23 @@
     "format": "ultracite format ."
   },
   "dependencies": {
-    "hono": "^4.0.0",
+    "@hono/trpc-server": "^0.4.1",
+    "@iso/api": "workspace:*",
+    "@iso/db": "workspace:*",
+    "@iso/validators": "workspace:^",
+    "@t3-oss/env-core": "^0.13.10",
     "@trpc/server": "^11.0.0-rc.0",
-    "zod": "catalog:",
     "drizzle-orm": "catalog:",
-    "postgres": "catalog:",
+    "hono": "^4.0.0",
     "parse-torrent": "^11.0.0",
-    "@iso/db": "workspace:*"
+    "postgres": "catalog:",
+    "superjson": "^2.2.1",
+    "zod": "catalog:"
   },
   "devDependencies": {
-    "wrangler": "^3.0.0",
     "@cloudflare/workers-types": "^4.20240101.0",
     "@types/node": "^20.10.0",
-    "@types/parse-torrent": "^5.8.0"
+    "@types/parse-torrent": "^5.8.0",
+    "wrangler": "^3.0.0"
   }
 }

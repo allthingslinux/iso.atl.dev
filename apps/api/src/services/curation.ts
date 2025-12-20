@@ -1,14 +1,10 @@
-import { createDbClient, distros, isos, profiles } from "@iso/db";
+import { type createDbClient, distros, isos, profiles } from "@iso/db";
 import { eq, sql } from "drizzle-orm";
 
 export class CurationService {
   private readonly db: ReturnType<typeof createDbClient>;
-
-  constructor() {
-    this.db = createDbClient(
-      process.env.DATABASE_URL ||
-        "postgres://admin:password@localhost:5432/iso_archive"
-    );
+  constructor(db: ReturnType<typeof createDbClient>) {
+    this.db = db;
   }
 
   async getPendingIsos() {

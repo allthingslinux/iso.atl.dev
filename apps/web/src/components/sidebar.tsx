@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { trpc } from "../trpc/client";
+import { trpc } from "@/trpc/client";
 
 const navItems = [
   { name: "Library", href: "/", icon: Library },
@@ -23,9 +23,11 @@ const navItems = [
 export function Sidebar() {
   const pathname = usePathname();
   const mockUserId = "mock-user-1";
-  const { data: reputation } = trpc.curation.getReputation.useQuery({
+  const { data: reputationData } = trpc.curation.getReputation.useQuery({
     userId: mockUserId,
   });
+
+  const reputation = reputationData?.reputation ?? 0;
 
   return (
     <aside className="fixed top-0 left-0 z-40 flex h-screen w-64 flex-col border-zinc-800 border-r bg-zinc-950">

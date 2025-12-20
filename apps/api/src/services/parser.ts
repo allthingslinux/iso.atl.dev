@@ -1,17 +1,4 @@
-import { z } from "zod";
-
-export const ISOMetadataSchema = z.object({
-  distro: z.string(),
-  version: z.string(),
-  arch: z.string(),
-  type: z.string().optional(),
-  date: z.string().optional(), // YYYYMMDD
-  lang: z.string().optional(),
-  originalFilename: z.string(),
-  confidence: z.number().min(0).max(100),
-});
-
-export type ISOMetadata = z.infer<typeof ISOMetadataSchema>;
+import type { ISOMetadata } from "@iso/validators";
 
 // Basic regex to extract info from standard filenames
 const FILENAME_REGEX =
