@@ -23,6 +23,9 @@ const routes: Record<string, { label: string; parent?: string }> = {
   "/sync": { label: "Sync Dashboard" },
   "/settings": { label: "Settings" },
   "/profile": { label: "Profile" },
+  "/better": { label: "Better" },
+  "/edits": { label: "Edit Queue" },
+  "/metrics": { label: "Metrics" },
 };
 
 export function Breadcrumb() {

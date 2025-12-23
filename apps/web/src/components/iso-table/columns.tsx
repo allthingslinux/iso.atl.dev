@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@iso/ui/components/dropdown-menu";
-import { Ellipsis, ExternalLink, Copy, Flag, CheckCircle2, Clock, FlaskConical, AlertTriangle } from "lucide-react";
+import { Ellipsis, ExternalLink, Copy, Flag, CheckCircle2, Clock, AlertTriangle } from "lucide-react";
 import Link from "next/link";
 
 export type IsoRow = {
@@ -34,15 +34,13 @@ export type IsoRow = {
 
 const statusIcons: Record<string, { icon: typeof CheckCircle2; className: string; label: string }> = {
   verified: { icon: CheckCircle2, className: "text-emerald-400", label: "Verified" },
-  pending: { icon: Clock, className: "text-amber-400", label: "Pending" },
-  staging: { icon: FlaskConical, className: "text-blue-400", label: "Staging" },
+  staging: { icon: Clock, className: "text-amber-400", label: "Staging" },
   flagged: { icon: AlertTriangle, className: "text-red-400", label: "Flagged" },
 };
 
 const badgeColors: Record<string, string> = {
   verified: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
-  pending: "bg-amber-500/10 text-amber-400 border-amber-500/20",
-  staging: "bg-blue-500/10 text-blue-400 border-blue-500/20",
+  staging: "bg-amber-500/10 text-amber-400 border-amber-500/20",
   flagged: "bg-red-500/10 text-red-400 border-red-500/20",
 };
 

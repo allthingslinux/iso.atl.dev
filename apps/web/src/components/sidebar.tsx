@@ -7,36 +7,45 @@ import {
   Database,
   LayoutGrid,
   Library,
+  LibraryBig,
   RefreshCw,
   Settings,
   Activity,
+  LogIn,
+  Sparkles,
+  FileEdit,
+  Award,
+  SquareLibrary,
+  BarChart3,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { useAuth } from "@/lib/dev-auth";
+import { useAuth } from "@/lib/auth-provider";
 
 const navItems = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutGrid },
   { 
     name: "Library", 
     href: "/library", 
-    icon: Library,
+    icon: LibraryBig,
     items: [
       { name: "All ISOs", href: "/library" },
-      { name: "Distributions", href: "/distros" },
-      { name: "Families", href: "/families" },
       { name: "OS Types", href: "/os-types" },
+      { name: "Families", href: "/families" },
+      { name: "Distributions", href: "/distros" },
     ]
   },
+  { name: "Better", href: "/better", icon: Sparkles },
+  { name: "Edit Queue", href: "/edits", icon: FileEdit },
+  { name: "Metrics", href: "/metrics", icon: BarChart3 },
   { name: "Activity", href: "/activity", icon: Activity },
   { name: "Staging Area", href: "/staging", icon: Clock },
-  { name: "Sync Dashboard", href: "/sync", icon: RefreshCw },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
-  const { user } = useAuth();
+  const { user, isLoading, logout } = useAuth();
   const [expandedItems, setExpandedItems] = useState<string[]>(["Library"]);
 
   const toggleExpand = (name: string) => {
@@ -65,7 +74,7 @@ export function Sidebar() {
         </Link>
       </div>
 
-      <nav className="mt-4 flex-1 space-y-1 px-3">
+      <nav className="mt-4 flex-1 px-3 space-y-1">
         {navItems.map((item) => {
           const isActive = isItemActive(item);
           const isExpanded = expandedItems.includes(item.name);
@@ -73,28 +82,15 @@ export function Sidebar() {
 
           return (
             <div key={item.name}>
-              <div
-                className={cn(
-                  "group flex items-center justify-between rounded-md px-3 py-2 font-medium text-sm transition-all duration-200 cursor-pointer",
-                  isActive
-                    ? "bg-zinc-900 text-white"
-                    : "text-zinc-400 hover:bg-zinc-900/50 hover:text-zinc-100"
-                )}
-                onClick={() => hasSubItems ? toggleExpand(item.name) : null}
-              >
-                {hasSubItems ? (
-                  <div className="flex items-center gap-3">
-                    <item.icon
-                      className={cn(
-                        "h-4 w-4 transition-colors",
-                        isActive
-                          ? "text-indigo-400"
-                          : "text-zinc-500 group-hover:text-zinc-300"
-                      )}
-                    />
-                    {item.name}
-                  </div>
-                ) : (
+              {hasSubItems ? (
+                <div
+                  className={cn(
+                    "group flex items-center justify-between rounded-md px-3 py-2 font-medium text-sm transition-all duration-200",
+                    isActive
+                      ? "bg-zinc-900 text-white"
+                      : "text-zinc-400 hover:bg-zinc-900/50 hover:text-zinc-100"
+                  )}
+                >
                   <Link href={item.href} className="flex items-center gap-3 flex-1">
                     <item.icon
                       className={cn(
@@ -106,17 +102,40 @@ export function Sidebar() {
                     />
                     {item.name}
                   </Link>
-                )}
-                {hasSubItems && (
-                  <ChevronRight className={cn(
-                    "h-3 w-3 text-zinc-500 transition-transform",
-                    isExpanded && "rotate-90"
-                  )} />
-                )}
-              </div>
+                  <button
+                    onClick={() => toggleExpand(item.name)}
+                    className="p-1 -mr-1 rounded hover:bg-zinc-800"
+                  >
+                    <ChevronRight className={cn(
+                      "h-3 w-3 text-zinc-500 transition-transform",
+                      isExpanded && "rotate-90"
+                    )} />
+                  </button>
+                </div>
+              ) : (
+                <Link
+                  href={item.href}
+                  className={cn(
+                    "group flex items-center gap-3 rounded-md px-3 py-2 font-medium text-sm transition-all duration-200",
+                    isActive
+                      ? "bg-zinc-900 text-white"
+                      : "text-zinc-400 hover:bg-zinc-900/50 hover:text-zinc-100"
+                  )}
+                >
+                  <item.icon
+                    className={cn(
+                      "h-4 w-4 transition-colors",
+                      isActive
+                        ? "text-indigo-400"
+                        : "text-zinc-500 group-hover:text-zinc-300"
+                    )}
+                  />
+                  {item.name}
+                </Link>
+              )}
               
               {hasSubItems && isExpanded && (
-                <div className="ml-4 mt-1 space-y-1 border-l border-zinc-800 pl-3">
+                <div className="ml-4 mt-1 mb-1 border-l border-zinc-800 pl-3">
                   {item.items.map((subItem) => {
                     const isSubActive = pathname === subItem.href;
                     return (
@@ -124,7 +143,7 @@ export function Sidebar() {
                         key={subItem.href}
                         href={subItem.href}
                         className={cn(
-                          "block rounded-md px-3 py-1.5 text-sm transition-colors",
+                          "flex items-center h-7 px-3 text-sm",
                           isSubActive
                             ? "text-indigo-400"
                             : "text-zinc-500 hover:text-zinc-200"
@@ -142,33 +161,52 @@ export function Sidebar() {
       </nav>
 
       <div className="mt-auto border-zinc-800 border-t p-4">
-        <Link
-          href="/profile"
-          className="flex items-center gap-3 rounded-lg border border-zinc-800/40 bg-zinc-900/40 px-3 py-3 transition-colors hover:bg-zinc-800/50"
-        >
-          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-indigo-600 text-sm font-semibold text-white">
-            {user.username.charAt(0).toUpperCase()}
+        {isLoading ? (
+          <div className="flex items-center justify-center py-4">
+            <div className="h-5 w-5 animate-spin rounded-full border-2 border-zinc-600 border-t-zinc-300" />
           </div>
-          <div className="flex min-w-0 flex-1 flex-col">
-            <span className="truncate text-sm font-medium text-zinc-200">
-              {user.username}
-            </span>
-            <span className="text-xs text-zinc-500 capitalize">{user.role}</span>
-          </div>
-          <div className="rounded-md bg-indigo-500/10 px-2 py-1">
-            <span className="font-semibold text-xs text-indigo-400">
-              {user.reputation}
-            </span>
-          </div>
-        </Link>
+        ) : user ? (
+          <>
+            <Link
+              href="/profile"
+              className="flex items-center gap-3 rounded-lg border border-zinc-800/40 bg-zinc-900/40 px-3 py-3 transition-colors hover:bg-zinc-800/50"
+            >
+              {user.image ? (
+                <img
+                  src={user.image}
+                  alt={user.name}
+                  className="h-9 w-9 rounded-full"
+                />
+              ) : (
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-indigo-600 text-sm font-semibold text-white">
+                  {user.name.charAt(0).toUpperCase()}
+                </div>
+              )}
+              <div className="flex min-w-0 flex-1 flex-col">
+                <span className="truncate text-sm font-medium text-zinc-200">
+                  {user.name}
+                </span>
+                <span className="truncate text-xs text-zinc-500">{user.email}</span>
+              </div>
+            </Link>
 
-        <Link
-          className="mt-3 flex items-center gap-2 px-3 py-2 text-xs text-zinc-500 transition-colors hover:text-zinc-300"
-          href="/settings"
-        >
-          <Settings className="h-3.5 w-3.5" />
-          Settings
-        </Link>
+            <button
+              onClick={() => logout()}
+              className="mt-3 flex w-full items-center gap-2 px-3 py-2 text-xs text-zinc-500 transition-colors hover:text-zinc-300"
+            >
+              <Settings className="h-3.5 w-3.5" />
+              Sign out
+            </button>
+          </>
+        ) : (
+          <Link
+            href="/login"
+            className="flex items-center justify-center gap-2 rounded-lg border border-zinc-800 bg-zinc-900/50 px-3 py-3 text-sm font-medium text-zinc-300 transition-colors hover:bg-zinc-800/50 hover:text-white"
+          >
+            <LogIn className="h-4 w-4" />
+            Sign in
+          </Link>
+        )}
       </div>
     </aside>
   );

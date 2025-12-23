@@ -20,6 +20,7 @@ export interface IsoCardData {
   hardwareTarget?: string | null;
   filename: string;
   size?: number | null;
+  completenessScore?: number | null;
 }
 
 export function IsoCard({ iso }: { iso: IsoCardData }) {
@@ -47,10 +48,19 @@ export function IsoCard({ iso }: { iso: IsoCardData }) {
     other: "bg-zinc-800 text-zinc-300 border-zinc-700",
   };
 
+  const getCompletenessColor = (score: number | null | undefined) => {
+    if (!score) return "bg-zinc-700";
+    if (score >= 90) return "bg-green-500";
+    if (score >= 70) return "bg-yellow-500";
+    if (score >= 50) return "bg-orange-500";
+    return "bg-red-500";
+  };
+
   const stage = iso.releaseStage || "stable";
   const stageClass = stageColors[stage] || stageColors.stable;
   const osType = iso.distroOsType || "linux";
   const osTypeClass = osTypeColors[osType] || osTypeColors.other;
+  const completeness = iso.completenessScore ?? 0;
 
   return (
     <Link
@@ -109,15 +119,27 @@ export function IsoCard({ iso }: { iso: IsoCardData }) {
       </div>
 
       {/* Footer - always at bottom */}
-      <div className="mt-auto flex items-center justify-between gap-2 border-t border-zinc-800 pt-3">
-        <p className="min-w-0 truncate font-mono text-xs text-zinc-500" title={iso.filename}>
-          {iso.filename}
-        </p>
-        {iso.size && (
-          <span className="shrink-0 text-xs text-zinc-400">
-            {formatSize(iso.size)}
-          </span>
-        )}
+      <div className="mt-auto space-y-2 border-t border-zinc-800 pt-3">
+        {/* Completeness bar */}
+        <div className="flex items-center gap-2">
+          <div className="flex-1 h-1.5 bg-zinc-800 rounded-full overflow-hidden">
+            <div
+              className={`h-full ${getCompletenessColor(completeness)} transition-all`}
+              style={{ width: `${completeness}%` }}
+            />
+          </div>
+          <span className="text-xs text-zinc-500 w-8 text-right">{completeness}%</span>
+        </div>
+        <div className="flex items-center justify-between gap-2">
+          <p className="min-w-0 truncate font-mono text-xs text-zinc-500" title={iso.filename}>
+            {iso.filename}
+          </p>
+          {iso.size && (
+            <span className="shrink-0 text-xs text-zinc-400">
+              {formatSize(iso.size)}
+            </span>
+          )}
+        </div>
       </div>
     </Link>
   );
