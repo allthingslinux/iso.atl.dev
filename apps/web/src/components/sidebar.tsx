@@ -3,31 +3,54 @@
 import { cn } from "@iso/ui/lib/utils";
 import {
   ChevronRight,
+  Clock,
   Database,
   LayoutGrid,
   Library,
   RefreshCw,
   Settings,
-  UserCircle,
+  Activity,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { trpc } from "@/trpc/client";
+import { useState } from "react";
+import { useAuth } from "@/lib/dev-auth";
 
 const navItems = [
-  { name: "Library", href: "/", icon: Library },
-  { name: "Staging Area", href: "/staging", icon: LayoutGrid },
+  { name: "Dashboard", href: "/dashboard", icon: LayoutGrid },
+  { 
+    name: "Library", 
+    href: "/library", 
+    icon: Library,
+    items: [
+      { name: "All ISOs", href: "/library" },
+      { name: "Distributions", href: "/distros" },
+      { name: "Families", href: "/families" },
+      { name: "OS Types", href: "/os-types" },
+    ]
+  },
+  { name: "Activity", href: "/activity", icon: Activity },
+  { name: "Staging Area", href: "/staging", icon: Clock },
   { name: "Sync Dashboard", href: "/sync", icon: RefreshCw },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
-  const mockUserId = "mock-user-1";
-  const { data: reputationData } = trpc.curation.getReputation.useQuery({
-    userId: mockUserId,
-  });
+  const { user } = useAuth();
+  const [expandedItems, setExpandedItems] = useState<string[]>(["Library"]);
 
-  const reputation = reputationData?.reputation ?? 0;
+  const toggleExpand = (name: string) => {
+    setExpandedItems(prev => 
+      prev.includes(name) ? prev.filter(n => n !== name) : [...prev, name]
+    );
+  };
+
+  const isItemActive = (item: typeof navItems[0]) => {
+    if (item.items) {
+      return item.items.some(sub => sub.href === pathname);
+    }
+    return pathname === item.href;
+  };
 
   return (
     <aside className="fixed top-0 left-0 z-40 flex h-screen w-64 flex-col border-zinc-800 border-r bg-zinc-950">
@@ -44,56 +67,100 @@ export function Sidebar() {
 
       <nav className="mt-4 flex-1 space-y-1 px-3">
         {navItems.map((item) => {
-          const isActive = pathname === item.href;
+          const isActive = isItemActive(item);
+          const isExpanded = expandedItems.includes(item.name);
+          const hasSubItems = item.items && item.items.length > 0;
+
           return (
-            <Link
-              className={cn(
-                "group flex items-center justify-between rounded-md px-3 py-2 font-medium text-sm transition-all duration-200",
-                isActive
-                  ? "bg-zinc-900 text-white"
-                  : "text-zinc-400 hover:bg-zinc-900/50 hover:text-zinc-100"
-              )}
-              href={item.href}
-              key={item.href}
-            >
-              <div className="flex items-center gap-3">
-                <item.icon
-                  className={cn(
-                    "h-4 w-4 transition-colors",
-                    isActive
-                      ? "text-indigo-400"
-                      : "text-zinc-500 group-hover:text-zinc-300"
-                  )}
-                />
-                {item.name}
+            <div key={item.name}>
+              <div
+                className={cn(
+                  "group flex items-center justify-between rounded-md px-3 py-2 font-medium text-sm transition-all duration-200 cursor-pointer",
+                  isActive
+                    ? "bg-zinc-900 text-white"
+                    : "text-zinc-400 hover:bg-zinc-900/50 hover:text-zinc-100"
+                )}
+                onClick={() => hasSubItems ? toggleExpand(item.name) : null}
+              >
+                {hasSubItems ? (
+                  <div className="flex items-center gap-3">
+                    <item.icon
+                      className={cn(
+                        "h-4 w-4 transition-colors",
+                        isActive
+                          ? "text-indigo-400"
+                          : "text-zinc-500 group-hover:text-zinc-300"
+                      )}
+                    />
+                    {item.name}
+                  </div>
+                ) : (
+                  <Link href={item.href} className="flex items-center gap-3 flex-1">
+                    <item.icon
+                      className={cn(
+                        "h-4 w-4 transition-colors",
+                        isActive
+                          ? "text-indigo-400"
+                          : "text-zinc-500 group-hover:text-zinc-300"
+                      )}
+                    />
+                    {item.name}
+                  </Link>
+                )}
+                {hasSubItems && (
+                  <ChevronRight className={cn(
+                    "h-3 w-3 text-zinc-500 transition-transform",
+                    isExpanded && "rotate-90"
+                  )} />
+                )}
               </div>
-              {!!isActive && (
-                <ChevronRight className="h-3 w-3 text-indigo-400" />
+              
+              {hasSubItems && isExpanded && (
+                <div className="ml-4 mt-1 space-y-1 border-l border-zinc-800 pl-3">
+                  {item.items.map((subItem) => {
+                    const isSubActive = pathname === subItem.href;
+                    return (
+                      <Link
+                        key={subItem.href}
+                        href={subItem.href}
+                        className={cn(
+                          "block rounded-md px-3 py-1.5 text-sm transition-colors",
+                          isSubActive
+                            ? "text-indigo-400"
+                            : "text-zinc-500 hover:text-zinc-200"
+                        )}
+                      >
+                        {subItem.name}
+                      </Link>
+                    );
+                  })}
+                </div>
               )}
-            </Link>
+            </div>
           );
         })}
       </nav>
 
       <div className="mt-auto border-zinc-800 border-t p-4">
-        <div className="flex items-center gap-3 rounded-lg border border-zinc-800/40 bg-zinc-900/40 px-2 py-3">
-          <div className="relative">
-            <UserCircle className="h-10 w-10 text-zinc-600" />
-            <div className="absolute -right-0.5 -bottom-0.5 h-3.5 w-3.5 rounded-full border-2 border-zinc-900 bg-indigo-500" />
+        <Link
+          href="/profile"
+          className="flex items-center gap-3 rounded-lg border border-zinc-800/40 bg-zinc-900/40 px-3 py-3 transition-colors hover:bg-zinc-800/50"
+        >
+          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-indigo-600 text-sm font-semibold text-white">
+            {user.username.charAt(0).toUpperCase()}
           </div>
-          <div className="flex min-w-0 flex-col">
-            <span className="truncate font-semibold text-xs text-zinc-200">
-              Curator Panel
+          <div className="flex min-w-0 flex-1 flex-col">
+            <span className="truncate text-sm font-medium text-zinc-200">
+              {user.username}
             </span>
-            <div className="mt-0.5 flex items-center gap-1.5">
-              <div className="rounded-md border border-indigo-500/20 bg-indigo-500/10 px-1.5 py-0.5">
-                <span className="font-bold text-[10px] text-indigo-400 uppercase tracking-wider">
-                  Rep: {reputation ?? 0}
-                </span>
-              </div>
-            </div>
+            <span className="text-xs text-zinc-500 capitalize">{user.role}</span>
           </div>
-        </div>
+          <div className="rounded-md bg-indigo-500/10 px-2 py-1">
+            <span className="font-semibold text-xs text-indigo-400">
+              {user.reputation}
+            </span>
+          </div>
+        </Link>
 
         <Link
           className="mt-3 flex items-center gap-2 px-3 py-2 text-xs text-zinc-500 transition-colors hover:text-zinc-300"

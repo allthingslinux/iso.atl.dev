@@ -10,20 +10,19 @@
     "check": "ultracite check .",
     "fix": "ultracite fix .",
     "format": "ultracite format .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@iso/api": "workspace:*",
     "@iso/db": "workspace:*",
     "@iso/ui": "workspace:*",
     "@iso/validators": "workspace:^",
+    "@radix-ui/react-select": "^2.2.6",
     "@radix-ui/react-slot": "^1.2.4",
     "@t3-oss/env-nextjs": "^0.13.10",
     "@tanstack/react-query": "catalog:",
-    "@trpc/client": "catalog:",
-    "@trpc/react-query": "catalog:",
-    "@trpc/server": "catalog:",
-    "@trpc/tanstack-react-query": "^11.8.0",
+    "@tanstack/react-table": "^8.21.3",
     "class-variance-authority": "catalog:",
     "clsx": "catalog:",
     "drizzle-orm": "catalog:",
@@ -35,18 +34,16 @@
     "postgres": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "superjson": "^2.2.1",
     "tailwind-merge": "catalog:",
-    "zod": "catalog:"
+    "zod": "^4.2.1"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4.0.0",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "autoprefixer": "^10.0.1",
     "postcss": "^8",
-    "tailwindcss": "^3.3.0",
-    "tailwindcss-animate": "catalog:",
+    "tailwindcss": "^4.0.0",
     "typescript": "catalog:"
   }
 }

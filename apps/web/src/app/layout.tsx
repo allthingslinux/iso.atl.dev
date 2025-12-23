@@ -10,8 +10,11 @@ export const metadata: Metadata = {
 };
 
 import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { QueryProvider } from "../components/query-provider";
 import { Sidebar } from "../components/sidebar";
-import { TRPCProvider } from "../trpc/provider";
+import { TopNav } from "../components/top-nav";
+import { DevAuthProvider } from "../lib/dev-auth";
+import { CommandMenu } from "../components/command-menu";
 
 export default function RootLayout({
   children,
@@ -22,14 +25,18 @@ export default function RootLayout({
     <html className="dark" lang="en">
       <body className={`${inter.className} bg-background text-foreground`}>
         <NuqsAdapter>
-          <TRPCProvider>
-            <div className="flex min-h-screen">
-              <Sidebar />
-              <main className="flex-1 pl-64 transition-all duration-300">
-                <div className="h-full">{children}</div>
-              </main>
-            </div>
-          </TRPCProvider>
+          <QueryProvider>
+            <DevAuthProvider>
+              <div className="flex min-h-screen">
+                <Sidebar />
+                <main className="flex-1 pl-64 transition-all duration-300">
+                  <TopNav />
+                  <div className="h-full">{children}</div>
+                </main>
+              </div>
+              <CommandMenu />
+            </DevAuthProvider>
+          </QueryProvider>
         </NuqsAdapter>
       </body>
     </html>
