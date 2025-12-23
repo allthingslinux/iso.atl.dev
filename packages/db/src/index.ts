@@ -5,23 +5,15 @@ import * as schema from "./schema";
 
 export type DbClient = ReturnType<typeof createDbClient>;
 
-let globalClient: postgres.Sql | undefined;
-
 /**
- * Creates or retrieves a Drizzle database client.
- * In development, we use a global singleton to prevent exhausting connection limits during HMR.
+ * Creates a Drizzle database client.
+ * For Cloudflare Workers, each request needs its own connection.
  */
 export const createDbClient = (connectionString: string) => {
-  if (!globalClient) {
-    globalClient = postgres(connectionString, {
-      // postgres.js will use multiple connections as needed.
-      // For serverless, you might want to limit this or use a connection pooling solution.
-      max: 10,
-    });
-  }
-
-  return drizzle(globalClient, { schema });
+  const client = postgres(connectionString, { max: 1 });
+  return drizzle(client, { schema });
 };
 
 // biome-ignore lint/performance/noBarrelFile: Index file used for explicit exports
 export * from "./schema";
+export * from "./seed";

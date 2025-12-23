@@ -12,6 +12,7 @@
     "db:studio": "drizzle-kit studio",
     "db:check": "drizzle-kit check",
     "db:up": "drizzle-kit up",
+    "db:seed": "npx tsx src/run-seed.ts",
     "typecheck": "tsc --noEmit",
     "check": "ultracite check .",
     "fix": "ultracite fix .",
