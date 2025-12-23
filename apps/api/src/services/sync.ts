@@ -1,14 +1,20 @@
-import { type createDbClient, distros, isos } from "@iso/db";
+import { type createDbClient, distros, isos, activityLog } from "@iso/db";
 import { eq } from "drizzle-orm";
-import { type DriveService, MockDriveService } from "./drive";
 import { parseFilename } from "./parser";
 
+type DriveFile = { id: string; name: string };
+type MockDrive = { listFiles: (folderId: string) => Promise<DriveFile[]> };
+
+const mockDrive: MockDrive = {
+  listFiles: async () => [],
+};
+
 export class SyncService {
-  private readonly drive: DriveService;
+  private readonly drive: MockDrive;
   private readonly db: ReturnType<typeof createDbClient>;
 
   constructor(db: ReturnType<typeof createDbClient>) {
-    this.drive = new MockDriveService(); // Dependency Injection later
+    this.drive = mockDrive;
     this.db = db;
   }
 
@@ -20,7 +26,6 @@ export class SyncService {
 
     for (const file of files) {
       try {
-        // 1. Check if exists
         const existing = await this.db
           .select()
           .from(isos)
@@ -30,13 +35,8 @@ export class SyncService {
           continue;
         }
 
-        // 2. Parse Filename
         const metadata = parseFilename(file.name);
 
-        // 3. Find/Create Distro (Simplified for MVP)
-        // In reality we'd look up the Distro ID from 'metadata.distro' slug
-        // For now, assume a Default Distro or create on fly?
-        // Let's hardcode ID 1 for MVP or fetch first.
         const distroList = await this.db.select().from(distros).limit(1);
         let distroId = distroList[0]?.id;
 
@@ -46,24 +46,37 @@ export class SyncService {
             .values({
               slug: metadata.distro,
               name: metadata.distro,
-              family: "Linux",
+              osType: "linux",
             })
             .returning();
           distroId = newDistro[0].id;
         }
 
-        // 4. Insert ISO
-        await this.db.insert(isos).values({
+        const [newIso] = await this.db.insert(isos).values({
           distroId,
           filename: file.name,
           driveId: file.id,
           version: metadata.version,
           arch: metadata.arch,
+          edition: metadata.edition,
+          spin: metadata.spin,
+          isoType: metadata.isoType as "live" | undefined,
+          libc: metadata.libc,
+          initSystem: metadata.initSystem,
+          hardwareTarget: metadata.hardwareTarget,
+          language: metadata.language,
+          releaseDate: metadata.releaseDate,
           confidenceScore: metadata.confidence,
-          status: "STAGING",
-          metadata: {
-            original_metadata: metadata,
-          },
+          status: "staging",
+          metadata: { original_metadata: metadata },
+        }).returning({ id: isos.id });
+
+        // Log activity
+        await this.db.insert(activityLog).values({
+          action: "created",
+          entityType: "iso",
+          entityId: String(newIso.id),
+          data: { filename: file.name, source: "sync" },
         });
 
         stats.new += 1;

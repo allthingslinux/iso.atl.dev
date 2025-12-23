@@ -2,8 +2,8 @@ name = "iso-api"
 compatibility_date = "2024-01-01"
 compatibility_flags = ["nodejs_compat"]
 
-[vars]
-DATABASE_URL = "postgres://admin:password@localhost:5432/iso_archive"
+# Removed DATABASE_URL - now in .dev.vars for local dev
+# In production, set this as a Cloudflare secret
 
 [[kv_namespaces]]
 binding = "ISO_CACHE"

@@ -9,21 +9,22 @@
     "typecheck": "tsc --noEmit",
     "check": "ultracite check .",
     "fix": "ultracite fix .",
-    "format": "ultracite format ."
+    "format": "ultracite format .",
+    "test": "vitest"
   },
   "dependencies": {
-    "@hono/trpc-server": "^0.4.1",
+    "@hono/zod-openapi": "^1.2.0",
+    "@hono/zod-validator": "^0.7.6",
     "@iso/api": "workspace:*",
     "@iso/db": "workspace:*",
     "@iso/validators": "workspace:^",
+    "@scalar/hono-api-reference": "^0.9.30",
     "@t3-oss/env-core": "^0.13.10",
-    "@trpc/server": "^11.0.0-rc.0",
     "drizzle-orm": "catalog:",
     "hono": "^4.0.0",
     "parse-torrent": "^11.0.0",
     "postgres": "catalog:",
-    "superjson": "^2.2.1",
-    "zod": "catalog:"
+    "zod": "^4.2.1"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240101.0",
