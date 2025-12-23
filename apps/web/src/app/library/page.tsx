@@ -15,7 +15,7 @@ import { cn } from "@iso/ui/lib/utils";
 const ISO_TYPES = ["live", "installer", "minimal", "netinst", "full", "server", "rescue", "cloud"];
 const RELEASE_STAGES = ["stable", "lts", "beta", "alpha", "rc", "snapshot", "nightly"];
 const ARCHITECTURES = ["amd64", "arm64", "i386", "armhf", "riscv64", "ppc64le"];
-const STATUSES = ["verified", "pending", "staging", "flagged"];
+const STATUSES = ["verified", "staging", "flagged"];
 const EDITIONS = ["desktop", "server", "cloud", "workstation", "gaming", "education", "iot", "minimal"];
 const SPINS = ["gnome", "kde", "xfce", "mate", "cinnamon", "budgie", "lxqt", "lxde", "i3", "sway", "hyprland"];
 const INIT_SYSTEMS = ["systemd", "openrc", "runit", "s6", "dinit", "sysvinit"];

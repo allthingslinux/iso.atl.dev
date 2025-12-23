@@ -26,7 +26,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 import { useIso } from "@/hooks/use-api";
-import { useAuth } from "@/lib/dev-auth";
+import { useAuth } from "@/lib/auth-provider";
 
 const ISO_TYPES = ["live", "installer", "minimal", "netinst", "full", "server", "rescue", "cloud"];
 const RELEASE_STAGES = ["stable", "lts", "beta", "alpha", "rc", "snapshot", "nightly"];
@@ -70,7 +70,7 @@ export default function IsoDetailPage() {
           <div className="mb-4 flex items-center gap-3">
             <span className={`rounded-md px-3 py-1.5 text-sm font-semibold ${
               iso.status === "verified" ? "bg-green-600 text-white" :
-              iso.status === "pending" ? "bg-yellow-600 text-white" :
+              iso.status === "staging" ? "bg-yellow-600 text-white" :
               iso.status === "flagged" ? "bg-red-600 text-white" :
               "bg-zinc-700 text-white"
             }`}>

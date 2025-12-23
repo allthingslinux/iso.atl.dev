@@ -13,7 +13,7 @@ import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { QueryProvider } from "../components/query-provider";
 import { Sidebar } from "../components/sidebar";
 import { TopNav } from "../components/top-nav";
-import { DevAuthProvider } from "../lib/dev-auth";
+import { AuthProvider } from "../lib/auth-provider";
 import { CommandMenu } from "../components/command-menu";
 
 export default function RootLayout({
@@ -26,7 +26,7 @@ export default function RootLayout({
       <body className={`${inter.className} bg-background text-foreground`}>
         <NuqsAdapter>
           <QueryProvider>
-            <DevAuthProvider>
+            <AuthProvider>
               <div className="flex min-h-screen">
                 <Sidebar />
                 <main className="flex-1 pl-64 transition-all duration-300">
@@ -35,7 +35,7 @@ export default function RootLayout({
                 </main>
               </div>
               <CommandMenu />
-            </DevAuthProvider>
+            </AuthProvider>
           </QueryProvider>
         </NuqsAdapter>
       </body>
