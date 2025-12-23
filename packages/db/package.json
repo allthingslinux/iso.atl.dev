@@ -19,11 +19,13 @@
     "format": "ultracite format ."
   },
   "dependencies": {
-    "drizzle-orm": "catalog:",
+    "better-auth": "^1.4.9",
+    "drizzle-orm": "^0.45.1",
     "drizzle-zod": "^0.6.1",
     "postgres": "catalog:"
   },
   "devDependencies": {
+    "@types/node": "catalog:",
     "drizzle-kit": "^0.31.8"
   }
 }

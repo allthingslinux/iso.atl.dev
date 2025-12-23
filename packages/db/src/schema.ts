@@ -49,28 +49,92 @@ export const isoTypeEnum = pgEnum("iso_type", [
 ]);
 
 export const isoStatusEnum = pgEnum("iso_status", [
-  "pending",
   "staging",
   "verified",
   "flagged",
-  "archived",
 ]);
 
 export const editStatusEnum = pgEnum("edit_status", [
   "pending",
-  "approved",
+  "accepted",
   "rejected",
-  "applied",
+  "immediate_accepted",
+  "immediate_rejected",
+  "failed",
+  "canceled",
 ]);
 
-export const editTypeEnum = pgEnum("edit_type", [
+export const operationTypeEnum = pgEnum("operation_type", [
   "create",
-  "update",
-  "merge",
-  "delete",
+  "modify",
+  "destroy",
 ]);
 
-export const voteTypeEnum = pgEnum("vote_type", ["yes", "no", "abstain"]);
+export const voteTypeEnum = pgEnum("vote_type", [
+  "accept",
+  "reject",
+  "abstain",
+  "immediate_accept",
+  "immediate_reject",
+]);
+
+// ============================================
+// Better Auth Tables
+// ============================================
+
+export const authUsers = pgTable("auth_users", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  email: text("email").notNull().unique(),
+  emailVerified: boolean("email_verified").notNull().default(false),
+  image: text("image"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const authSessions = pgTable("auth_sessions", {
+  id: text("id").primaryKey(),
+  expiresAt: timestamp("expires_at").notNull(),
+  token: text("token").notNull().unique(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  userId: text("user_id")
+    .notNull()
+    .references(() => authUsers.id, { onDelete: "cascade" }),
+});
+
+export const authAccounts = pgTable("auth_accounts", {
+  id: text("id").primaryKey(),
+  accountId: text("account_id").notNull(),
+  providerId: text("provider_id").notNull(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => authUsers.id, { onDelete: "cascade" }),
+  accessToken: text("access_token"),
+  refreshToken: text("refresh_token"),
+  idToken: text("id_token"),
+  accessTokenExpiresAt: timestamp("access_token_expires_at"),
+  refreshTokenExpiresAt: timestamp("refresh_token_expires_at"),
+  scope: text("scope"),
+  password: text("password"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const authVerifications = pgTable("auth_verifications", {
+  id: text("id").primaryKey(),
+  identifier: text("identifier").notNull(),
+  value: text("value").notNull(),
+  expiresAt: timestamp("expires_at").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// ============================================
+// Application Tables
+// ============================================
 
 // Families Table
 export const families = pgTable(
@@ -140,7 +204,8 @@ export const isos = pgTable(
     checksumSha1: varchar("checksum_sha1", { length: 40 }),
     checksumSha256: varchar("checksum_sha256", { length: 64 }),
     // Curation
-    status: isoStatusEnum("status").default("pending"),
+    status: isoStatusEnum("status").default("staging"),
+    completenessScore: integer("completeness_score").default(0),
     confidenceScore: integer("confidence_score").default(0),
     metadata: jsonb("metadata"),
     createdAt: timestamp("created_at").defaultNow(),
@@ -156,13 +221,17 @@ export const isos = pgTable(
     index("idx_isos_iso_type").on(table.isoType),
     index("idx_isos_release_stage").on(table.releaseStage),
     index("idx_isos_release_date").on(table.releaseDate),
+    index("idx_isos_completeness").on(table.completenessScore),
   ]
 );
 
-// Profiles Table
+// Profiles Table (extends auth_users with app-specific data)
 export const profiles = pgTable("profiles", {
   id: serial("id").primaryKey(),
-  userId: varchar("user_id", { length: 256 }).notNull().unique(),
+  userId: text("user_id")
+    .notNull()
+    .unique()
+    .references(() => authUsers.id, { onDelete: "cascade" }),
   username: varchar("username", { length: 256 }),
   reputation: integer("reputation").default(10).notNull(),
   editsSubmitted: integer("edits_submitted").default(0).notNull(),
@@ -178,25 +247,37 @@ export const edits = pgTable(
   "edits",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    userId: varchar("user_id", { length: 256 })
+    userId: text("user_id")
       .notNull()
-      .references(() => profiles.userId),
-    targetType: varchar("target_type", { length: 50 }).notNull(),
-    targetId: varchar("target_id", { length: 256 }),
-    editType: editTypeEnum("edit_type").notNull(),
+      .references(() => authUsers.id),
+    // Target
+    targetType: varchar("target_type", { length: 50 }).notNull(), // iso, distro, family
+    targetId: varchar("target_id", { length: 256 }), // null for create
+    // Operation
+    operation: operationTypeEnum("operation").notNull(),
     status: editStatusEnum("status").default("pending"),
-    data: jsonb("data").notNull(),
-    votesYes: integer("votes_yes").default(0).notNull(),
-    votesNo: integer("votes_no").default(0).notNull(),
+    // Data
+    newData: jsonb("new_data").notNull(),
+    oldData: jsonb("old_data"), // null for create
+    // Voting
+    voteCount: integer("vote_count").default(0).notNull(), // net: accepts - rejects
+    destructive: boolean("destructive").default(false).notNull(),
+    // Metadata
+    automation: boolean("automation").default(false).notNull(),
+    automationSource: varchar("automation_source", { length: 100 }),
+    updateCount: integer("update_count").default(0).notNull(),
     comment: text("comment"),
+    // Timestamps
     createdAt: timestamp("created_at").defaultNow(),
     updatedAt: timestamp("updated_at"),
     closedAt: timestamp("closed_at"),
+    expiresAt: timestamp("expires_at"),
   },
   (table) => [
     index("idx_edits_status").on(table.status),
     index("idx_edits_user").on(table.userId),
     index("idx_edits_target").on(table.targetType, table.targetId),
+    index("idx_edits_expires").on(table.expiresAt),
   ]
 );
 
@@ -206,11 +287,12 @@ export const editVotes = pgTable(
     editId: uuid("edit_id")
       .notNull()
       .references(() => edits.id, { onDelete: "cascade" }),
-    userId: varchar("user_id", { length: 256 })
+    userId: text("user_id")
       .notNull()
-      .references(() => profiles.userId),
+      .references(() => authUsers.id),
     vote: voteTypeEnum("vote").notNull(),
     createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at"),
   },
   (table) => [primaryKey({ columns: [table.editId, table.userId] })]
 );
@@ -222,9 +304,9 @@ export const editComments = pgTable(
     editId: uuid("edit_id")
       .notNull()
       .references(() => edits.id, { onDelete: "cascade" }),
-    userId: varchar("user_id", { length: 256 })
+    userId: text("user_id")
       .notNull()
-      .references(() => profiles.userId),
+      .references(() => authUsers.id),
     text: text("text").notNull(),
     createdAt: timestamp("created_at").defaultNow(),
   },
@@ -236,9 +318,9 @@ export const drafts = pgTable(
   "drafts",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    userId: varchar("user_id", { length: 256 })
+    userId: text("user_id")
       .notNull()
-      .references(() => profiles.userId),
+      .references(() => authUsers.id),
     type: varchar("type", { length: 50 }).notNull(),
     data: jsonb("data").notNull(),
     expiresAt: timestamp("expires_at").notNull(),
@@ -253,9 +335,9 @@ export const uploadSessions = pgTable(
   "upload_sessions",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    userId: varchar("user_id", { length: 256 })
+    userId: text("user_id")
       .notNull()
-      .references(() => profiles.userId),
+      .references(() => authUsers.id),
     filename: varchar("filename", { length: 512 }).notNull(),
     size: bigint("size", { mode: "number" }).notNull(),
     uploadUri: text("upload_uri").notNull(),
@@ -277,7 +359,7 @@ export const downloads = pgTable(
   {
     id: uuid("id").primaryKey().defaultRandom(),
     isoId: integer("iso_id").references(() => isos.id),
-    userId: varchar("user_id", { length: 256 }),
+    userId: text("user_id"),
     downloadType: varchar("download_type", { length: 50 }),
     startedAt: timestamp("started_at").defaultNow(),
     completedAt: timestamp("completed_at"),
@@ -293,9 +375,9 @@ export const notifications = pgTable(
   "notifications",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    userId: varchar("user_id", { length: 256 })
+    userId: text("user_id")
       .notNull()
-      .references(() => profiles.userId),
+      .references(() => authUsers.id),
     type: varchar("type", { length: 50 }).notNull(),
     title: varchar("title", { length: 255 }).notNull(),
     message: text("message"),
@@ -311,8 +393,8 @@ export const activityLog = pgTable(
   "activity_log",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    actorId: varchar("actor_id", { length: 256 }).references(
-      () => profiles.userId
+    actorId: text("actor_id").references(
+      () => authUsers.id
     ), // nullable for system actions
     action: varchar("action", { length: 50 }).notNull(), // created, updated, deleted, downloaded, uploaded, approved, rejected
     entityType: varchar("entity_type", { length: 50 }).notNull(), // iso, distro, family, edit, upload
@@ -332,8 +414,8 @@ export const collections = pgTable("collections", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
   description: text("description"),
-  curatorId: varchar("curator_id", { length: 256 }).references(
-    () => profiles.userId
+  curatorId: text("curator_id").references(
+    () => authUsers.id
   ),
   public: boolean("public").default(true),
   createdAt: timestamp("created_at").defaultNow(),
@@ -353,6 +435,53 @@ export const collectionItems = pgTable(
     addedAt: timestamp("added_at").defaultNow(),
   },
   (table) => [primaryKey({ columns: [table.collectionId, table.isoId] })]
+);
+
+// Badge type enum
+export const badgeTypeEnum = pgEnum("badge_type", [
+  "role",
+  "tutorial",
+  "achievement",
+  "milestone",
+  "conditional",
+  "secret",
+  "special",
+]);
+
+// Badges Table
+export const badges = pgTable("badges", {
+  id: varchar("id", { length: 50 }).primaryKey(), // e.g., 'first-edit', 'contributor-gold'
+  name: varchar("name", { length: 100 }).notNull(),
+  description: text("description"),
+  hint: text("hint"), // For secret badges
+  icon: varchar("icon", { length: 10 }), // Emoji
+  type: badgeTypeEnum("type").notNull(),
+  tier: integer("tier"), // For milestone badges (1-5)
+  points: integer("points").default(0),
+  criteria: jsonb("criteria"), // Machine-readable conditions
+  secret: boolean("secret").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// User Badges Table
+export const userBadges = pgTable(
+  "user_badges",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => authUsers.id, { onDelete: "cascade" }),
+    badgeId: varchar("badge_id", { length: 50 })
+      .notNull()
+      .references(() => badges.id, { onDelete: "cascade" }),
+    tier: integer("tier"), // Current tier for milestone badges
+    earnedAt: timestamp("earned_at").defaultNow(),
+    lostAt: timestamp("lost_at"), // For conditional badges
+    metadata: jsonb("metadata"), // Context about how it was earned
+  },
+  (table) => [
+    primaryKey({ columns: [table.userId, table.badgeId] }),
+    index("idx_user_badges_user").on(table.userId),
+  ]
 );
 
 // Zod Schemas
@@ -390,3 +519,6 @@ export type Notification = typeof notifications.$inferSelect;
 export type Collection = typeof collections.$inferSelect;
 export type ActivityLog = typeof activityLog.$inferSelect;
 export type NewActivityLog = typeof activityLog.$inferInsert;
+export type Badge = typeof badges.$inferSelect;
+export type NewBadge = typeof badges.$inferInsert;
+export type UserBadge = typeof userBadges.$inferSelect;

@@ -46,7 +46,7 @@ type IsoSeed = {
   initSystem?: string;
   hardwareTarget?: string;
   size: number;
-  status: "verified" | "pending" | "staging" | "flagged";
+  status: "verified" | "staging" | "flagged";
   confidence: number;
 };
 
@@ -55,7 +55,7 @@ const DEMO_ISOS: IsoSeed[] = [
   { distroSlug: "ubuntu", filename: "ubuntu-24.04-amd64-desktop-gnome-live-20240425-en.iso", version: "24.04", arch: "amd64", edition: "desktop", spin: "gnome", isoType: "live", releaseStage: "lts", initSystem: "systemd", size: 5_200_000_000, status: "verified", confidence: 100 },
   { distroSlug: "ubuntu", filename: "ubuntu-24.04-amd64-server-installer-20240425-en.iso", version: "24.04", arch: "amd64", edition: "server", isoType: "installer", releaseStage: "lts", initSystem: "systemd", size: 2_600_000_000, status: "verified", confidence: 95 },
   { distroSlug: "ubuntu", filename: "ubuntu-24.04-arm64-desktop-gnome-live-20240425-en.iso", version: "24.04", arch: "arm64", edition: "desktop", spin: "gnome", isoType: "live", releaseStage: "lts", initSystem: "systemd", size: 4_800_000_000, status: "verified", confidence: 92 },
-  { distroSlug: "ubuntu", filename: "ubuntu-24.10-amd64-desktop-gnome-live-20241010-en.iso", version: "24.10", arch: "amd64", edition: "desktop", spin: "gnome", isoType: "live", releaseStage: "stable", initSystem: "systemd", size: 5_400_000_000, status: "pending", confidence: 78 },
+  { distroSlug: "ubuntu", filename: "ubuntu-24.10-amd64-desktop-gnome-live-20241010-en.iso", version: "24.10", arch: "amd64", edition: "desktop", spin: "gnome", isoType: "live", releaseStage: "stable", initSystem: "systemd", size: 5_400_000_000, status: "staging", confidence: 78 },
   
   // Debian
   { distroSlug: "debian", filename: "debian-12.4.0-amd64-netinst-20231210-en.iso", version: "12.4.0", arch: "amd64", isoType: "netinst", releaseStage: "stable", initSystem: "systemd", size: 628_000_000, status: "verified", confidence: 100 },
@@ -65,7 +65,7 @@ const DEMO_ISOS: IsoSeed[] = [
   // Fedora - workstation and spins
   { distroSlug: "fedora", filename: "fedora-41-amd64-workstation-gnome-live-20241029-en.iso", version: "41", arch: "amd64", edition: "workstation", spin: "gnome", isoType: "live", releaseStage: "stable", initSystem: "systemd", size: 2_100_000_000, status: "verified", confidence: 100 },
   { distroSlug: "fedora", filename: "fedora-41-amd64-kde-live-20241029-en.iso", version: "41", arch: "amd64", spin: "kde", isoType: "live", releaseStage: "stable", initSystem: "systemd", size: 2_300_000_000, status: "verified", confidence: 95 },
-  { distroSlug: "fedora", filename: "fedora-41-amd64-xfce-live-20241029-en.iso", version: "41", arch: "amd64", spin: "xfce", isoType: "live", releaseStage: "stable", initSystem: "systemd", size: 1_800_000_000, status: "pending", confidence: 72 },
+  { distroSlug: "fedora", filename: "fedora-41-amd64-xfce-live-20241029-en.iso", version: "41", arch: "amd64", spin: "xfce", isoType: "live", releaseStage: "stable", initSystem: "systemd", size: 1_800_000_000, status: "staging", confidence: 72 },
   { distroSlug: "fedora", filename: "fedora-41-amd64-server-dvd-20241029-en.iso", version: "41", arch: "amd64", edition: "server", isoType: "installer", releaseStage: "stable", initSystem: "systemd", size: 2_400_000_000, status: "verified", confidence: 92 },
   
   // Arch
@@ -74,7 +74,7 @@ const DEMO_ISOS: IsoSeed[] = [
   // Manjaro
   { distroSlug: "manjaro", filename: "manjaro-24.2-amd64-kde-live-20241201-en.iso", version: "24.2", arch: "amd64", spin: "kde", isoType: "live", releaseStage: "stable", initSystem: "systemd", size: 3_800_000_000, status: "verified", confidence: 88 },
   { distroSlug: "manjaro", filename: "manjaro-24.2-amd64-gnome-live-20241201-en.iso", version: "24.2", arch: "amd64", spin: "gnome", isoType: "live", releaseStage: "stable", initSystem: "systemd", size: 3_600_000_000, status: "verified", confidence: 85 },
-  { distroSlug: "manjaro", filename: "manjaro-24.2-amd64-xfce-live-20241201-en.iso", version: "24.2", arch: "amd64", spin: "xfce", isoType: "live", releaseStage: "stable", initSystem: "systemd", size: 3_200_000_000, status: "pending", confidence: 70 },
+  { distroSlug: "manjaro", filename: "manjaro-24.2-amd64-xfce-live-20241201-en.iso", version: "24.2", arch: "amd64", spin: "xfce", isoType: "live", releaseStage: "stable", initSystem: "systemd", size: 3_200_000_000, status: "staging", confidence: 70 },
   
   // EndeavourOS
   { distroSlug: "endeavouros", filename: "endeavouros-galileo-2024.09.22-x86_64.iso", version: "Galileo", arch: "amd64", isoType: "live", releaseStage: "stable", initSystem: "systemd", size: 2_100_000_000, status: "verified", confidence: 90 },
@@ -101,7 +101,7 @@ const DEMO_ISOS: IsoSeed[] = [
   { distroSlug: "void", filename: "void-live-x86_64-20240314-xfce-glibc.iso", version: "20240314", arch: "amd64", spin: "xfce", isoType: "live", releaseStage: "stable", libc: "glibc", initSystem: "runit", size: 1_200_000_000, status: "verified", confidence: 100 },
   { distroSlug: "void", filename: "void-live-x86_64-20240314-xfce-musl.iso", version: "20240314", arch: "amd64", spin: "xfce", isoType: "live", releaseStage: "stable", libc: "musl", initSystem: "runit", size: 1_100_000_000, status: "verified", confidence: 100 },
   { distroSlug: "void", filename: "void-live-x86_64-20240314-base-glibc.iso", version: "20240314", arch: "amd64", edition: "minimal", isoType: "live", releaseStage: "stable", libc: "glibc", initSystem: "runit", size: 600_000_000, status: "verified", confidence: 95 },
-  { distroSlug: "void", filename: "void-live-x86_64-20240314-base-musl.iso", version: "20240314", arch: "amd64", edition: "minimal", isoType: "live", releaseStage: "stable", libc: "musl", initSystem: "runit", size: 550_000_000, status: "pending", confidence: 88 },
+  { distroSlug: "void", filename: "void-live-x86_64-20240314-base-musl.iso", version: "20240314", arch: "amd64", edition: "minimal", isoType: "live", releaseStage: "stable", libc: "musl", initSystem: "runit", size: 550_000_000, status: "staging", confidence: 88 },
   
   // Alpine - musl based
   { distroSlug: "alpine", filename: "alpine-standard-3.20.0-x86_64.iso", version: "3.20.0", arch: "amd64", isoType: "installer", releaseStage: "stable", libc: "musl", initSystem: "openrc", size: 200_000_000, status: "verified", confidence: 100 },
@@ -111,7 +111,7 @@ const DEMO_ISOS: IsoSeed[] = [
   // Artix - Arch without systemd
   { distroSlug: "artix", filename: "artix-base-openrc-20240823-x86_64.iso", version: "20240823", arch: "amd64", edition: "minimal", isoType: "live", releaseStage: "stable", initSystem: "openrc", size: 800_000_000, status: "verified", confidence: 92 },
   { distroSlug: "artix", filename: "artix-plasma-runit-20240823-x86_64.iso", version: "20240823", arch: "amd64", spin: "kde", isoType: "live", releaseStage: "stable", initSystem: "runit", size: 2_400_000_000, status: "verified", confidence: 88 },
-  { distroSlug: "artix", filename: "artix-xfce-s6-20240823-x86_64.iso", version: "20240823", arch: "amd64", spin: "xfce", isoType: "live", releaseStage: "stable", initSystem: "s6", size: 1_800_000_000, status: "pending", confidence: 75 },
+  { distroSlug: "artix", filename: "artix-xfce-s6-20240823-x86_64.iso", version: "20240823", arch: "amd64", spin: "xfce", isoType: "live", releaseStage: "stable", initSystem: "s6", size: 1_800_000_000, status: "staging", confidence: 75 },
   
   // NixOS
   { distroSlug: "nixos", filename: "nixos-24.05-x86_64-gnome.iso", version: "24.05", arch: "amd64", spin: "gnome", isoType: "live", releaseStage: "stable", initSystem: "systemd", size: 2_800_000_000, status: "verified", confidence: 95 },
@@ -121,7 +121,7 @@ const DEMO_ISOS: IsoSeed[] = [
   
   // Gentoo
   { distroSlug: "gentoo", filename: "gentoo-install-amd64-minimal-20241215.iso", version: "20241215", arch: "amd64", edition: "minimal", isoType: "minimal", releaseStage: "stable", libc: "glibc", initSystem: "openrc", size: 500_000_000, status: "verified", confidence: 100 },
-  { distroSlug: "gentoo", filename: "gentoo-livegui-amd64-20241215.iso", version: "20241215", arch: "amd64", isoType: "live", releaseStage: "stable", libc: "glibc", initSystem: "openrc", size: 5_500_000_000, status: "pending", confidence: 70 },
+  { distroSlug: "gentoo", filename: "gentoo-livegui-amd64-20241215.iso", version: "20241215", arch: "amd64", isoType: "live", releaseStage: "stable", libc: "glibc", initSystem: "openrc", size: 5_500_000_000, status: "staging", confidence: 70 },
 ];
 
 function randomHash(len: number) {
