@@ -23,6 +23,7 @@
     "@t3-oss/env-nextjs": "^0.13.10",
     "@tanstack/react-query": "catalog:",
     "@tanstack/react-table": "^8.21.3",
+    "better-auth": "^1.4.9",
     "class-variance-authority": "catalog:",
     "clsx": "catalog:",
     "drizzle-orm": "catalog:",
@@ -34,6 +35,8 @@
     "postgres": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
+    "react-grid-layout": "^2.1.1",
+    "react-resizable": "^3.0.5",
     "tailwind-merge": "catalog:",
     "zod": "^4.2.1"
   },
@@ -42,6 +45,7 @@
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
+    "@types/react-grid-layout": "^1.3.6",
     "postcss": "^8",
     "tailwindcss": "^4.0.0",
     "typescript": "catalog:"
