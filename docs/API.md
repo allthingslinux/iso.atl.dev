@@ -1,16 +1,16 @@
 # ISO Archive API Specification
 
 **Version**: 1.0.0  
-**Base URL**: `http://localhost:8787/api/v1` (development)
+**Base URL**: `/api/v1`
 
 ## Overview
 
-The ISO Archive API provides a community-driven platform for cataloging, curating, and distributing operating system installation media. This specification defines the target architecture based on domain-driven design principles and proven patterns from similar platforms (StashDB).
+The ISO Archive API provides a community-driven platform for cataloging, curating, and distributing operating system installation media.
 
 ### Interactive Documentation
 
-- **[Scalar UI](http://localhost:8787/docs)** - Interactive API explorer
-- **[OpenAPI Spec](http://localhost:8787/openapi.json)** - OpenAPI 3.1 specification
+- **Scalar UI**: `/docs`
+- **OpenAPI Spec**: `/openapi.json`
 
 ---
 
@@ -20,11 +20,12 @@ The ISO Archive API provides a community-driven platform for cataloging, curatin
 
 ```
 /api/v1/
-├── catalog/          # Public Discovery (Cached)
-├── library/          # ISO Details (Cached)
-├── curation/         # Community Workflows (Auth Required)
-├── downloads/        # File Delivery (CDN)
-└── admin/            # Operations (Admin Only)
+├── catalog/      # Public discovery (cached)
+├── library/      # ISO/distro details (cached)
+├── curation/     # Community workflows (auth required)
+├── downloads/    # File delivery
+├── uploads/      # Direct-to-Drive uploads
+└── admin/        # Operations (admin only)
 ```
 
 ### Authentication
@@ -32,7 +33,7 @@ The ISO Archive API provides a community-driven platform for cataloging, curatin
 | Method | Use Case |
 |--------|----------|
 | Session (Cookie) | Web interface |
-| API Key (`X-API-Key` header) | Programmatic access |
+| API Key (`X-API-Key`) | Programmatic access |
 | OAuth (Discord/GitHub) | Community users |
 
 ### Rate Limits
@@ -52,140 +53,201 @@ Public discovery endpoints with aggressive caching.
 ### Search ISOs
 
 ```http
-GET /api/v1/catalog/search
+GET /catalog/search
 ```
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
 | `q` | string | Full-text search query |
-| `distribution` | string[] | Filter by distro slug |
-| `arch` | string[] | Filter by architecture |
-| `category` | string[] | desktop, server, minimal, live |
-| `sort` | string | relevance, date, downloads, name |
-| `order` | string | asc, desc |
-| `page` | number | Page number (1-based) |
-| `limit` | number | Results per page (max 100) |
+| `distro` | string | Filter by distro slug |
+| `family` | string | Filter by family slug (debian, arch, rhel) |
+| `os_type` | string | Filter by OS type (linux, bsd, unix, vintage, other) |
+| `arch` | string | Filter by architecture (amd64, arm64, i386) |
+| `edition` | string | Filter by edition (desktop, server, cloud) |
+| `spin` | string | Filter by DE/WM (gnome, kde, xfce) |
+| `iso_type` | string | Filter by ISO type (live, installer, minimal, netinst) |
+| `release_stage` | string | Filter by stage (stable, lts, beta, rc, snapshot) |
+| `hardware_target` | string | Filter by hardware (nvidia, steam-deck, surface) |
+| `page` | number | Page number (default: 1) |
+| `limit` | number | Results per page (default: 50, max: 100) |
 
 **Response:**
 ```json
 {
   "results": [
     {
-      "id": "123",
-      "distribution": { "name": "Ubuntu", "slug": "ubuntu" },
+      "id": 123,
+      "distro": {
+        "slug": "ubuntu",
+        "name": "Ubuntu",
+        "os_type": "linux",
+        "family": { "slug": "debian", "name": "Debian" }
+      },
       "version": "22.04",
-      "arch": "x86_64",
-      "filename": "ubuntu-22.04-desktop-amd64.iso",
+      "arch": "amd64",
+      "edition": "desktop",
+      "spin": "gnome",
+      "iso_type": "live",
+      "release_stage": "lts",
+      "language": "en",
+      "filename": "ubuntu-22.04-amd64-desktop-gnome-live-20220421-en.iso",
       "size": 3774873600,
-      "status": "verified",
-      "confidence": 95
+      "status": "verified"
     }
   ],
-  "pagination": {
-    "page": 1,
-    "limit": 20,
-    "total": 1523,
-    "pages": 77
-  },
-  "facets": {
-    "distributions": [{ "value": "ubuntu", "count": 45 }],
-    "architectures": [{ "value": "x86_64", "count": 1200 }]
-  }
+  "total": 1523,
+  "page": 1,
+  "limit": 50
 }
 ```
-
-### Browse Directory
-
-```http
-GET /api/v1/catalog/browse
-```
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `path` | string | Directory path (e.g., "/Linux/Ubuntu") |
-| `sort` | string | name, date, size |
 
 ### List Distributions
 
 ```http
-GET /api/v1/catalog/distributions
+GET /catalog/distributions
 ```
 
-### List Collections
+**Response:**
+```json
+[
+  {
+    "id": 1,
+    "slug": "ubuntu",
+    "name": "Ubuntu",
+    "os_type": "linux",
+    "family": { "slug": "debian", "name": "Debian" },
+    "parent": null,
+    "iso_count": 45
+  },
+  {
+    "id": 2,
+    "slug": "kubuntu",
+    "name": "Kubuntu",
+    "os_type": "linux",
+    "family": { "slug": "debian", "name": "Debian" },
+    "parent": { "slug": "ubuntu", "name": "Ubuntu" },
+    "iso_count": 12
+  }
+]
+```
+
+### List Families
 
 ```http
-GET /api/v1/catalog/collections
+GET /catalog/families
+```
+
+**Response:**
+```json
+[
+  {
+    "id": 1,
+    "slug": "debian",
+    "name": "Debian",
+    "description": "APT/dpkg-based, .deb packages",
+    "distro_count": 156
+  },
+  {
+    "id": 2,
+    "slug": "arch",
+    "name": "Arch Linux",
+    "description": "Pacman-based, rolling release",
+    "distro_count": 42
+  }
+]
 ```
 
 ---
 
 ## Library Domain
 
-Detailed ISO information and relationships.
+Detailed ISO and distribution information.
 
 ### Get ISO Details
 
 ```http
-GET /api/v1/library/isos/{id}
+GET /library/isos/{id}
 ```
 
 **Response:**
 ```json
 {
-  "id": "123",
-  "metadata": {
-    "distribution": {
-      "name": "Ubuntu",
-      "slug": "ubuntu",
-      "family": "linux",
-      "website": "https://ubuntu.com"
-    },
-    "release": {
-      "version": "22.04",
-      "codename": "Jammy Jellyfish",
-      "releaseDate": "2022-04-21",
-      "supportStatus": "lts",
-      "supportUntil": "2027-04-21"
-    },
-    "technical": {
-      "architecture": "x86_64",
-      "category": "desktop",
-      "desktopEnvironment": ["gnome"],
-      "kernelVersion": "5.15",
-      "initSystem": "systemd"
-    },
-    "file": {
-      "filename": "ubuntu-22.04-desktop-amd64.iso",
-      "size": 3774873600,
-      "checksums": {
-        "sha256": "abc123..."
-      }
-    }
+  "id": 123,
+  "distro": {
+    "id": 1,
+    "slug": "ubuntu",
+    "name": "Ubuntu",
+    "os_type": "linux",
+    "family": { "slug": "debian", "name": "Debian" },
+    "website": "https://ubuntu.com"
   },
-  "curation": {
-    "status": "verified",
-    "confidence": 95,
-    "verifiedBy": "user123",
-    "verifiedAt": "2024-01-15T10:30:00Z"
-  },
-  "statistics": {
-    "downloads": 1523
-  }
+  "version": "22.04",
+  "arch": "amd64",
+  "edition": "desktop",
+  "spin": "gnome",
+  "iso_type": "live",
+  "release_stage": "lts",
+  "release_date": "2022-04-21",
+  "wrapper": "glibc",
+  "hardware_target": null,
+  "kernel_version": "5.15",
+  "language": "en",
+  "filename": "ubuntu-22.04-amd64-desktop-gnome-live-20220421-en.iso",
+  "drive_id": "abc123",
+  "size": 3774873600,
+  "checksum_md5": "...",
+  "checksum_sha1": "...",
+  "checksum_sha256": "...",
+  "status": "verified",
+  "confidence_score": 95,
+  "created_at": "2024-01-15T10:30:00Z",
+  "updated_at": "2024-01-15T10:30:00Z"
 }
 ```
 
-### Search by Fingerprint
+### Get ISO Fingerprint
 
 ```http
-POST /api/v1/library/fingerprints/search
+GET /library/isos/{id}/fingerprint
 ```
 
-**Request:**
+**Response:**
 ```json
 {
-  "fingerprints": [
-    { "algorithm": "sha256", "value": "abc123..." }
-  ]
+  "md5": "d41d8cd98f00b204e9800998ecf8427e",
+  "sha1": "da39a3ee5e6b4b0d3255bfef95601890afd80709",
+  "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}
+```
+
+### Get Distribution Details
+
+```http
+GET /library/distros/{slug}
+```
+
+**Response:**
+```json
+{
+  "id": 1,
+  "slug": "ubuntu",
+  "name": "Ubuntu",
+  "os_type": "linux",
+  "family": {
+    "id": 1,
+    "slug": "debian",
+    "name": "Debian"
+  },
+  "parent": null,
+  "children": [
+    { "slug": "kubuntu", "name": "Kubuntu" },
+    { "slug": "xubuntu", "name": "Xubuntu" },
+    { "slug": "edubuntu", "name": "Edubuntu" }
+  ],
+  "description": "Ubuntu is a Linux distribution...",
+  "website": "https://ubuntu.com",
+  "logo_url": "https://...",
+  "iso_count": 45
 }
 ```
 
@@ -198,97 +260,123 @@ Community-driven edit workflows with voting.
 ### Submit Edit
 
 ```http
-POST /api/v1/curation/edits
+POST /curation/edits
 ```
 
 **Request:**
 ```json
 {
-  "type": "update",
-  "targetType": "iso",
-  "targetId": "123",
-  "changes": {
-    "metadata.release.version": "22.04.1"
-  },
-  "evidence": {
-    "references": ["https://releases.ubuntu.com/22.04.1/"]
+  "target_type": "iso",
+  "target_id": 123,
+  "edit_type": "update",
+  "data": {
+    "version": "22.04.1",
+    "release_date": "2022-08-11"
   },
   "comment": "Updated to point release version"
 }
 ```
 
-### Get Pending Edits
+**Notes:**
+- `target_type`: `iso`, `distro`, or `family`
+- `edit_type`: `create`, `update`, `merge`, `delete`
+
+**Response:**
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000"
+}
+```
+
+### List Edits
 
 ```http
-GET /api/v1/curation/edits?status=pending
+GET /curation/edits
+```
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `status` | string | pending, approved, rejected, applied |
+| `page` | number | Page number |
+| `limit` | number | Results per page |
+
+### Get Edit Details
+
+```http
+GET /curation/edits/{id}
 ```
 
 ### Vote on Edit
 
 ```http
-POST /api/v1/curation/edits/{id}/votes
+POST /curation/edits/{id}/votes
 ```
 
 **Request:**
 ```json
 {
-  "vote": "yes",
-  "comment": "Verified against official release notes"
+  "vote": "yes"
 }
-```
-
-### Voting Rules
-
-| Edit Type | Auto-Approve | Auto-Reject | Min Period | Tie Result |
-|-----------|--------------|-------------|------------|------------|
-| Non-destructive | 3 unanimous YES | 3 unanimous NO | 3 days | Approve |
-| Destructive (merge/delete) | 5 unanimous YES | 3 unanimous NO | 7 days | Reject |
-
-### Add Comment
-
-```http
-POST /api/v1/curation/edits/{id}/comments
-```
-
-### Draft System
-
-```http
-POST   /api/v1/curation/drafts
-GET    /api/v1/curation/drafts
-PUT    /api/v1/curation/drafts/{id}
-POST   /api/v1/curation/drafts/{id}/submit
-DELETE /api/v1/curation/drafts/{id}
-```
-
-### User Reputation
-
-```http
-GET /api/v1/curation/users/{userId}/reputation
 ```
 
 **Response:**
 ```json
 {
-  "score": 150,
-  "rank": "Curator",
-  "contributions": {
-    "editsSubmitted": 42,
-    "editsApproved": 38,
-    "editsRejected": 4,
-    "votesCast": 156,
-    "accuracy": 90.5
-  }
+  "yes": 3,
+  "no": 0
 }
 ```
 
-### Reputation Thresholds
+### Voting Rules
 
-| Rank | Score | Permissions |
-|------|-------|-------------|
-| Viewer | 0 | Browse, download |
-| Contributor | 1+ | Submit edits |
-| Curator | 100+ (10 approved) | Vote on edits |
-| Trusted | 500+ (50 approved) | Auto-approve simple edits |
+| Edit Type | Auto-Approve | Auto-Reject | Min Period |
+|-----------|--------------|-------------|------------|
+| Non-destructive (create, update) | 3 unanimous YES | 3 unanimous NO | — |
+| Destructive (merge, delete) | 5 unanimous YES | 3 unanimous NO | 7 days |
+
+### Add Comment
+
+```http
+POST /curation/edits/{id}/comments
+```
+
+**Request:**
+```json
+{
+  "text": "Verified against official release notes"
+}
+```
+
+### List Comments
+
+```http
+GET /curation/edits/{id}/comments
+```
+
+### Get User Reputation
+
+```http
+GET /curation/users/{userId}/reputation
+```
+
+**Response:**
+```json
+{
+  "reputation": 150,
+  "rank": "curator",
+  "edits_submitted": 42,
+  "edits_approved": 38
+}
+```
+
+### Reputation Ranks
+
+| Rank | Threshold | Permissions |
+|------|-----------|-------------|
+| `viewer` | 0 | Browse, download |
+| `contributor` | 1+ edit | Submit edits |
+| `curator` | 10 approved | Vote on edits |
+| `trusted` | 50 approved | Auto-approve simple edits |
 
 ---
 
@@ -296,49 +384,118 @@ GET /api/v1/curation/users/{userId}/reputation
 
 File delivery with tracking.
 
-### Get Download Link
+### Get Direct Download Link
 
 ```http
-GET /api/v1/downloads/direct/{id}
+GET /downloads/direct/{id}
 ```
 
 **Response:**
 ```json
 {
-  "url": "https://storage.example.com/...",
-  "filename": "ubuntu-22.04-desktop-amd64.iso",
-  "size": 3774873600,
-  "expiresAt": "2024-01-15T11:30:00Z",
-  "resumable": true,
-  "mirrors": [
-    { "url": "https://mirror1.example.com/...", "location": "US", "priority": 1 }
-  ]
-}
-```
-
-### Get Torrent
-
-```http
-GET /api/v1/downloads/torrent/{id}
-```
-
-**Response:**
-```json
-{
-  "magnetLink": "magnet:?xt=urn:btih:...",
-  "torrentFile": "<base64>",
-  "infoHash": "abc123...",
-  "trackers": ["udp://tracker.example.com:6969"],
-  "webSeeds": ["https://storage.example.com/..."],
-  "peers": { "seeders": 42, "leechers": 5 }
+  "url": "https://drive.google.com/uc?id=...",
+  "filename": "ubuntu-22.04-amd64-desktop-gnome-live-20220421-en.iso",
+  "expires_at": "2024-01-15T11:30:00Z"
 }
 ```
 
 ### Get Magnet Link
 
 ```http
-GET /api/v1/downloads/magnet/{id}
+GET /downloads/magnet/{id}
 ```
+
+**Response:**
+```json
+{
+  "magnet": "magnet:?xt=urn:btih:..."
+}
+```
+
+### Get Torrent File
+
+```http
+GET /downloads/torrent/{id}
+```
+
+Returns `.torrent` file with `Content-Type: application/x-bittorrent`
+
+---
+
+## Uploads Domain
+
+Direct-to-Google-Drive uploads with quota enforcement.
+
+### Initiate Upload
+
+```http
+POST /uploads/initiate
+```
+
+**Request:**
+```json
+{
+  "filename": "custom-distro-1.0-amd64-live.iso",
+  "size": 2147483648
+}
+```
+
+**Response:**
+```json
+{
+  "session_id": "550e8400-e29b-41d4-a716-446655440000",
+  "upload_uri": "https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable&...",
+  "expires_at": "2024-01-16T10:30:00Z"
+}
+```
+
+### Get Upload Status
+
+```http
+GET /uploads/{sessionId}
+```
+
+**Response:**
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "status": "initiated",
+  "filename": "custom-distro-1.0-amd64-live.iso",
+  "size": 2147483648,
+  "drive_file_id": null,
+  "completed_at": null
+}
+```
+
+### Complete Upload
+
+```http
+POST /uploads/{sessionId}/complete
+```
+
+**Request:**
+```json
+{
+  "drive_file_id": "1abc123..."
+}
+```
+
+### Get Quota
+
+```http
+GET /uploads/quota
+```
+
+**Response:**
+```json
+{
+  "used_bytes": 5368709120,
+  "limit_bytes": 805306368000,
+  "remaining_bytes": 799937658880
+}
+```
+
+**Note:** 750GB daily upload limit per user.
 
 ---
 
@@ -349,24 +506,31 @@ Administrative operations (requires admin role).
 ### Trigger Sync
 
 ```http
-POST /api/v1/admin/sync
+POST /admin/sync
 ```
 
-### Get Analytics
-
-```http
-GET /api/v1/admin/analytics/overview
-GET /api/v1/admin/analytics/curation
-GET /api/v1/admin/analytics/downloads
+**Response:**
+```json
+{
+  "job_id": "550e8400-e29b-41d4-a716-446655440000",
+  "status": "queued"
+}
 ```
 
-### Manage Users
+### Get Analytics Overview
 
 ```http
-GET    /api/v1/admin/users
-GET    /api/v1/admin/users/{id}
-PATCH  /api/v1/admin/users/{id}
-DELETE /api/v1/admin/users/{id}
+GET /admin/analytics/overview
+```
+
+**Response:**
+```json
+{
+  "total_isos": 5234,
+  "total_distros": 342,
+  "total_downloads": 152300,
+  "pending_edits": 23
+}
 ```
 
 ---
@@ -374,9 +538,9 @@ DELETE /api/v1/admin/users/{id}
 ## Notifications
 
 ```http
-GET  /api/v1/notifications
-POST /api/v1/notifications/{id}/read
-POST /api/v1/notifications/read-all
+GET  /notifications
+POST /notifications/{id}/read
+POST /notifications/read-all
 ```
 
 ---
@@ -388,11 +552,8 @@ All errors follow this format:
 ```json
 {
   "error": {
-    "code": "VALIDATION_ERROR",
-    "message": "Invalid architecture value",
-    "details": { "field": "arch", "value": "invalid" },
-    "timestamp": "2024-01-15T10:30:00Z",
-    "requestId": "req_abc123"
+    "code": "404",
+    "message": "ISO not found"
   }
 }
 ```
@@ -401,24 +562,13 @@ All errors follow this format:
 
 | Code | HTTP | Description |
 |------|------|-------------|
-| `VALIDATION_ERROR` | 400 | Invalid request data |
-| `UNAUTHORIZED` | 401 | Authentication required |
-| `FORBIDDEN` | 403 | Insufficient permissions |
-| `NOT_FOUND` | 404 | Resource not found |
-| `DUPLICATE` | 409 | Resource already exists |
-| `RATE_LIMITED` | 429 | Too many requests |
-| `INTERNAL_ERROR` | 500 | Server error |
-
----
-
-## Caching
-
-| Endpoint | Cache-Control |
-|----------|---------------|
-| `catalog/*` | `public, max-age=300` (5 min) |
-| `library/isos/{id}` | `public, max-age=1800` (30 min) |
-| `curation/*` | `private, no-cache` |
-| `downloads/*` | `private, max-age=60` (1 min) |
+| `400` | 400 | Bad request / validation error |
+| `401` | 401 | Authentication required |
+| `403` | 403 | Insufficient permissions |
+| `404` | 404 | Resource not found |
+| `409` | 409 | Conflict / duplicate |
+| `429` | 429 | Rate limit exceeded |
+| `500` | 500 | Internal server error |
 
 ---
 
@@ -428,154 +578,83 @@ All list endpoints support:
 
 | Parameter | Default | Max |
 |-----------|---------|-----|
-| `page` | 1 | - |
+| `page` | 1 | — |
 | `limit` | 20 | 100 |
 
 Response includes:
 ```json
 {
-  "pagination": {
-    "page": 1,
-    "limit": 20,
-    "total": 1523,
-    "pages": 77,
-    "hasNext": true,
-    "hasPrev": false
-  }
+  "items": [...],
+  "total": 1523,
+  "page": 1,
+  "limit": 20
 }
 ```
 
 ---
 
-## Database Schema
+## Caching
 
-```sql
--- Core tables
-CREATE TABLE distros (
-  id SERIAL PRIMARY KEY,
-  slug VARCHAR(256) UNIQUE NOT NULL,
-  name VARCHAR(256) NOT NULL,
-  family VARCHAR(50) NOT NULL,
-  description TEXT
-);
+| Endpoint Pattern | Cache-Control |
+|------------------|---------------|
+| `catalog/*` | `public, max-age=300` (5 min) |
+| `library/*` | `public, max-age=1800` (30 min) |
+| `curation/*` | `private, no-cache` |
+| `downloads/*` | `private, max-age=60` (1 min) |
+| `uploads/*` | `private, no-cache` |
 
-CREATE TABLE isos (
-  id SERIAL PRIMARY KEY,
-  distro_id INTEGER REFERENCES distros(id),
-  filename VARCHAR(512) NOT NULL,
-  drive_id VARCHAR(256) UNIQUE NOT NULL,
-  checksum VARCHAR(64),
-  version VARCHAR(50),
-  arch VARCHAR(50),
-  status VARCHAR(20) DEFAULT 'pending',
-  confidence_score INTEGER DEFAULT 0,
-  metadata JSONB,
-  created_at TIMESTAMP DEFAULT NOW(),
-  updated_at TIMESTAMP DEFAULT NOW()
-);
+---
 
-CREATE TABLE profiles (
-  id SERIAL PRIMARY KEY,
-  user_id VARCHAR(256) UNIQUE NOT NULL,
-  reputation INTEGER DEFAULT 10,
-  updated_at TIMESTAMP DEFAULT NOW()
-);
+## Field Reference
 
--- Edit workflow
-CREATE TABLE edits (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id VARCHAR(256) REFERENCES profiles(user_id),
-  target_type VARCHAR(50) NOT NULL,
-  target_id VARCHAR(256),
-  operation VARCHAR(50) NOT NULL,
-  status VARCHAR(50) DEFAULT 'pending',
-  data JSONB NOT NULL,
-  vote_count INTEGER DEFAULT 0,
-  created_at TIMESTAMP DEFAULT NOW(),
-  closed_at TIMESTAMP
-);
+See [SPEC.md](./SPEC.md) for complete field definitions, canonical values, and database schema.
 
-CREATE TABLE edit_votes (
-  edit_id UUID REFERENCES edits(id) ON DELETE CASCADE,
-  user_id VARCHAR(256) REFERENCES profiles(user_id),
-  vote VARCHAR(10) NOT NULL,
-  created_at TIMESTAMP DEFAULT NOW(),
-  PRIMARY KEY (edit_id, user_id)
-);
+### Key Enums
 
-CREATE TABLE edit_comments (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  edit_id UUID REFERENCES edits(id) ON DELETE CASCADE,
-  user_id VARCHAR(256) REFERENCES profiles(user_id),
-  text TEXT NOT NULL,
-  created_at TIMESTAMP DEFAULT NOW()
-);
+**os_type:** `linux`, `bsd`, `unix`, `vintage`, `other`, `mobile`, `windows`
 
--- Supporting tables
-CREATE TABLE drafts (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id VARCHAR(256) REFERENCES profiles(user_id),
-  type VARCHAR(50) NOT NULL,
-  data JSONB NOT NULL,
-  expires_at TIMESTAMP NOT NULL,
-  created_at TIMESTAMP DEFAULT NOW()
-);
+**release_stage:** `stable`, `lts`, `beta`, `alpha`, `rc`, `snapshot`, `nightly`
 
-CREATE TABLE downloads (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  iso_id INTEGER REFERENCES isos(id),
-  user_id VARCHAR(256),
-  download_type VARCHAR(50),
-  started_at TIMESTAMP DEFAULT NOW(),
-  completed_at TIMESTAMP
-);
+**iso_type:** `live`, `installer`, `minimal`, `netinst`, `full`, `server`, `rescue`, `cloud`
 
-CREATE TABLE notifications (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id VARCHAR(256) REFERENCES profiles(user_id),
-  type VARCHAR(50) NOT NULL,
-  title VARCHAR(255) NOT NULL,
-  message TEXT,
-  data JSONB,
-  read BOOLEAN DEFAULT FALSE,
-  created_at TIMESTAMP DEFAULT NOW()
-);
+**iso_status:** `pending`, `staging`, `verified`, `flagged`, `archived`
 
-CREATE TABLE collections (
-  id SERIAL PRIMARY KEY,
-  name VARCHAR(255) NOT NULL,
-  description TEXT,
-  curator_id VARCHAR(256) REFERENCES profiles(user_id),
-  public BOOLEAN DEFAULT TRUE,
-  created_at TIMESTAMP DEFAULT NOW()
-);
+**edit_type:** `create`, `update`, `merge`, `delete`
 
-CREATE TABLE collection_items (
-  collection_id INTEGER REFERENCES collections(id) ON DELETE CASCADE,
-  iso_id INTEGER REFERENCES isos(id) ON DELETE CASCADE,
-  position INTEGER,
-  PRIMARY KEY (collection_id, iso_id)
-);
+**edit_status:** `pending`, `approved`, `rejected`, `applied`
 
--- Indexes
-CREATE INDEX idx_isos_status ON isos(status);
-CREATE INDEX idx_isos_distro ON isos(distro_id);
-CREATE INDEX idx_edits_status ON edits(status);
-CREATE INDEX idx_edits_user ON edits(user_id);
-CREATE INDEX idx_notifications_user ON notifications(user_id, read);
-```
+**vote_type:** `yes`, `no`, `abstain`
 
 ---
 
 ## Implementation Status
 
-| Domain | Status | Notes |
-|--------|--------|-------|
-| Catalog/Search | 🟡 Basic | Needs facets, advanced filters |
-| Library/ISOs | 🟡 Basic | Needs rich metadata |
-| Curation/Edits | ❌ Missing | Core workflow needed |
-| Downloads | ❌ Missing | Tracking, torrents needed |
-| Admin | 🟡 Basic | Sync only |
-| Notifications | ❌ Missing | - |
+| Domain | Endpoint | Status |
+|--------|----------|--------|
+| Catalog | `GET /catalog/search` | ✅ |
+| Catalog | `GET /catalog/distributions` | ✅ |
+| Catalog | `GET /catalog/families` | ✅ |
+| Library | `GET /library/isos/{id}` | ✅ |
+| Library | `GET /library/isos/{id}/fingerprint` | ✅ |
+| Library | `GET /library/distros/{slug}` | ✅ |
+| Curation | `POST /curation/edits` | ✅ |
+| Curation | `GET /curation/edits` | ✅ |
+| Curation | `GET /curation/edits/{id}` | ✅ |
+| Curation | `POST /curation/edits/{id}/votes` | ✅ |
+| Curation | `POST /curation/edits/{id}/comments` | ✅ |
+| Curation | `GET /curation/edits/{id}/comments` | ✅ |
+| Curation | `GET /curation/users/{id}/reputation` | ✅ |
+| Downloads | `GET /downloads/direct/{id}` | ✅ |
+| Downloads | `GET /downloads/magnet/{id}` | ✅ |
+| Downloads | `GET /downloads/torrent/{id}` | 🟡 |
+| Uploads | `POST /uploads/initiate` | ✅ |
+| Uploads | `GET /uploads/{id}` | ✅ |
+| Uploads | `POST /uploads/{id}/complete` | ✅ |
+| Uploads | `GET /uploads/quota` | ✅ |
+| Admin | `POST /admin/sync` | ✅ |
+| Admin | `GET /admin/analytics/overview` | ✅ |
+| Notifications | `GET /notifications` | ✅ |
+| Notifications | `POST /notifications/{id}/read` | ✅ |
+| Notifications | `POST /notifications/read-all` | ✅ |
 
-**Legend**: ✅ Complete | 🟡 Partial | ❌ Missing
+**Legend:** ✅ Implemented | 🟡 Partial
