@@ -20,7 +20,7 @@
     "@iso/validators": "workspace:^",
     "@scalar/hono-api-reference": "^0.9.30",
     "@t3-oss/env-core": "^0.13.10",
-    "drizzle-orm": "catalog:",
+    "drizzle-orm": "^0.45.1",
     "hono": "^4.0.0",
     "parse-torrent": "^11.0.0",
     "postgres": "catalog:",
