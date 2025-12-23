@@ -8,14 +8,15 @@
     "typecheck": "tsc --noEmit",
     "check": "ultracite check .",
     "fix": "ultracite fix .",
-    "format": "ultracite format ."
+    "format": "ultracite format .",
+    "test": "vitest"
   },
   "dependencies": {
+    "@hono/zod-validator": "^0.4.1",
     "@iso/db": "workspace:*",
     "@iso/validators": "workspace:^",
-    "@trpc/server": "catalog:",
-    "superjson": "^2.2.1",
-    "zod": "catalog:"
+    "hono": "^4.0.0",
+    "zod": "^4.2.1"
   },
   "devDependencies": {
     "typescript": "catalog:"

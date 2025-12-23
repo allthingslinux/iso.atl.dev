@@ -1,44 +1,59 @@
+import { zValidator } from "@hono/zod-validator";
+import type { DbClient } from "@iso/db";
 import {
   CurationActionSchema,
   HelloSchema,
   ReputationSchema,
   SearchSchema,
 } from "@iso/validators";
-import { z } from "zod";
-import { createTRPCRouter, publicProcedure } from "./trpc";
+import { Hono } from "hono";
 
-export const appRouter = createTRPCRouter({
-  hello: publicProcedure
-    .input(HelloSchema)
-    .query(
-      ({ input }) => `Hello ${input.name ?? "World"} from shared @iso/api!`
-    ),
+export type ApiContext = {
+  db: DbClient;
+};
 
-  triggerSync: publicProcedure
-    .input(z.void())
-    .mutation(() => ({ status: "completed" })),
+export const createApiRouter = () => {
+  const app = new Hono<{ Variables: ApiContext }>();
 
-  search: publicProcedure.input(SearchSchema).query(async ({ input }) => {
+  // Hello endpoint
+  app.get("/hello", zValidator("query", HelloSchema), (c) => {
+    const { name } = c.req.valid("query");
+    return c.json({
+      message: `Hello ${name ?? "World"} from shared @iso/api!`,
+    });
+  });
+
+  // Trigger sync endpoint
+  app.post("/sync", async (c) => c.json({ status: "completed" }));
+
+  // Search endpoint
+  app.get("/search", zValidator("query", SearchSchema), (c) => {
+    const _input = c.req.valid("query");
     // Implementation will be in apps/api
-    return [] as any[];
-  }),
+    return c.json([]);
+  });
 
-  curation: createTRPCRouter({
-    getPending: publicProcedure.query(async () => [] as any[]),
+  // Curation endpoints
+  const curation = new Hono<{ Variables: ApiContext }>();
 
-    getReputation: publicProcedure
-      .input(ReputationSchema)
-      .query(async ({ input }) => ({ reputation: 0 })),
+  curation.get("/pending", (c) => c.json([]));
 
-    approve: publicProcedure
-      .input(CurationActionSchema)
-      .mutation(async ({ input }) => ({ success: true })),
+  curation.get("/reputation", zValidator("query", ReputationSchema), (c) => {
+    const _input = c.req.valid("query");
+    return c.json({ reputation: 0 });
+  });
 
-    reject: publicProcedure
-      .input(CurationActionSchema)
-      .mutation(async ({ input }) => ({ success: true })),
-  }),
-});
+  curation.post("/approve", zValidator("json", CurationActionSchema), (c) => {
+    const _input = c.req.valid("json");
+    return c.json({ success: true });
+  });
 
-// export type definition of API
-export type AppRouter = typeof appRouter;
+  curation.post("/reject", zValidator("json", CurationActionSchema), (c) => {
+    const _input = c.req.valid("json");
+    return c.json({ success: true });
+  });
+
+  app.route("/curation", curation);
+
+  return app;
+};

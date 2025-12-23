@@ -5,7 +5,8 @@
   "types": "./src/index.ts",
   "license": "MIT",
   "dependencies": {
-    "zod": "catalog:"
+    "@hono/zod-openapi": "^1.2.0",
+    "zod": "^4.2.1"
   },
   "devDependencies": {
     "typescript": "catalog:"
