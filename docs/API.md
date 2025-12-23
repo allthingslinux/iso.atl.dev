@@ -617,7 +617,7 @@ See [SPEC.md](./SPEC.md) for complete field definitions, canonical values, and d
 
 **iso_type:** `live`, `installer`, `minimal`, `netinst`, `full`, `server`, `rescue`, `cloud`
 
-**iso_status:** `pending`, `staging`, `verified`, `flagged`, `archived`
+**iso_status:** `staging`, `verified`, `flagged`
 
 **edit_type:** `create`, `update`, `merge`, `delete`
 

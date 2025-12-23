@@ -104,7 +104,9 @@ CREATE TYPE iso_type AS ENUM (
 
 -- ISO curation status
 CREATE TYPE iso_status AS ENUM (
-  'pending', 'staging', 'verified', 'flagged', 'archived'
+  'staging',   -- Imported, awaiting review
+  'verified',  -- Metadata confirmed accurate
+  'flagged'    -- Has a problem (checksum mismatch, wrong data, etc.)
 );
 ```
 
