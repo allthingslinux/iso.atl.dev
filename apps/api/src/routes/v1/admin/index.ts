@@ -1,6 +1,7 @@
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 import { distros, downloads, edits, isos } from "@iso/db";
 import { count, eq } from "drizzle-orm";
+import { EditExpirationService } from "../../../services/edit-expiration.service";
 import type { AppEnv } from "../../../types";
 
 const admin = new OpenAPIHono<AppEnv>();
@@ -25,6 +26,28 @@ const syncRoute = createRoute({
 admin.openapi(syncRoute, (c) =>
   c.json({ jobId: crypto.randomUUID(), status: "queued" })
 );
+
+// Close expired edits
+const closeExpiredRoute = createRoute({
+  method: "post",
+  path: "/edits/close-expired",
+  responses: {
+    200: {
+      description: "Expired edits closed",
+      content: {
+        "application/json": {
+          schema: z.object({ accepted: z.number(), rejected: z.number() }),
+        },
+      },
+    },
+  },
+  tags: ["Admin"],
+});
+
+admin.openapi(closeExpiredRoute, async (c) => {
+  const svc = new EditExpirationService(c.get("db"));
+  return c.json(await svc.closeExpiredEdits());
+});
 
 // Analytics overview
 const analyticsRoute = createRoute({

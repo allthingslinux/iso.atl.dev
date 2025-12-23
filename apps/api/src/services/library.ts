@@ -33,6 +33,7 @@ export class LibraryService {
         checksumSha1: isos.checksumSha1,
         checksumSha256: isos.checksumSha256,
         status: isos.status,
+        completenessScore: isos.completenessScore,
         confidenceScore: isos.confidenceScore,
         createdAt: isos.createdAt,
         updatedAt: isos.updatedAt,

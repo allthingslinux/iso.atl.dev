@@ -70,6 +70,7 @@ export class CatalogService {
           language: isos.language,
           size: isos.size,
           status: isos.status,
+          completenessScore: isos.completenessScore,
           distroSlug: distros.slug,
           distroName: distros.name,
           distroOsType: distros.osType,
@@ -148,8 +149,8 @@ export class CatalogService {
     if (hardwareTarget) {
       conditions.push(eq(isos.hardwareTarget, hardwareTarget));
     }
-    if (status && isoStatusEnum.enumValues.includes(status as "pending")) {
-      conditions.push(eq(isos.status, status as "pending"));
+    if (status && isoStatusEnum.enumValues.includes(status as "staging")) {
+      conditions.push(eq(isos.status, status as "staging"));
     }
   }
 

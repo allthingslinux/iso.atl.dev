@@ -5,6 +5,10 @@ import type { AppEnv } from "../../../types";
 
 const curation = new OpenAPIHono<AppEnv>();
 
+const operationEnum = z.enum(["create", "modify", "destroy"]);
+const editStatusEnum = z.enum(["pending", "accepted", "rejected", "immediate_accepted", "immediate_rejected", "failed", "canceled"]);
+const voteEnum = z.enum(["accept", "reject", "abstain", "immediate_accept", "immediate_reject"]);
+
 // Submit edit
 const submitEditRoute = createRoute({
   method: "post",
@@ -14,11 +18,13 @@ const submitEditRoute = createRoute({
       content: {
         "application/json": {
           schema: z.object({
-            targetType: z.enum(["iso", "distro"]),
-            targetId: z.number(),
-            editType: z.enum(["create", "update", "merge", "delete"]),
+            targetType: z.enum(["iso", "distro", "family"]),
+            targetId: z.string().optional(),
+            operation: operationEnum,
             data: z.record(z.string(), z.unknown()),
             comment: z.string().optional(),
+            automation: z.boolean().optional(),
+            automationSource: z.string().optional(),
           }),
         },
       },
@@ -41,13 +47,51 @@ curation.openapi(submitEditRoute, async (c) => {
   const edit = await svc.submitEdit({
     userId,
     targetType: body.targetType,
-    targetId: body.targetId.toString(),
-    editType: body.editType,
-    data: body.data,
+    targetId: body.targetId,
+    operation: body.operation,
+    newData: body.data,
     comment: body.comment,
+    automation: body.automation,
+    automationSource: body.automationSource,
   });
 
   return c.json({ id: edit.id });
+});
+
+// Update pending edit
+const updateEditRoute = createRoute({
+  method: "patch",
+  path: "/edits/:id",
+  request: {
+    params: z.object({ id: z.string().uuid() }),
+    body: {
+      content: {
+        "application/json": {
+          schema: z.object({
+            data: z.record(z.string(), z.unknown()),
+            comment: z.string().optional(),
+          }),
+        },
+      },
+    },
+  },
+  responses: {
+    200: {
+      description: "Edit updated",
+      content: { "application/json": { schema: z.any() } },
+    },
+  },
+  tags: ["Curation"],
+});
+
+curation.openapi(updateEditRoute, async (c) => {
+  const { id } = c.req.valid("param");
+  const body = c.req.valid("json");
+  const userId = c.get("userId") ?? "anonymous";
+  const svc = new CurationService(c.get("db"));
+
+  const edit = await svc.updateEdit(id, userId, body.data, body.comment);
+  return c.json(edit);
 });
 
 // List edits
@@ -56,7 +100,7 @@ const listEditsRoute = createRoute({
   path: "/edits",
   request: {
     query: z.object({
-      status: z.enum(["pending", "approved", "rejected", "applied"]).optional(),
+      status: editStatusEnum.optional(),
       page: z.coerce.number().default(1),
       limit: z.coerce.number().default(20),
     }),
@@ -94,7 +138,7 @@ const getEditRoute = createRoute({
   },
   responses: {
     200: {
-      description: "Edit details",
+      description: "Edit details with votes and comments",
       content: { "application/json": { schema: z.any() } },
     },
     404: { description: "Not found" },
@@ -123,7 +167,7 @@ const voteRoute = createRoute({
     body: {
       content: {
         "application/json": {
-          schema: z.object({ vote: z.enum(["yes", "no", "abstain"]) }),
+          schema: z.object({ vote: voteEnum }),
         },
       },
     },
@@ -133,7 +177,7 @@ const voteRoute = createRoute({
       description: "Vote recorded",
       content: {
         "application/json": {
-          schema: z.object({ yes: z.number(), no: z.number() }),
+          schema: z.object({ voteCount: z.number().optional(), status: z.string().optional() }),
         },
       },
     },
@@ -148,6 +192,31 @@ curation.openapi(voteRoute, async (c) => {
   const svc = new CurationService(c.get("db"));
 
   const result = await svc.vote(id, userId, vote);
+  return c.json(result);
+});
+
+// Cancel edit
+const cancelRoute = createRoute({
+  method: "post",
+  path: "/edits/:id/cancel",
+  request: {
+    params: z.object({ id: z.string().uuid() }),
+  },
+  responses: {
+    200: {
+      description: "Edit canceled",
+      content: { "application/json": { schema: z.object({ status: z.string() }) } },
+    },
+  },
+  tags: ["Curation"],
+});
+
+curation.openapi(cancelRoute, async (c) => {
+  const { id } = c.req.valid("param");
+  const userId = c.get("userId") ?? "anonymous";
+  const svc = new CurationService(c.get("db"));
+
+  const result = await svc.cancelEdit(id, userId);
   return c.json(result);
 });
 
