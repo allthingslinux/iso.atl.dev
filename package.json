@@ -14,16 +14,24 @@
     "format": "turbo format",
     "format:root": "ultracite format",
     "typecheck": "turbo typecheck",
+    "test": "turbo test",
+    "test:e2e": "turbo test:e2e",
     "db:generate": "turbo run db:generate",
     "db:push": "pnpm --filter=@iso/db push",
     "db:migrate": "pnpm --filter=@iso/db migrate",
     "db:studio": "pnpm --filter=@iso/db studio",
-    "db:check": "turbo run db:check"
+    "db:check": "turbo run db:check",
+    "prepare": "husky"
   },
   "devDependencies": {
+    "@playwright/test": "^1.57.0",
+    "@vitest/ui": "^4.0.16",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
     "turbo": "latest",
+    "typescript": "^5.6.2",
     "ultracite": "^6.4.2",
-    "typescript": "^5.6.2"
+    "vitest": "^4.0.16"
   },
   "packageManager": "pnpm@10.0.0",
   "engines": {
@@ -35,5 +43,8 @@
       "version": ">=20",
       "onFail": "download"
     }
+  },
+  "dependencies": {
+    "lucide-react": "^0.562.0"
   }
 }

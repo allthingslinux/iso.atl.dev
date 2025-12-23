@@ -6,6 +6,9 @@
     "clientKind": "git",
     "useIgnoreFile": true
   },
+  "files": {
+    "ignore": ["packages/ui/src/components/**", "packages/ui/src/hooks/**"]
+  },
   "formatter": {
     "enabled": true
   },
